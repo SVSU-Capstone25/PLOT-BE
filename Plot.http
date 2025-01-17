@@ -1,0 +1,6 @@
+@Plot_HostAddress = http://localhost:5268
+
+GET {{Plot_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
