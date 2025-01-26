@@ -8,6 +8,8 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+//Add EmailService so it can use appsettings (need better comment)
+builder.Services.AddScoped<EmailService>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
