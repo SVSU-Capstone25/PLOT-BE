@@ -13,17 +13,5 @@ namespace Prime.UnitTests.Services
 
             Assert.False(result, "1 should not be prime");
         }
-
-        [Fact]
-        public void Test_WillPass_Example1()
-        {
-            Assert.False(false, "2 should pass");
-        }
-
-        [Fact]
-        public void Test_WillFail_Example2()
-        {
-            Assert.False(true, "3 should fail");
-        }
     }
 }
