@@ -1,15 +1,19 @@
+using EmailService;
 var builder = WebApplication.CreateBuilder(args);
+
 
 builder.WebHost.UseUrls("http://0.0.0.0:8085");
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+//Add EmailService so it can use appsettings (need better comment)
+
+builder.Services.AddScoped<EmailSender>();
 
 var app = builder.Build();
 
-//Add EmailService so it can use appsettings (need better comment)
-builder.Services.AddScoped<EmailService>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -43,3 +47,5 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+
+
