@@ -1,4 +1,4 @@
-using EmailService;
+using Plot.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -7,8 +7,9 @@ builder.WebHost.UseUrls("http://0.0.0.0:8085");
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-//Add EmailService so it can use appsettings (need better comment)
 
+
+// Registers EmailSender class as a scoped service in the dependency injection container.
 builder.Services.AddScoped<EmailSender>();
 
 var app = builder.Build();
