@@ -1,3 +1,4 @@
+using Plot.Endpoints;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.UseUrls("http://0.0.0.0:8085");
@@ -23,7 +24,7 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", () =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
+    var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
             DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
@@ -34,6 +35,12 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 })
 .WithName("GetWeatherForecast");
+
+app.MapGroup("/users").MapUsers();
+app.MapGroup("/stores").MapStores();
+app.MapGroup("/layouts").MapLayouts();
+app.MapGroup("/floorsets").MapFloorsets();
+app.MapGroup("/fixtures").MapFixtures();
 
 app.Run();
 
