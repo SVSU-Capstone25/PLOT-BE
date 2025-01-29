@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plot", "PlotService\Plot.csproj", "{F07717A1-0356-45F9-8B05-81283E2A50AA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plot", "Plot\Plot.csproj", "{F07717A1-0356-45F9-8B05-81283E2A50AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlotService.Tests", "PlotService.Tests\PlotService.Tests.csproj", "{5246074A-C453-4784-8889-BF710DB2DF34}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plot.Tests", "Plot.Tests\Plot.Tests.csproj", "{5246074A-C453-4784-8889-BF710DB2DF34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
