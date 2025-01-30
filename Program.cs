@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using Plot.Model;
 using Plot.Services;
+using Microsoft.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -10,7 +13,11 @@ builder.Services.AddOpenApi();
 
 
 // Registers EmailSender class as a scoped service in the dependency injection container.
-builder.Services.AddScoped<EmailSender>();
+
+builder.Services.Configure<EmailSettingsModel>(
+    builder.Configuration.GetSection("EmailSettings"));
+
+builder.Services.AddScoped<EmailService>();
 
 var app = builder.Build();
 
@@ -19,6 +26,15 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    //TEST____________________
+    using (var scope = app.Services.CreateScope())
+    {
+        var emailService = scope.ServiceProvider.GetRequiredService<EmailService>();
+        await emailService.SendPasswordResetEmailAsync("Michael","mapolhill@gmail.com","https://yourwebsite.com/reset-password");
+        //await emailSender.SendEmail("Test Receiver", "mapolhill@gmail.com", "Test Email", "This is a test email.");
+        Console.WriteLine("Test email sent directly during debugging!");
+    }
 }
 
 app.UseHttpsRedirection();

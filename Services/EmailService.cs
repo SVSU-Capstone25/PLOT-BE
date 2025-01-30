@@ -1,5 +1,7 @@
 using MailKit.Net.Smtp;
+using Microsoft.Extensions.Options;
 using MimeKit;
+using Plot.Model;
 
 namespace Plot.Services 
 {
@@ -20,14 +22,19 @@ namespace Plot.Services
     /// MailKit and MimeKit libraries which can be found at 
     /// https://github.com/jstedfast/MailKit.
     /// </summary>
-    class EmailSender
+    class EmailService
     {
+        private const string PLATO_LOGO_FILE_PATH = "Images/PlatoLogo.png";
+        
         // VARIABLES -- VARIABLES -- VARIABLES -- VARIABLES -- VARIABLES -- VARIABLES
         private readonly string _senderName= string.Empty;  // Name of the email sender.
         private readonly string _senderEmail= string.Empty; // Email address of the sender.
         private readonly string _smtpServer= string.Empty;  // SMTP server address. ex:"smtp.gmail.com"
         private readonly int _smtpPort= 0; // SMTP server port number
         private readonly string _senderSmtpPass= string.Empty;  // SMTP server password 
+
+        
+
 
         // METHODS/FUNCTIONS -- METHODS/FUNCTIONS -- METHODS/FUNCTIONS
 
@@ -38,26 +45,21 @@ namespace Plot.Services
         /// <param name="config"></param> An instance of IConfiguration that contains application settings.
         /// <exception cref="ArgumentNullException"> Thrown when an email configuration is missing.
         /// </exception>
-        public EmailSender(IConfiguration config) 
+        public EmailService(IOptions<EmailSettingsModel> emailSettings) 
         {
-            // Use the IConfiguration instance to retrieve EmailSettings located in appsettings.json
-            var emailSettings=config.GetSection("EmailSettings");
+            _senderName=emailSettings.Value.SenderName
+                ?? throw new ArgumentNullException(emailSettings.Value.SenderName);
 
-            // Assign email settings data to corresponding variable.
-            _senderName=emailSettings["SenderName"]
-                ?? throw new ArgumentNullException("Sender Name not configured in EmailSettings");
+            _senderEmail=emailSettings.Value.SenderEmail
+                ?? throw new ArgumentNullException(emailSettings.Value.SenderEmail);
 
-            _senderEmail=emailSettings["SenderEmail"]
-                ?? throw new ArgumentNullException("Sender Email not configured in EmailSettings");
+            _smtpServer=emailSettings.Value.SmtpServer
+                ?? throw new ArgumentNullException(emailSettings.Value.SmtpServer);
 
-            _smtpServer=emailSettings["SmtpServer"]
-                ?? throw new ArgumentNullException("Smtp Server not configured in EmailSettings");
+            _smtpPort=emailSettings.Value.SmtpPort;
 
-            _smtpPort=int.Parse(emailSettings["SmtpPort"]
-                ?? throw new ArgumentNullException("Smtp Port Number not configured in EmailSettings"));
-
-            _senderSmtpPass=emailSettings["SenderSmtpPass"]
-                ?? throw new ArgumentNullException("Sender Smtp password not configured in EmailSettings");
+            _senderSmtpPass=emailSettings.Value.SenderSmtpPass
+                ?? throw new ArgumentNullException(emailSettings.Value.SenderSmtpPass);
         }
 
 //BEGIN------------------TEMP METHODS------TEMP METHODS------TEMP METHODS------------------
@@ -65,21 +67,30 @@ namespace Plot.Services
         public async Task SendPasswordResetEmailAsync(
             string recipientName, string recipientEmailAddress, string resetLink)
         {
-            string emailBody = "Please click this link to reset your password " + resetLink;
-            string emailSubject = "Password reset link";
+            var razorEmailRenderer = new RazorEmailRenderer();
+            var emailTemplateModel = new EmailTemplateModel
+            {
+                Name = recipientName,
+                BodyText = "We received a request to reset your password. Please click the button below to reset it.",
+                ButtonText = "Reset Password",
+                ButtonLink = resetLink,
+                AfterButtonText = "If you did not request this, you can safely ignore this email."
+            };
 
-            await SendEmailAsync(
-                recipientName, recipientEmailAddress, emailSubject, emailBody);
+
+            string emailHtmlBody = await razorEmailRenderer.RenderEmailAsync(emailTemplateModel);
+            string emailSubject = "Reset Your Password";
+
+            MimeMessage EmailMessage = BuildEmailMessage(
+                recipientName, recipientEmailAddress, emailSubject, emailHtmlBody);
+
+            await SendEmailAsync(EmailMessage);
         }
+
+
 
 //Not exactly sure what notifications were sending
-        public async Task SendNotificationEmailAsync(
-            string recipientName, string recipientEmailAddress, 
-            string notificationSubject, string notificationBody)
-        {
-            await SendEmailAsync(
-                recipientName, recipientEmailAddress, notificationSubject, notificationBody);
-        }
+        
  //END------------------TEMP METHODS------TEMP METHODS------TEMP METHODS------------------       
 
         /// <summary>
@@ -90,8 +101,8 @@ namespace Plot.Services
         /// <param name="subject">The subject of the email.</param>
         /// <param name="body">The body content of the email.</param>
         /// <returns>A task that represents the asynchronous email sending operation.</returns>
-        public async Task SendEmailAsync(
-            string recipientName, string recipientEmailAddress, string subject, string body)
+        private MimeMessage BuildEmailMessage(
+            string recipientName, string recipientEmailAddress, string subject, string htmlBody)
         {
             // Create a new email message.
             var message = new MimeMessage ();
@@ -103,11 +114,22 @@ namespace Plot.Services
             // Add the email subject to the message.
             message.Subject = subject;
 
-            // Add the body of the email to the message.
-            message.Body = new TextPart ("plain") 
+            BodyBuilder bodyBuilder = new BodyBuilder();
+
+            string imagePath = Path.Combine(Directory.GetCurrentDirectory(), PLATO_LOGO_FILE_PATH);
+            var linkedImage = bodyBuilder.LinkedResources.Add(imagePath);
+            linkedImage.ContentId = "headerImage";
+
+            bodyBuilder.HtmlBody = htmlBody.Replace("{{HeaderImage}}", "cid:headerImage");
+            
+            message.Body = bodyBuilder.ToMessageBody();
+            return message;
+            }
+
+
+
+            private async Task SendEmailAsync(MimeMessage message)
             {
-                Text = body
-            };
 
             // Create an SmtpClient instance to send the message.
             using var client = new SmtpClient();
@@ -119,6 +141,7 @@ namespace Plot.Services
 
                 // Authenticate the senders email credentials
                 // Note: only needed if the SMTP server requires authentication.
+                
                 client.Authenticate(_senderEmail, _senderSmtpPass);
 
                 // Send the email and disconnect from the server
