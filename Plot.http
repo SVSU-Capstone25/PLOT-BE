@@ -12,6 +12,10 @@ GET {{Plot_HostAddress}}/users/1
 Accept: application/json
 
 ###
+GET {{Plot_HostAddress}}/users/Employee
+Accept: application/json
+
+###
 POST {{Plot_HostAddress}}/users
 Content-Type: application/json
 Accept: application/json
@@ -20,7 +24,8 @@ Accept: application/json
     "FirstName": "Homer",
     "LastName": "Simpson",
     "Email": "homersimpson@gmail.com",
-    "Password": "homer1234"
+    "Password": "homer1234",
+    "Role": 0
 }
 
 ###
