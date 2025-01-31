@@ -1,3 +1,12 @@
+/*
+    Filename: User.cs
+    Part of Project: PLOT/PLOT-BE/Data/Models/Users
+    File Purpose:
+    This file contains the user object model for inputs/outputs used by 
+    endpoints that require sensitive data.
+    Written by: Jordan Houlihan
+*/
+
 namespace Plot.Data.Models.Users;
 
 public class User

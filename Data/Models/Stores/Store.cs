@@ -1,3 +1,12 @@
+/*
+    Filename: Store.cs
+    Part of Project: PLOT/PLOT-BE/Data/Models/Stores
+    File Purpose:
+    This file contains the store object model for inputs/outputs used by 
+    endpoints.
+    Written by: Jordan Houlihan
+*/
+
 using Plot.Data.Models.Users;
 
 namespace Plot.Data.Models.Stores;

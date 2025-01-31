@@ -1,5 +1,5 @@
 /*
-    Filename: FixturesController.cs
+    Filename: FloorsetsController.cs
     Part of Project: PLOT/PLOT-BE/Controllers
     File Purpose:
     This file contains the floorset controller endpoint mapping.
