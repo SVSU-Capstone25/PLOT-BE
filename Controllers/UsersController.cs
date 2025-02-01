@@ -18,6 +18,7 @@ public class UsersController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces("application/json")]
     public ActionResult<UserDTO[]> GetAll()
@@ -33,16 +34,6 @@ public class UsersController : ControllerBase
     public ActionResult<UserDTO> GetById(int id)
     {
         return Ok();
-    }
-
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces("application/json")]
-    public ActionResult<UserDTO> Create(User user)
-    {
-        return CreatedAtAction(nameof(Create), new { id = 1 });
     }
 
     [HttpPatch("/UpdateName")]
@@ -92,5 +83,34 @@ public class UsersController : ControllerBase
     public ActionResult Delete(int id)
     {
         return NoContent();
+    }
+
+    [HttpPost("/login")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Produces("application/json")]
+    public ActionResult Login(User user)
+    {
+        return NoContent();
+    }
+
+    [HttpPost("/logout")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Produces("application/json")]
+    public ActionResult Logout(User user)
+    {
+        return NoContent();
+    }
+
+    [HttpPost("/register")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Produces("application/json")]
+    public ActionResult<UserDTO> Register(User user)
+    {
+        return CreatedAtAction(nameof(Register), new { id = 1 });
     }
 }
