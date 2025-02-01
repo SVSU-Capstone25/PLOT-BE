@@ -7,15 +7,6 @@ assignees: ''
 
 ---
 
-## 📝 Requirements
-
-> [!NOTE]
-> The following are requirements that documentation expects at the end of the ticket lifetime.
-
-- The system shall allow managers to delete accounts permanently.
-  - Test: Delete an account and check if the data is removed.
-- ... (DELETE THIS PLACEHOLDER CONTENT)
-
 ## 🎯 Acceptance Criteria
 
 > [!NOTE]
