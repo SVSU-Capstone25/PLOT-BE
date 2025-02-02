@@ -35,6 +35,16 @@ public class FixturesController : ControllerBase
         return CreatedAtAction(nameof(Create), new { id = 1 });
     }
 
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Produces("application/json")]
+    public ActionResult<CreateFixtureInstanceDTO> Create(CreateFixtureInstanceDTO fixture)
+    {
+        return CreatedAtAction(nameof(Create), new { id = 1 });
+    }
+
     [HttpPatch("/{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

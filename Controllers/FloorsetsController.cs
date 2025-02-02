@@ -15,21 +15,11 @@ namespace Plot.Controllers;
 [Route("[controller]")]
 public class FloorsetsController : ControllerBase
 {
-    [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces("application/json")]
-    public ActionResult<Floorset[]> GetAll()
-    {
-        return Ok();
-    }
-
     [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces("application/json")]
-    public ActionResult<Floorset> GetById(int id)
+    public ActionResult<Floorset[]> GetByStore(int id)
     {
         return Ok();
     }
