@@ -1,7 +1,7 @@
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using Plot.Model;
+using Plot.Data.Models.Email;
 
 namespace Plot.Services 
 {
@@ -22,7 +22,7 @@ namespace Plot.Services
     /// MailKit and MimeKit libraries which can be found at 
     /// https://github.com/jstedfast/MailKit.
     /// </summary>
-    class EmailService
+    public class EmailService
     {
         private const string PLATO_LOGO_FILE_PATH = "Images/PlatoLogo.png";
         
@@ -45,7 +45,7 @@ namespace Plot.Services
         /// <param name="config"></param> An instance of IConfiguration that contains application settings.
         /// <exception cref="ArgumentNullException"> Thrown when an email configuration is missing.
         /// </exception>
-        public EmailService(IOptions<EmailSettingsModel> emailSettings) 
+        public EmailService(IOptions<EmailSettings> emailSettings) 
         {
             _senderName=emailSettings.Value.SenderName
                 ?? throw new ArgumentNullException(emailSettings.Value.SenderName);
@@ -56,7 +56,8 @@ namespace Plot.Services
             _smtpServer=emailSettings.Value.SmtpServer
                 ?? throw new ArgumentNullException(emailSettings.Value.SmtpServer);
 
-            _smtpPort=emailSettings.Value.SmtpPort;
+            _smtpPort=emailSettings.Value.SmtpPort 
+                ?? throw new ArgumentNullException(nameof(emailSettings.Value.SmtpPort));
 
             _senderSmtpPass=emailSettings.Value.SenderSmtpPass
                 ?? throw new ArgumentNullException(emailSettings.Value.SenderSmtpPass);
@@ -68,7 +69,7 @@ namespace Plot.Services
             string recipientName, string recipientEmailAddress, string resetLink)
         {
             var razorEmailRenderer = new RazorEmailRenderer();
-            var emailTemplateModel = new EmailTemplateModel
+            var emailTemplate = new EmailTemplate
             {
                 Name = recipientName,
                 BodyText = "We received a request to reset your password. Please click the button below to reset it.",
@@ -78,7 +79,7 @@ namespace Plot.Services
             };
 
 
-            string emailHtmlBody = await razorEmailRenderer.RenderEmailAsync(emailTemplateModel);
+            string emailHtmlBody = await razorEmailRenderer.RenderEmailAsync(emailTemplate);
             string emailSubject = "Reset Your Password";
 
             MimeMessage EmailMessage = BuildEmailMessage(

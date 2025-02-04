@@ -1,68 +1,44 @@
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
-using Plot.Model;
+using Microsoft.EntityFrameworkCore;
 using Plot.Services;
-using Microsoft.Extensions.DependencyInjection;
+using Plot.Context;
+using Plot.Data.Models.Email;
+using Plot.Data.Models.Token;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.UseUrls("http://0.0.0.0:8085");//"http://localhost:5000");
 
-builder.WebHost.UseUrls("http://0.0.0.0:8085");
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+//-----------------------------------------------------------------------------------------------------test
+
+builder.Services.AddDbContext<PlotContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-// Registers EmailSender class as a scoped service in the dependency injection container.
-
-builder.Services.Configure<EmailSettingsModel>(
+builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
 
+builder.Services.Configure<TokenSettings>(
+    builder.Configuration.GetSection("JwtSettings"));
+
 builder.Services.AddScoped<EmailService>();
+
+builder.Services.AddSingleton<TokenService>();
+
+builder.Services.AddControllers();
+
 
 var app = builder.Build();
 
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
 
-    //TEST____________________
-    using (var scope = app.Services.CreateScope())
-    {
-        var emailService = scope.ServiceProvider.GetRequiredService<EmailService>();
-        await emailService.SendPasswordResetEmailAsync("Michael","mapolhill@gmail.com","https://yourwebsite.com/reset-password");
-        //await emailSender.SendEmail("Test Receiver", "mapolhill@gmail.com", "Test Email", "This is a test email.");
-        Console.WriteLine("Test email sent directly during debugging!");
-    }
-}
-
+app.UseRouting();
+app.UseStaticFiles();
 app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
+app.MapControllers();
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
-
-

@@ -1,7 +1,7 @@
 
-namespace Plot.Model
+namespace Plot.Data.Models.Email
 {
-    public class EmailTemplateModel
+    public class EmailTemplate
     {
         public required string Name { get; set; }
         public required string BodyText { get; set; }

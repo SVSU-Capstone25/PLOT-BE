@@ -1,6 +1,6 @@
 
 
-using Plot.Model;
+using Plot.Data.Models.Email; 
 using RazorLight;
 
 namespace Plot.Services
@@ -17,7 +17,7 @@ namespace Plot.Services
                 .Build();
         }
 
-        public async Task<string> RenderEmailAsync(EmailTemplateModel emailModel)
+        public async Task<string> RenderEmailAsync(EmailTemplate emailModel)
         {
             string templatePath = "EmailTemplate.cshtml";
             return await _razorEngine.CompileRenderAsync(templatePath, emailModel);
