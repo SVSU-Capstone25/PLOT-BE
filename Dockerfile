@@ -10,6 +10,9 @@ COPY . ./
 # Restore dependencies
 RUN dotnet restore
 
+# Run tests
+RUN dotnet test
+
 # Build and publish the app (for production)
 RUN dotnet publish -c Release -o /publish
 
