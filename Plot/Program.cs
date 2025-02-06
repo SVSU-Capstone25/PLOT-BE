@@ -1,25 +1,33 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-builder.WebHost.UseUrls("http://0.0.0.0:8085");
-builder.Services.AddHealthChecks();
-
-builder.Services.AddControllers();
-builder.Services.AddOpenApi();
-builder.Services.AddEndpointsApiExplorer();
-
-var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
+public class Program
 {
-    app.MapOpenApi();
-}
-else
-{
-    app.UseHttpsRedirection();
-}
+    public static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-app.MapHealthChecks("/health");
-app.MapControllers();
-app.Run();
+        builder.WebHost.UseUrls("http://0.0.0.0:8085");
+        builder.Services.AddHealthChecks();
 
-public partial class Program { };
+        builder.Services.AddControllers();
+        builder.Services.AddOpenApi();
+        builder.Services.AddEndpointsApiExplorer();
+
+        var app = builder.Build();
+
+        if (app.Environment.IsDevelopment())
+        {
+            app.MapOpenApi();
+        }
+        else
+        {
+            app.UseHttpsRedirection();
+        }
+
+        app.MapHealthChecks("/health");
+        app.MapControllers();
+        app.Run();
+    }
+}
