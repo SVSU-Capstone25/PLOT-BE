@@ -1,6 +1,7 @@
 var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.UseUrls("http://0.0.0.0:8085");
+builder.Services.AddHealthChecks();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
@@ -17,7 +18,8 @@ else
     app.UseHttpsRedirection();
 }
 
+app.MapHealthChecks("/health");
 app.MapControllers();
 app.Run();
 
-public partial class Program {};
+public partial class Program { };
