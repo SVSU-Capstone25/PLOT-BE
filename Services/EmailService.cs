@@ -90,23 +90,21 @@ namespace Plot.Services
 
         /// <summary>
         /// This method sends a password reset email to the specified recipient.
-        /// It sends a pre-defined email template to an instance of 
-        /// RazorEmailRenderer to render the html email body. The email is then
+        /// It sends a pre-defined email template with email sending info
+        /// to BuildEmailMessage, and then the email is then
         /// sent using the SendEmailAsync method.
         /// </summary>
-        /// <param name="recipientName"> The name of the email recipient.</param>
         /// <param name="recipientEmailAddress">The email address of the 
         /// recipient.</param> 
+        /// <param name="recipientName"> The name of the email recipient.</param>
         /// <param name="resetLink"></param> The password reset link.
         /// <returns></returns>
         public async Task SendPasswordResetEmailAsync(
-            string recipientName, string recipientEmailAddress, string resetLink)
+            string recipientEmailAddress, string recipientName, string resetLink)
         {
-            //Instantiate a new RazorEmailRenderer instance, it will be used to 
-            // render the html template.
-            var razorEmailRenderer = new RazorEmailRenderer();
-            //Create a new EmailTemplate instance with the email body content.
-            var emailTemplate = new EmailTemplate
+            // Create a new email template to be used as the 
+            // password reset body.
+            var emailTemplateBody = new EmailTemplate
             {
                 Name = recipientName,
                 BodyText = "We received a request to reset your password." + 
@@ -117,16 +115,12 @@ namespace Plot.Services
                     " you can safely ignore this email."
             };
 
-
-            //Render the email template to send as the email body.
-            string emailHtmlBody = await razorEmailRenderer.RenderEmailAsync(
-                emailTemplate);
-            //Set the email subject.
-            string emailSubject = "Reset Your Password";
-
+            //Set the emails subject.
+            var subject= "PLOT Password Reset";
+            
             //Instantiate a new MimeMessage instance with the email content.
-            MimeMessage EmailMessage = BuildEmailMessage(recipientName, 
-                recipientEmailAddress, emailSubject, emailHtmlBody);
+            MimeMessage EmailMessage = await BuildEmailMessage(recipientName, 
+                recipientEmailAddress, subject, emailTemplateBody);
 
             //Call the SendEmailAsync method to send the email.
             await SendEmailAsync(EmailMessage);
@@ -145,8 +139,8 @@ namespace Plot.Services
         /// <param name="subject">The subject of the email.</param>
         /// <param name="body"> html string for email content</param>
         /// <returns>A MimeMessage object ready to be sent as an email</returns>
-        private MimeMessage BuildEmailMessage(string recipientName,
-            string recipientEmailAddress, string subject, string htmlBody)
+        private async Task<MimeMessage>BuildEmailMessage(string recipientName,
+            string recipientEmailAddress, string subject, EmailTemplate emailTemplateBody)
         {
             // Create a new email message.
             var message = new MimeMessage ();
@@ -158,6 +152,15 @@ namespace Plot.Services
 
             // Add the email subject to the message.
             message.Subject = subject;
+
+
+            // Instantiate a new RazorEmailRenderer instance, it will be used to 
+            // render the html template
+            var razorEmailRenderer = new RazorEmailRenderer();
+            
+            //Render the email template to send as the email body.
+            string emailHtmlBody = await razorEmailRenderer.RenderEmailAsync(
+                emailTemplateBody);
 
             // Initialize a new BodyBuilder instance to build the email body.
             BodyBuilder bodyBuilder = new BodyBuilder();
@@ -171,7 +174,7 @@ namespace Plot.Services
             linkedImage.ContentId = "headerImage";
 
             // Replace the placeholder in the email body with the header image.
-            bodyBuilder.HtmlBody = htmlBody.Replace(
+            bodyBuilder.HtmlBody = emailHtmlBody.Replace(
                 "{{HeaderImage}}", "cid:headerImage");
             
             // Set the email body to the message.

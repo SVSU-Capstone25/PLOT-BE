@@ -154,7 +154,9 @@ namespace Plot.Services
                 IssuerSigningKey = key,
                 // Check the tokens issuer and audience.
                 ValidateIssuer = true,
+                ValidIssuer = _issuer,
                 ValidateAudience = true,
+                ValidAudience = _audience,
                 // Make sure the token is not expired.
                 ValidateLifetime = true
             };

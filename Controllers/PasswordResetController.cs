@@ -119,9 +119,9 @@ namespace Plot.Controllers
             string email = user.Email ?? string.Empty;
 
             // Pass the users name, email, and reset link to the email service
-            //  to send the password reset email.
+            // to send the password reset email.
             await _emailService.SendPasswordResetEmailAsync(
-                name, email, resetLink);
+                email, name, resetLink);
         
             // Return OK.
             return Ok();
@@ -158,9 +158,11 @@ namespace Plot.Controllers
             // Otherwise returns null.
             var email = _tokenService.ValidateToken(token);
 
+
             // If the email is null, return bad request.
             if (email == null)
             {
+                
                 return BadRequest("Invalid token.");
             }
 
@@ -177,7 +179,7 @@ namespace Plot.Controllers
             // At this point the user is valid, create
             // a new password hasher.
             PasswordHasher<User> hasher = new PasswordHasher<User>();
-
+            
             // Hash the new password.
             var hashedPassword = hasher.HashPassword(user, newPassword);
 
