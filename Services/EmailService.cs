@@ -45,24 +45,25 @@ namespace Plot.Services
         // VARIABLES -- VARIABLES -- VARIABLES -- VARIABLES -- VARIABLES ------
 
         // Name of the email sender.
-        private readonly string _senderName= string.Empty;  
+        private readonly string _senderName;  
 
         // Email address of the sender.
-        private readonly string _senderEmail= string.Empty; 
+        private readonly string _senderEmail; 
 
         // SMTP server address. ex:"smtp.gmail.com"
-        private readonly string _smtpServer= string.Empty;  
+        private readonly string _smtpServer;  
 
         // SMTP server port number
-        private readonly int _smtpPort= 0; 
+        private readonly int _smtpPort; 
 
         // SMTP server password 
-        private readonly string _senderSmtpPass= string.Empty;  
+        private readonly string _senderSmtpPass;  
 
         // Methods -- Methods -- Methods -- Methods -- Methods -- Methods -----
         /// <summary>
         /// Constructor used for EmailService class.
         /// Gets necessary email settings from an IOptions instance.
+        /// Gets the servers email password from .env file.
         /// </summary>
         /// <param name="emailSettings">An instance of IOptions that contains
         /// application settings.</param> 
@@ -83,8 +84,9 @@ namespace Plot.Services
             _smtpPort=emailSettings.Value.SmtpPort ?? throw new 
                 ArgumentNullException(nameof(emailSettings.Value.SmtpPort));
 
-            _senderSmtpPass=emailSettings.Value.SenderSmtpPass ?? throw new 
-                ArgumentNullException(emailSettings.Value.SenderSmtpPass);
+            _senderSmtpPass=Environment.GetEnvironmentVariable("EMAIL_PASS") 
+                ?? throw new ArgumentNullException(
+                    Environment.GetEnvironmentVariable("EMAIL_PASS"));
         }
 
 
@@ -117,6 +119,45 @@ namespace Plot.Services
 
             //Set the emails subject.
             var subject= "PLOT Password Reset";
+            
+            //Instantiate a new MimeMessage instance with the email content.
+            MimeMessage EmailMessage = await BuildEmailMessage(recipientName, 
+                recipientEmailAddress, subject, emailTemplateBody);
+
+            //Call the SendEmailAsync method to send the email.
+            await SendEmailAsync(EmailMessage);
+        }
+
+
+
+        /// <summary>
+        /// Method sends a successful registration email to the specified recipient.
+        /// It sends a pre-defined email template with email sending info
+        /// to BuildEmailMessage, and then the email is then
+        /// sent using the SendEmailAsync method.
+        /// </summary>
+        /// <param name="recipientEmailAddress">The email address of the 
+        /// recipient.</param> 
+        /// <param name="recipientName"> The name of the email recipient.</param>
+        /// <param name="loginLink"></param> The login reset link.
+        /// <returns></returns>
+        public async Task SendRegistrationEmailAsync(
+            string recipientEmailAddress, string recipientName, string loginLink)
+        {
+            // Create a new email template to be used as the 
+            // registration notification body.
+            var emailTemplateBody = new EmailTemplate
+            {
+                Name = recipientName,
+                BodyText = "Your account has been successfully registered" + 
+                    "  with PLOT. Please click the button below to login.",
+                ButtonText = "Login",
+                ButtonLink = loginLink,
+                AfterButtonText = string.Empty
+            };
+
+            //Set the emails subject.
+            var subject= "PLOT Successful Registration";
             
             //Instantiate a new MimeMessage instance with the email content.
             MimeMessage EmailMessage = await BuildEmailMessage(recipientName, 

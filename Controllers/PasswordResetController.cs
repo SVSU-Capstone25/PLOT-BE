@@ -192,5 +192,47 @@ namespace Plot.Controllers
             // Return OK with success message.
             return Ok("Password reset successful.");
         }
+
+//!!!!!!!!!!!!!!!---------------------Temp method to show email system in class 2-13---------------------!!!!!!!!!!!!!!!
+// This wont be its own separate endpoint. It'll just go in the registration endpoint
+//This is almost an exact copy paste of pass reset, implementation will be diff, idk
+        [HttpPost("do-a-email")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DevRegNotification(
+            [FromBody] RequestPasswordReset receivedEmailRequest)
+        {
+            //I think i hate emails now
+            var receivedEmail = receivedEmailRequest.EmailAddress;
+            
+            // This is all temp stuff
+            if (receivedEmail == null)
+            {
+                return Ok();
+            }
+
+            //Dont need to read this, notification implementation will be diff
+            var user = _context.Users.FirstOrDefault
+                (u => u.Email == receivedEmail);
+
+            // If the user is null/not in the database, wow.
+            if (user == null)
+            {
+                return Ok();
+            }
+
+            //Again temp shit right here, change when url path is more defined.
+            string resetLink = "http://Plot.com/Login";
+
+            //more local vars. who wouda guessed
+            string name = user.FirstName ?? string.Empty;
+            string email = user.Email ?? string.Empty;
+
+            //pass those vars, hell yea.
+            await _emailService.SendRegistrationEmailAsync(
+                email, name, resetLink);
+        
+            // Return OK, good job.
+            return Ok();
+        }
     }
 }

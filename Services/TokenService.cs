@@ -52,7 +52,7 @@ namespace Plot.Services
         private readonly int _lifeTime;
 
         // Stores secret key for signing tokens.(change this when I put key somewhere secure)
-        private readonly string _secretKey="REPLACE_THIS_SECRET_KEY_AND_STORE_IT_SOMEWHERE_SECURE_I_DONT_KNOW_THE_BEST_WAY_TO_DO_THAT";//******TEMP DEV*********
+        private readonly string _secretKey;
 
 
         // Methods -- Methods -- Methods -- Methods -- Methods -- Methods -----
@@ -75,6 +75,10 @@ namespace Plot.Services
 
                 _lifeTime = tokenSettings.Value.Lifetime ?? throw new 
                     ArgumentNullException(nameof(tokenSettings.Value.Lifetime));
+
+                _secretKey=Environment.GetEnvironmentVariable("SECRET_KEY") 
+                ?? throw new ArgumentNullException(
+                    Environment.GetEnvironmentVariable("SECRET_KEY"));
             }
 
 
