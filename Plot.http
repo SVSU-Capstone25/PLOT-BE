@@ -1,33 +1,11 @@
 @Plot_HostAddress = http://localhost:8085
 
-GET {{Plot_HostAddress}}/weatherforecast/
+GET {{Plot_HostAddress}}/users/
 Accept: application/json
 
 ###
-GET {{Plot_HostAddress}}/users
-Accept: application/json
 
-###
 GET {{Plot_HostAddress}}/users/1
 Accept: application/json
 
 ###
-GET {{Plot_HostAddress}}/users/Employee
-Accept: application/json
-
-###
-POST {{Plot_HostAddress}}/users
-Content-Type: application/json
-Accept: application/json
-
-{
-    "FirstName": "Homer",
-    "LastName": "Simpson",
-    "Email": "homersimpson@gmail.com",
-    "Password": "homer1234",
-    "Role": 0
-}
-
-###
-DELETE {{Plot_HostAddress}}/users/1
-Accept: application/json

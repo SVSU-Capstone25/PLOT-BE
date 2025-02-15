@@ -1,8 +1,10 @@
 /*
-    Filename: Store.cs
+    Filename: StoreDTO.cs
     Part of Project: PLOT/PLOT-BE/Data/Models/Stores
     File Purpose:
-    This file contains the store object model.
+    This file contains the DTOs (Data-Transfer Objects)
+    used to format the inputs and outputs expected
+    from the backend for stores.
     Written by: Jordan Houlihan
 */
 
@@ -10,9 +12,13 @@ using Plot.Data.Models.Users;
 
 namespace Plot.Data.Models.Stores;
 
-public class Store
+/// <summary>
+/// This is the input format that the backend expects
+/// to see when the frontend makes a request
+/// to create and update a store.
+/// </summary>
+public record StoreDTO
 {
-    public int? StoreId { get; set; }
     public string? Name { get; set; }
     public string? Address { get; set; }
     public string? City { get; set; }

@@ -2,7 +2,9 @@
     Filename: FixturesController.cs
     Part of Project: PLOT/PLOT-BE/Controllers
     File Purpose:
-    This file contains the fixture controller endpoint mapping.
+    This file contains the fixture controller endpoint mapping,
+    which will transport the base fixture model data and fixture instance data 
+    from the frontend to the database and vice versa.
     Written by: Jordan Houlihan
 */
 
@@ -15,50 +17,107 @@ namespace Plot.Controllers;
 [Route("[controller]")]
 public class FixturesController : ControllerBase
 {
-    [HttpGet("{id:int}")]
+    /// <summary>
+    /// This endpoint deals with returning a floorset's fixture information
+    /// to fill out the floorset's grid and category allocations menu.
+    /// </summary>
+    /// <param name="floorsetId">The id of the floorset as a route parameter in the url.</param>
+    /// <returns>A floorset's fixture information as a FloorsetFixtureInformationDTO object.</returns>
+    [HttpGet("{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces("application/json")]
-    public ActionResult<Fixture[]> GetByFloorset(int id)
+    public ActionResult<FloorsetFixtureInformationDTO> GetFixtureInformation(int floorsetId)
     {
-        return Ok();
+        return NoContent();
     }
 
-    [HttpPost]
+    /// <summary>
+    /// This endpoint deals with creating a fixture model.
+    /// </summary>
+    /// <param name="storeId">The id of the store as a route parameter in the url.</param>
+    /// <param name="fixture">The new fixture information as a FixtureDTO object in the request body.</param>
+    /// <returns>The newly created fixture information as a Fixture object.</returns>
+    [HttpPost("models/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces("application/json")]
-    public ActionResult<Fixture> Create(Fixture fixture)
+    public ActionResult<Fixture> CreateFixtureModel(int storeId, FixtureDTO fixture)
     {
-        return CreatedAtAction(nameof(Create), new { id = 1 });
+        return NoContent();
     }
 
-    [HttpPost]
+    /// <summary>
+    /// This endpoint deals with creating a fixture instance model.
+    /// </summary>
+    /// <param name="storeId">The id of the store as a route parameter in the url.</param>
+    /// <param name="floorsetId">The id of the floorset as a route parameter in the url.</param>
+    /// <param name="fixture">The new fixture instance information as a FixtureDTO object in the request body.</param>
+    /// <returns>The newly created fixture instance information as a FixtureInstance object.</returns>
+    [HttpPost("instances/{storeId:int}/{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces("application/json")]
-    public ActionResult<CreateFixtureInstanceDTO> Create(CreateFixtureInstanceDTO fixture)
+    public ActionResult<FixtureInstance> CreateFixtureInstance(int storeId, int floorsetId, FixtureInstanceDTO fixture)
     {
-        return CreatedAtAction(nameof(Create), new { id = 1 });
+        return NoContent();
     }
 
-    [HttpPatch("/{id:int}")]
+
+    /// <summary>
+    /// This endpoint deals with updating a fixture model.
+    /// </summary>
+    /// <param name="fixtureId">The id of the fixture model as a route parameter in the url.</param>
+    /// <param name="fixture">The updated fixture model information as a FixtureDTO object in the request body.</param>
+    /// <returns>The updated fixture information as a Fixture object.</returns>
+    [HttpPut("models/{fixtureId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<Fixture> Update(int id, Fixture fixture)
+    public ActionResult<Fixture> UpdateFixtureModel(int fixtureId, FixtureDTO fixture)
     {
-        return Ok();
+        return NoContent();
     }
 
-    [HttpDelete("{id:int}")]
+    /// <summary>
+    /// This endpoint deals with updating a fixture instance.
+    /// </summary>
+    /// <param name="fixtureInstanceId">The id of the fixture instance model as a route parameter in the url.</param>
+    /// <param name="fixture">The updated fixture instance information as a FixtureInstanceDTO object in the request body.</param>
+    /// <returns>The updated fixture instance information as a FixtureInstance object.</returns>
+    [HttpPut("instances/{fixtureInstanceId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public ActionResult<FixtureInstance> UpdateFixtureInstance(int fixtureInstanceId, FixtureInstanceDTO fixture)
+    {
+        return NoContent();
+    }
+
+    /// <summary>
+    /// This endpoint deals with deleting a fixture model.
+    /// </summary>
+    /// <param name="fixtureId">The id of the fixture model as a route parameter in the url.</param>
+    /// <returns>This endpoint doesn't return a value.</returns>
+    [HttpDelete("models/{fixtureId:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult Delete(int id)
+    public ActionResult DeleteFixtureModel(int fixtureId)
+    {
+        return NoContent();
+    }
+
+    /// <summary>
+    /// This endpoint deals with deleting a fixture instance.
+    /// </summary>
+    /// <param name="fixtureInstanceId">The id of the fixture instance model as a route parameter in the url.</param>
+    /// <returns>This endpoint doesn't return a value.</returns>
+    [HttpDelete("instances/{fixtureInstanceId:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public ActionResult DeleteFixtureInstance(int fixtureInstanceId)
     {
         return NoContent();
     }

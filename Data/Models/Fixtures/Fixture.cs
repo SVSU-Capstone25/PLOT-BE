@@ -2,8 +2,7 @@
     Filename: Fixture.cs
     Part of Project: PLOT/PLOT-BE/Data/Models/Fixtures
     File Purpose:
-    This file contains the fixture object model for inputs/outputs used by 
-    endpoints.
+    This file contains the fixture object model.
     Written by: Jordan Houlihan
 */
 
@@ -11,7 +10,7 @@ namespace Plot.Data.Models.Fixtures;
 
 public class Fixture
 {
-    public int? Id { get; set; }
+    public int? FixtureId { get; set; }
     public string? Name { get; set; }
     public int? Width { get; set; }
     public int? Height { get; set; }
