@@ -89,7 +89,7 @@ namespace Plot.Controllers
         {
             //Set the received email address to a local variable.
             var receivedEmail = receivedEmailRequest.EmailAddress;
-            
+            /*----------------------------------------------------------------------------Testing email only, not DB part
             // If the email is null, return OK.
             if (receivedEmail == null)
             {
@@ -106,17 +106,23 @@ namespace Plot.Controllers
             {
                 return Ok();
             }
-
+----------------------------------------------------------------------------------------------------------------------
+*/
             // Generate a new token for the user.
             string resetToken = _tokenService.GenerateToken(receivedEmail);
 
             // Add the token to the end of the reset link template to create
             // a unique reset link.
             string resetLink = RESET_LINK_TEMPLATE + resetToken;
-
+            /*----------------------------------------------------------------------------Testing email only, not DB part
             //Set the users name and email to local variables.
             string name = user.FirstName ?? string.Empty;
             string email = user.Email ?? string.Empty;
+----------------------------------------------------------------------------------------------------------------------
+*/
+            //Test test test test
+            var name = "Test Name";//For
+            var email = receivedEmail;//Testing
 
             // Pass the users name, email, and reset link to the email service
             // to send the password reset email.
@@ -203,7 +209,7 @@ namespace Plot.Controllers
         {
             //I think i hate emails now
             var receivedEmail = receivedEmailRequest.EmailAddress;
-            
+            /*----------------------------------------------------------------------------Testing email only, not DB part
             // This is all temp stuff
             if (receivedEmail == null)
             {
@@ -223,10 +229,17 @@ namespace Plot.Controllers
             //Again temp shit right here, change when url path is more defined.
             string resetLink = "http://Plot.com/Login";
 
+                
             //more local vars. who wouda guessed
             string name = user.FirstName ?? string.Empty;
             string email = user.Email ?? string.Empty;
+----------------------------------------------------------------------------------------------------------------------
+*/
+            //Test test test test
+            var name = "Test Name";//For
+            var email = receivedEmail;//Testing
 
+             string resetLink = "http://Plot.com/Login";
             //pass those vars, hell yea.
             await _emailService.SendRegistrationEmailAsync(
                 email, name, resetLink);

@@ -9,7 +9,7 @@ using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls("http://0.0.0.0:8085");
+builder.WebHost.UseUrls("http://localhost:500");//Changed to local host for testing
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -18,9 +18,9 @@ builder.Services.AddOpenApi();
 // Load in env file, so env variables can be used.
 Env.Load();
 
+
 // Get the connection string directly from environment variables
 // throw NullException if not set.
-
 string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION") 
     ?? throw new ArgumentNullException(
         Environment.GetEnvironmentVariable("DB_CONNECTION"));
@@ -30,6 +30,7 @@ string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
 // connection.
 builder.Services.AddDbContext<PlotContext>(options => options.UseSqlServer(
     connectionString));
+
 
 
 // Bind settings from appsettings.json to the EmailSettings model
