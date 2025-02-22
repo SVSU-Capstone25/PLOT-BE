@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="EmailTemplate\**\*" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="Images\**\*" CopyToPublishDirectory="PreserveNewest" />
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="MailKit" Version="4.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.0" />

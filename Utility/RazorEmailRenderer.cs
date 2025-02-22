@@ -43,7 +43,7 @@ namespace Plot.Utility
         {
             _razorEngine = new RazorLightEngineBuilder()
                 .UseFileSystemProject(
-                    Directory.GetCurrentDirectory() + "/Templates/")
+                    AppContext.BaseDirectory + "EmailTemplate")
                     .UseMemoryCachingProvider()
                     .Build();
         }

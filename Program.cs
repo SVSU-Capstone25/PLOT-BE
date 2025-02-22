@@ -9,7 +9,7 @@ using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls("http://localhost:500");//Changed to local host for testing
+builder.WebHost.UseUrls("http://0.0.0.0:8085");//Changed to local host for testing
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
