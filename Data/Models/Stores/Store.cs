@@ -1,8 +1,15 @@
 /*
     Filename: Store.cs
     Part of Project: PLOT/PLOT-BE/Data/Models/Stores
+
     File Purpose:
     This file contains the store object model.
+    
+    Class Purpose:
+    This record is used as the main model
+    for stores in the application. This will
+    look the same as the schema in the database.
+
     Written by: Jordan Houlihan
 */
 

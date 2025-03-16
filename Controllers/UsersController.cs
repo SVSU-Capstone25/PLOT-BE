@@ -1,31 +1,40 @@
 /*
     Filename: UsersController.cs
     Part of Project: PLOT/PLOT-BE/Controllers
+
     File Purpose:
     This file contains the user controller endpoint mapping,
     which will transport the user data from the frontend 
     to the database and vice versa.
+
     Written by: Jordan Houlihan
 */
 
-namespace Plot.Controllers;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Users;
+using Plot.DataAccess.Interfaces;
+
+namespace Plot.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
+    private readonly IUserContext _userContext;
+
+    public UsersController(IUserContext userContext)
+    {
+        _userContext = userContext;
+    }
 
     /// <summary>
-    /// This endpoint deals with returning a list of users.
+    /// This endpoint deals with returning all of the users
     /// </summary>
-    /// <returns>A list of all users as UserDTO objects.</returns>
+    /// <returns>Array of userDTO objects</returns>
+    [Authorize]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces("application/json")]
     public ActionResult<UserDTO[]> GetAll()
     {
@@ -33,14 +42,15 @@ public class UsersController : ControllerBase
     }
 
     /// <summary>
-    /// This endpoint deals with returning a user with a specified id.
+    /// This endpoint deals with returning a specific user
+    /// based on their id
     /// </summary>
-    /// <param name="userId">The id of the user as a route parameter in the url.</param>
-    /// <returns>The user tied to the userId as a UserDTO object.</returns>
+    /// <param name="userId">The id of the user</param>
+    /// <returns>UserDTO object</returns>
+    [Authorize]
     [HttpGet("{userId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces("application/json")]
     public ActionResult<UserDTO> GetById(int userId)
     {
@@ -48,30 +58,32 @@ public class UsersController : ControllerBase
     }
 
     /// <summary>
-    /// This endpoint deals with updating a user.
+    /// This endpoint deals with updating a specific user
+    /// based on their id
     /// </summary>
-    /// <param name="userId">The id of the user as a route parameter in the url.</param>
-    /// <param name="userUpdateDTO">The updated user information from the request body as a UserUpdateDTO object.</param>
-    /// <returns>The newly updated user information as a UserDTO object.</returns>
+    /// <param name="userId">The id of the user</param>
+    /// <param name="user">The updated user</param>
+    /// <returns>UserDTO object</returns>
+    [Authorize(Policy = "Manager")]
     [HttpPatch("{userId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces("application/json")]
-    public ActionResult<UserDTO> Update(int userId, UserUpdateDTO user)
+    public ActionResult<UserDTO> Update(int userId, UpdateUser user)
     {
         return NoContent();
     }
 
     /// <summary>
-    /// This endpoint deals with deleting a user.
+    /// This endpoint deals with deleting a specific user
+    /// based on their id
     /// </summary>
-    /// <param name="userId">The id of the user as a route parameter in the url.</param>
-    /// <returns>This endpoint doesn't return a value.</returns>
+    /// <param name="userId">The id of the user</param>
+    /// <returns>UserDTO object</returns>
+    [Authorize(Policy = "Manager")]
     [HttpDelete("{userId:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult Delete(int userId)
     {
         return NoContent();

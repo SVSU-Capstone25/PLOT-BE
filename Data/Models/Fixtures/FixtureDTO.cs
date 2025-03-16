@@ -1,10 +1,12 @@
 /*
     Filename: FixtureDTO.cs
     Part of Project: PLOT/PLOT-BE/Data/Models/Fixtures
+
     File Purpose:
     This file contains the DTOs (Data-Transfer Objects)
     used to format the inputs and outputs expected
     from the backend for fixtures.
+    
     Written by: Jordan Houlihan
 */
 

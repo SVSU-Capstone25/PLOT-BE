@@ -1,11 +1,51 @@
 @Plot_HostAddress = http://localhost:8085
 
-GET {{Plot_HostAddress}}/users/
+GET {{Plot_HostAddress}}/api/users/
 Accept: application/json
 
 ###
 
-GET {{Plot_HostAddress}}/users/1
+GET {{Plot_HostAddress}}/api/users/1
 Accept: application/json
 
 ###
+POST {{Plot_HostAddress}}/api/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+    "FirstName": "Bart",
+    "LastName": "Simpson",
+    "Email": "bartsimpson@gmail.com",
+    "Role": 1,
+    "Store": 1
+}
+
+###
+POST {{Plot_HostAddress}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "Email": "bartsimpson@gmail.com",
+    "Password": "Pizza"
+}
+
+###
+
+POST {{Plot_HostAddress}}/api/auth/logout
+
+###
+POST {{Plot_HostAddress}}/api/auth/register
+Content-Type: application/json
+Accept: application/json
+Authorization:
+{
+    "Email": "jordan_houlihan@yahoo.com",
+    "Password": "pizzachips",
+    "FirstName": "Jordan",
+    "LastName": "Houlihan",
+    "Role": 1,
+    "Active": 1
+}
+

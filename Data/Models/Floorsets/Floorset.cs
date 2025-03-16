@@ -1,8 +1,15 @@
 /*
     Filename: Floorset.cs
     Part of Project: PLOT/PLOT-BE/Data/Models/Floorset
+
     File Purpose:
     This file contains the floorset object model.
+    
+    Class Purpose:
+    This record is used as the main model
+    for floorsets in the application. This will
+    look the same as the schema in the database.
+
     Written by: Jordan Houlihan
 */
 

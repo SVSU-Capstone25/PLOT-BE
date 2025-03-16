@@ -1,21 +1,21 @@
 /*
-    Filename: FloorsetDTO.cs
+    Filename: CreateFloorset.cs
     Part of Project: PLOT/PLOT-BE/Data/Models/Floorsets
+
     File Purpose:
-    This file contains the DTOs (Data-Transfer Objects)
-    used to format the inputs and outputs expected
-    from the backend for floorsets.
+    This file contains the floorset object model tied
+    to creating a floorset.
+    
+    Class Purpose:
+    This record is used as a model for frontend requests
+    that create a floorset.
+    
     Written by: Jordan Houlihan
 */
 
 namespace Plot.Data.Models.Floorsets;
 
-/// <summary>
-/// This is the input format that the backend expects
-/// to see when the frontend makes a request
-/// to create and update a floorset.
-/// </summary>
-public record FloorsetDTO
+public record CreateFloorset
 {
     public string? Name { get; set; }
     public int? StoreId { get; set; }

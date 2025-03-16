@@ -1,10 +1,12 @@
 /*
     Filename: FixturesController.cs
     Part of Project: PLOT/PLOT-BE/Controllers
+
     File Purpose:
     This file contains the fixture controller endpoint mapping,
     which will transport the base fixture model data and fixture instance data 
     from the frontend to the database and vice versa.
+    
     Written by: Jordan Houlihan
 */
 
@@ -14,7 +16,7 @@ using Plot.Data.Models.Fixtures;
 namespace Plot.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class FixturesController : ControllerBase
 {
     /// <summary>

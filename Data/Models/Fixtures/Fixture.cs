@@ -1,8 +1,10 @@
 /*
     Filename: Fixture.cs
     Part of Project: PLOT/PLOT-BE/Data/Models/Fixtures
+
     File Purpose:
     This file contains the fixture object model.
+    
     Written by: Jordan Houlihan
 */
 
@@ -16,7 +18,7 @@ public class Fixture
     public int? Height { get; set; }
     public float? LFCapacity { get; set; }
     public int? HangerStack { get; set; }
-    public float? LFTotal { get; set; }
+    public float? LFTarget { get; set; }
     public int? StoreId { get; set; }
     public IFormFile? FixtureImage { get; set; }
 }
