@@ -9,6 +9,7 @@
     Written by: Jordan Houlihan
 */
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Plot.Controllers;
@@ -17,6 +18,17 @@ namespace Plot.Controllers;
 [Route("api/[controller]")]
 public class SalesController : ControllerBase
 {
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="floorsetId"></param>
+    /// <param name="excelFile"></param>
+    /// <returns></returns>
+    [Authorize(Policy = "Manager")]
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult UploadSales(int floorsetId, IFormFile excelFile)
     {
         return Ok();

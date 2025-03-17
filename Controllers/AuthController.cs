@@ -9,8 +9,6 @@
     EmailService: Sends password reset emails.
     TokenService: Generates and validates password reset tokens.
     AuthContext: Database context for accessing user data.
-    RequestPasswordResetDTO: Model for password reset requests.
-    PasswordResetDTO: Model for resetting passwords.
 
     Written by: Michael Polhill, Jordan Houlihan
 */
@@ -190,8 +188,7 @@ public class AuthController : ControllerBase
         string resetToken = _tokenService.GenerateToken(registeredUser!);
         string resetLink = RESET_LINK_TEMPLATE + resetToken;
 
-        await _emailService.SendRegistrationEmailAsync(user.Email!, user.FirstName!, resetLink);
-
+        await _emailService.SendRegistrationEmailAsync(registeredUser.Email!, registeredUser.FirstName!, resetLink);
 
         return Ok();
     }

@@ -14,6 +14,7 @@
     Written by: Jordan Houlihan
 */
 
+using System.Diagnostics;
 using System.Security.Cryptography;
 using Dapper;
 using Microsoft.AspNetCore.Identity;
@@ -50,7 +51,7 @@ public class AuthContext : DbContext, IAuthContext
             EMAIL = user.Email,
             PASSWORD = hasher.HashPassword(user, oneTimePassword.ToString()),
             ROLE_TUID = user.Role,
-            ACTIVE = 1
+            ACTIVE = true
         };
 
         return await connection.ExecuteAsync(CreateUserSQL, CreateUserParameters);
@@ -65,7 +66,23 @@ public class AuthContext : DbContext, IAuthContext
                                 "WHERE EMAIL = @EMAIL";
         object GetUserByEmailParameters = new { EMAIL = email };
 
-        return await connection.QuerySingleOrDefaultAsync<User>(GetUserByEmailSQL, GetUserByEmailParameters);
+        var user = await connection.QuerySingleOrDefaultAsync(GetUserByEmailSQL, GetUserByEmailParameters);
+
+        if (user != null)
+        {
+            return new User()
+            {
+                UserId = user.TUID,
+                FirstName = user.FIRST_NAME,
+                LastName = user.LAST_NAME,
+                Email = user.EMAIL,
+                Password = user.PASSWORD,
+                Role = user.ROLE_TUID,
+                Active = user.ACTIVE
+            };
+        }
+
+        return null;
     }
 
     public async Task<int> UpdatePassword(LoginRequest user)

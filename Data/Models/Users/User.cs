@@ -23,5 +23,5 @@ public record User
     public string? Email { get; set; }
     public string? Password { get; set; }
     public int? Role { get; set; }
-    public int? Active { get; set; }
+    public bool Active { get; set; }
 }

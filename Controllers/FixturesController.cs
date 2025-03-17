@@ -6,7 +6,7 @@
     This file contains the fixture controller endpoint mapping,
     which will transport the base fixture model data and fixture instance data 
     from the frontend to the database and vice versa.
-    
+
     Written by: Jordan Houlihan
 */
 
@@ -29,7 +29,7 @@ public class FixturesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<FloorsetFixtureInformationDTO> GetFixtureInformation(int floorsetId)
+    public ActionResult<FloorsetFixtureInformation> GetFixtureInformation(int floorsetId)
     {
         return NoContent();
     }
@@ -44,7 +44,7 @@ public class FixturesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<Fixture> CreateFixtureModel(int storeId, FixtureDTO fixture)
+    public ActionResult<FixtureModel> CreateFixtureModel(int storeId, CreateFixtureModel fixture)
     {
         return NoContent();
     }
@@ -60,7 +60,7 @@ public class FixturesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<FixtureInstance> CreateFixtureInstance(int storeId, int floorsetId, FixtureInstanceDTO fixture)
+    public ActionResult<FixtureInstance> CreateFixtureInstance(int storeId, int floorsetId, CreateFixtureInstance fixture)
     {
         return NoContent();
     }
@@ -76,7 +76,7 @@ public class FixturesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<Fixture> UpdateFixtureModel(int fixtureId, FixtureDTO fixture)
+    public ActionResult<FixtureModel> UpdateFixtureModel(int fixtureId, UpdateFixtureModel fixture)
     {
         return NoContent();
     }
@@ -91,7 +91,7 @@ public class FixturesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<FixtureInstance> UpdateFixtureInstance(int fixtureInstanceId, FixtureInstanceDTO fixture)
+    public ActionResult<FixtureInstance> UpdateFixtureInstance(int fixtureInstanceId, UpdateFixtureInstance fixture)
     {
         return NoContent();
     }

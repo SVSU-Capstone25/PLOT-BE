@@ -31,7 +31,7 @@ public class UserContext : DbContext, IUserContext
         throw new NotImplementedException();
     }
 
-    public Task<UserDTO?> UpdateUserPublicInfo(UpdateUser user)
+    public Task<UserDTO?> UpdateUserPublicInfo(int userId, UpdateUser user)
     {
         throw new NotImplementedException();
     }

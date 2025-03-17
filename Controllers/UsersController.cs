@@ -71,6 +71,11 @@ public class UsersController : ControllerBase
     [Produces("application/json")]
     public ActionResult<UserDTO> Update(int userId, UpdateUser user)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         return NoContent();
     }
 

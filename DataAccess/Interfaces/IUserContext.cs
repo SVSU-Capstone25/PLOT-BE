@@ -21,6 +21,6 @@ public interface IUserContext
 {
     Task<UserDTO[]> GetUsers();
     Task<UserDTO?> GetUserById(int userId);
-    Task<UserDTO?> UpdateUserPublicInfo(UpdateUser user);
+    Task<UserDTO?> UpdateUserPublicInfo(int userId, UpdateUser user);
     Task<int> DeleteUserById(int userId);
 }

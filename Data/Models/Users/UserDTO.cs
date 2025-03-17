@@ -24,5 +24,5 @@ public record UserDTO
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public int? Role { get; set; }
-    public int? Active { get; set; }
+    public bool? Active { get; set; }
 }

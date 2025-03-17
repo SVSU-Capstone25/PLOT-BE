@@ -36,10 +36,11 @@ Accept: application/json
 POST {{Plot_HostAddress}}/api/auth/logout
 
 ###
-POST {{Plot_HostAddress}}/api/auth/register
+POST {{Plot_HostAddress}}/api/auth/register HTTP/1.1
 Content-Type: application/json
 Accept: application/json
-Authorization:
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImJhcnRzaW1wc29uQGdtYWlsLmNvbSIsIlJvbGUiOiIxIiwibmJmIjoxNzQyMTc2MTU4LCJleHAiOjE3NDIxNzk3NTgsImlhdCI6MTc0MjE3NjE1OCwiaXNzIjoiaHR0cDovLzAuMC4wLjA6ODA4NSIsImF1ZCI6Imh0dHA6Ly8wLjAuMC4wOjgwODAifQ.29Uq0hZtuKX-PI0EoBc5x-K7J-oiHhB6UB7_xHWbTSc
+
 {
     "Email": "jordan_houlihan@yahoo.com",
     "Password": "pizzachips",
@@ -48,4 +49,3 @@ Authorization:
     "Role": 1,
     "Active": 1
 }
-

@@ -35,9 +35,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("Employee", policy => policy.RequireClaim("Role", "1", "2", "3"))
-    .AddPolicy("Manager", policy => policy.RequireClaim("Role", "2", "3"))
-    .AddPolicy("Owner", policy => policy.RequireClaim("Role", "3"));
+    .AddPolicy("Employee", policy => policy.RequireClaim("Role", "3"))
+    .AddPolicy("Manager", policy => policy.RequireClaim("Role", "1", "2"))
+    .AddPolicy("Owner", policy => policy.RequireClaim("Role", "1"));
 
 // Add DbContext classes as scoped services.
 builder.Services.AddScoped<IAuthContext, AuthContext>();

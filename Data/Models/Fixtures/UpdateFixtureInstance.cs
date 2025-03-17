@@ -1,26 +1,23 @@
 /*
-    Filename: FixtureInstance.cs
+    Filename: UpdateFixtureInstance.cs
     Part of Project: PLOT/PLOT-BE/Data/Models/Fixtures
 
     File Purpose:
-    This file contains the object model for the instance
-    of a fixture.
-    
-    Class Purpose:
-    This record is used as the main model
-    for the instance of a fixture in the application. This will
-    look the same as the schema in the database.
+    This file contains the fixture object model tied
+    to updating the instance of a fixture.
 
+    Class Purpose:
+    This record is used as a model for frontend requests
+    that update the instance of a fixture.
+    
     Written by: Jordan Houlihan
 */
 
 namespace Plot.Data.Models.Fixtures;
 
-public class FixtureInstance
+public record UpdateFixtureInstance
 {
     public FixtureModel? Fixture { get; set; }
-    public int? FixtureInstanceId { get; set; }
-    public int? FloorsetId { get; set; }
     public double? XPosition { get; set; }
     public double? YPosition { get; set; }
     public double? LFAllocated { get; set; }
