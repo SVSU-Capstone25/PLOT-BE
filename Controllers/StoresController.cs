@@ -29,13 +29,12 @@ public class StoresController : ControllerBase
     }
 
     /// <summary>
-    /// This endpoint deals with getting all of the stores
+    /// This endpoint deals with getting all of the stores.
     /// </summary>
-    /// <returns>Array of Store objects</returns>
+    /// <returns>Array of Stores</returns>
     [Authorize]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<Store[]> GetAll()
     {
         return NoContent();
@@ -44,13 +43,13 @@ public class StoresController : ControllerBase
     /// <summary>
     /// This endpoint deals with getting a store with a specified id.
     /// </summary>
-    /// <param name="storeId">The id of the store as a route parameter in the url.</param>
-    /// <returns>The store tied to the storeId as a StoreDTO object.</returns>
+    /// <param name="storeId">The id of the store</param>
+    /// <returns>The store</returns>
     [Authorize]
     [HttpGet("{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<Store> GetById(int storeId)
     {
         return NoContent();
@@ -59,30 +58,44 @@ public class StoresController : ControllerBase
     /// <summary>
     /// This endpoint deals with creating a store.
     /// </summary>
-    /// <param name="store">The new store information as a StoreDTO object in the request body.</param>
-    /// <returns>The newly created store information as a Store object.</returns>
+    /// <param name="store">The new store</param>
+    /// <returns>The newly created store</returns>
     [Authorize(Policy = "Owner")]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces("application/json")]
     public ActionResult<Store> Create(CreateStore store)
     {
         return NoContent();
     }
 
     /// <summary>
-    /// This endpoint deals with updating a store.
+    /// This endpoint deals with updating the public information of a store. This includes
+    /// the name, location, image, and employees. 
     /// </summary>
-    /// <param name="store">The updated store information as a Store object in the request body.</param>
-    /// <returns>The updated store information as a Store object.</returns>
+    /// <param name="store">The updated public information for the store</param>
+    /// <returns>The updated store</returns>
     [Authorize(Policy = "Manager")]
-    [HttpPut]
+    [HttpPatch("public-info/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<Store> Update(Store store)
+    public ActionResult<Store> UpdatePublicInfo(int storeId, UpdatePublicInfoStore store)
+    {
+        return NoContent();
+    }
+
+    /// <summary>
+    /// This endpoint deals with updating the size of a store.
+    /// </summary>
+    /// <param name="store">The updated size of the store</param>
+    /// <returns>The updated store</returns>
+    [Authorize(Policy = "Manager")]
+    [HttpPatch("size/{storeId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<Store> UpdateSize(int storeId, UpdateSizeStore store)
     {
         return NoContent();
     }
@@ -90,13 +103,12 @@ public class StoresController : ControllerBase
     /// <summary>
     /// This endpoint deals with deleting a store.
     /// </summary>
-    /// <param name="storeId">The id of the store as a route parameter in the url.</param>
-    /// <returns>This endpoint doesn't return a value.</returns>
+    /// <param name="storeId">The id of the store</param>
+    /// <returns>This endpoint doesn't return a value</returns>
     [Authorize(Policy = "Owner")]
     [HttpDelete("{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult Delete(int storeId)
     {
         return NoContent();

@@ -21,7 +21,7 @@ namespace Plot.DataAccess.Contexts;
 
 public class StoreContext : DbContext, IStoreContext
 {
-    public Task<Store[]> GetStores()
+    public Task<Store[]?> GetStores()
     {
         throw new NotImplementedException();
     }

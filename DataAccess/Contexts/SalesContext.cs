@@ -1,10 +1,10 @@
 /*
-    Filename: FloorsetContext.cs
+    Filename: SalesContext.cs
     Part of Project: PLOT/PLOT-BE/DataAccess/Contexts
 
     File Purpose:
     This file contains the database context for database operations 
-    that involve floorsets. 
+    that involve sales and allocations.
     
     Class Purpose:
     This class will be sent to the endpoint controllers as a service through 
@@ -14,27 +14,18 @@
     Written by: Jordan Houlihan
 */
 
-using Plot.Data.Models.Floorsets;
 using Plot.DataAccess.Interfaces;
 
 namespace Plot.DataAccess.Contexts;
 
-public class FloorsetContext : DbContext, IFloorsetContext
+public class SalesContext : DbContext, ISalesContext
 {
-    public Task<Floorset[]?> GetFloorsetsByStoreId(int storeId)
-    {
-        throw new NotImplementedException();
-    }
-    public Task<Floorset> CreateFloorset(CreateFloorset floorset)
+    public Task<FixtureAllocations[]?> GetFixtureAllocations(int floorsetId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Floorset?> UpdateFloorsetById(int floorsetId, Floorset floorset)
-    {
-        throw new NotImplementedException();
-    }
-    public Task<int> DeleteFloorsetById(int floorsetId)
+    public Task<int> UploadSales(int floorsetId, IFormFile excelFile)
     {
         throw new NotImplementedException();
     }

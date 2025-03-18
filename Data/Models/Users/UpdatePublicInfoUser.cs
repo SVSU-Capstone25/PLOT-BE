@@ -15,10 +15,8 @@
 
 namespace Plot.Data.Models.Users;
 
-public record UpdateUser
+public record UpdatePublicInfoUser
 {
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
-    public int? Role { get; set; }
-    public bool? Active { get; set; }
 }

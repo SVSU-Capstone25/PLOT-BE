@@ -11,6 +11,7 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Plot.DataAccess.Interfaces;
 
 namespace Plot.Controllers;
 
@@ -18,18 +19,25 @@ namespace Plot.Controllers;
 [Route("api/[controller]")]
 public class SalesController : ControllerBase
 {
+    private readonly ISalesContext _salesContext;
+
+    public SalesController(ISalesContext salesContext)
+    {
+        _salesContext = salesContext;
+    }
 
     /// <summary>
-    /// 
+    /// This endpoint deals with uploading the sales
+    /// for an excel file.
     /// </summary>
-    /// <param name="floorsetId"></param>
-    /// <param name="excelFile"></param>
+    /// <param name="floorsetId">The floorset id</param>
+    /// <param name="excelFile">The excel file</param>
     /// <returns></returns>
     [Authorize(Policy = "Manager")]
-    [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult UploadSales(int floorsetId, IFormFile excelFile)
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public ActionResult UploadSales(int floorsetId, [FromBody] IFormFile excelFile)
     {
         return Ok();
     }

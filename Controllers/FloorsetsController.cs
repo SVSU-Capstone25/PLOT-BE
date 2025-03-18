@@ -37,8 +37,7 @@ public class FloorsetsController : ControllerBase
     [HttpGet("{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<Floorset[]> GetFloorsetsByStore(int storeId)
     {
         return NoContent();
@@ -47,31 +46,29 @@ public class FloorsetsController : ControllerBase
     /// <summary>
     /// This endpoint deals with creating a floorset.
     /// </summary>
-    /// <param name="floorset">The new floorset information as a FloorsetDTO object in the request body.</param>
-    /// <returns>The newly created floorset information as a Floorset object.</returns>
+    /// <param name="floorset">The new floorset information</param>
+    /// <returns>The newly created floorset information</returns>
     [Authorize(Policy = "Manager")]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces("application/json")]
     public ActionResult<Floorset> Create(CreateFloorset floorset)
     {
         return NoContent();
     }
 
     /// <summary>
-    /// This endpoint deals with updating a floorset.
+    /// This endpoint deals with updating the public information of a floorset.
     /// </summary>
-    /// <param name="floorsetId">The id of the floorset as a route parameter in the url.</param>
-    /// <param name="floorset">The updated floorset information as a FloorsetDTO object in the request body.</param>
-    /// <returns>The updated floorset information as a Floorset object.</returns>
+    /// <param name="floorsetId">The id of the floorset</param>
+    /// <param name="floorset">The updated public information</param>
+    /// <returns>The updated floorset</returns>
     [Authorize(Policy = "Manager")]
-    [HttpPatch("{floorsetId:int}")]
+    [HttpPatch("public-info/{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<Floorset> Update(int floorsetId, Floorset floorset)
+    public ActionResult<Floorset> UpdatePublicInfo(int floorsetId, UpdatePublicInfoFloorset floorset)
     {
         return NoContent();
     }
@@ -79,13 +76,13 @@ public class FloorsetsController : ControllerBase
     /// <summary>
     /// This endpoint deals with deleting a floorset.
     /// </summary>
-    /// <param name="floorsetId">The id of the floorset as a route parameter in the url.</param>
+    /// <param name="floorsetId">The id of the floorset</param>
     /// <returns>This endpoint doesn't return a value.</returns>
     [Authorize(Policy = "Manager")]
     [HttpDelete("{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult Delete(int floorsetId)
     {
         return NoContent();

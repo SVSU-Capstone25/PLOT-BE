@@ -1,10 +1,10 @@
 /*
-    Filename: IStoreContext.cs
+    Filename: ISalesContext.cs
     Part of Project: PLOT/PLOT-BE/DataAccess/Interfaces
 
     File Purpose:
     This file contains the interface for database operations 
-    that involve stores. 
+    that involve sales/allocations.
     
     Class Purpose:
     This interface will be implemented by its respective DbContext
@@ -13,14 +13,10 @@
     Written by: Jordan Houlihan
 */
 
-using Plot.Data.Models.Stores;
-
 namespace Plot.DataAccess.Interfaces;
 
-public interface IStoreContext
+public interface ISalesContext
 {
-    Task<Store[]?> GetStores();
-    Task<Store?> GetStoreById(int storeId);
-    Task<Store?> UpdateStoreById(int storeId, Store store);
-    Task<int> DeleteStoreById(int storeId);
+    Task<int> UploadSales(int floorsetId, IFormFile excelFile);
+    Task<FixtureAllocations[]?> GetFixtureAllocations(int floorsetId);
 }

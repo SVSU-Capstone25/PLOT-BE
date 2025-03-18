@@ -17,9 +17,10 @@
 
 namespace Plot.Data.Models.Fixtures;
 
-public record FloorsetFixtureInformation
+public record UpdateFloorsetFixtureInformation
 {
+    public int[]? DeletedFixtureInstances { get; set; }
+    public int[]? DeletedFixtureModels { get; set; }
     public FixtureModel[]? FixtureModels { get; set; }
     public FixtureInstance[]? FixtureInstances { get; set; }
-    public FixtureAllocations[]? Allocations { get; set; }
 }

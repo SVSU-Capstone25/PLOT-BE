@@ -19,7 +19,7 @@ namespace Plot.DataAccess.Interfaces;
 
 public interface IFloorsetContext
 {
-    Task<Floorset[]> GetFloorsetsByStoreId(int storeId);
+    Task<Floorset[]?> GetFloorsetsByStoreId(int storeId);
     Task<Floorset> CreateFloorset(CreateFloorset floorset);
     Task<Floorset?> UpdateFloorsetById(int floorsetId, Floorset floorset);
     Task<int> DeleteFloorsetById(int floorsetId);

@@ -23,6 +23,5 @@ public record UpdateFixtureModel
     public float? LFCapacity { get; set; }
     public int? HangerStack { get; set; }
     public float? LFTotal { get; set; }
-    public int? StoreId { get; set; }
     public IFormFile? FixtureImage { get; set; }
 }

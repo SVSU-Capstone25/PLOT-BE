@@ -74,7 +74,7 @@ public class AuthController : ControllerBase
     /// <returns>200 OK response regardless of email validity.</returns>
     [HttpPost("password-reset-request")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> ResetPasswordRequest([FromBody] ResetPasswordRequest receivedEmailRequest)
+    public async Task<ActionResult> ResetPasswordRequest([FromBody] ResetPasswordRequest receivedEmailRequest)
     {
         var user = await _authContext.GetUserByEmail(receivedEmailRequest.EmailAddress);
 
@@ -109,7 +109,7 @@ public class AuthController : ControllerBase
     [HttpPost("reset-password")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> ResetPassword([FromBody] ResetPassword receivedResetPassword)
+    public async Task<ActionResult> ResetPassword([FromBody] ResetPassword receivedResetPassword)
     {
         // Set local variables from the received model.
         var token = receivedResetPassword.Token;
@@ -169,7 +169,7 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Register(UserRegistration user)
+    public async Task<ActionResult> Register(UserRegistration user)
     {
         int success = await _authContext.CreateUser(user);
 
@@ -204,7 +204,7 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Login(LoginRequest userLoginAttempt)
+    public async Task<ActionResult> Login(LoginRequest userLoginAttempt)
     {
         var user = await _authContext.GetUserByEmail(userLoginAttempt.Email!);
 
@@ -236,7 +236,7 @@ public class AuthController : ControllerBase
     [Authorize]
     [HttpPost("logout")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult Logout()
+    public ActionResult Logout()
     {
         return Ok();
     }

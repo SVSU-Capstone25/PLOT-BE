@@ -21,7 +21,7 @@ namespace Plot.DataAccess.Contexts;
 
 public class UserContext : DbContext, IUserContext
 {
-    public Task<UserDTO[]> GetUsers()
+    public Task<UserDTO[]?> GetUsers()
     {
         throw new NotImplementedException();
     }
@@ -31,7 +31,7 @@ public class UserContext : DbContext, IUserContext
         throw new NotImplementedException();
     }
 
-    public Task<UserDTO?> UpdateUserPublicInfo(int userId, UpdateUser user)
+    public Task<UserDTO?> UpdateUserPublicInfo(int userId, UpdatePublicInfoUser user)
     {
         throw new NotImplementedException();
     }
