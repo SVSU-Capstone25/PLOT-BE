@@ -27,16 +27,15 @@ Content-Type: application/json
 Accept: application/json
 
 {
-    "Email": "bartsimpson@gmail.com",
-    "Password": "Pizza"
+    "Email": "jordan_houlihan@yahoo.com",
+    "Password": "ILovePizza34"
 }
 
 ###
-
 POST {{Plot_HostAddress}}/api/auth/logout
 
 ###
-POST {{Plot_HostAddress}}/api/auth/register HTTP/1.1
+POST {{Plot_HostAddress}}/api/auth/register
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImJhcnRzaW1wc29uQGdtYWlsLmNvbSIsIlJvbGUiOiIxIiwibmJmIjoxNzQyMTc2MTU4LCJleHAiOjE3NDIxNzk3NTgsImlhdCI6MTc0MjE3NjE1OCwiaXNzIjoiaHR0cDovLzAuMC4wLjA6ODA4NSIsImF1ZCI6Imh0dHA6Ly8wLjAuMC4wOjgwODAifQ.29Uq0hZtuKX-PI0EoBc5x-K7J-oiHhB6UB7_xHWbTSc
@@ -48,4 +47,23 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImJhcnRza
     "LastName": "Houlihan",
     "Role": 1,
     "Active": 1
+}
+
+###
+POST {{Plot_HostAddress}}/api/auth/reset-password
+Content-Type: application/json
+Accept: application/json
+
+{
+    "NewPassword": "ILovePizza34",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImpvcmRhbl9ob3VsaWhhbkB5YWhvby5jb20iLCJSb2xlIjoiMSIsIm5iZiI6MTc0MjI1OTg4NywiZXhwIjoxNzQyMjYzNDg3LCJpYXQiOjE3NDIyNTk4ODcsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODUiLCJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwIn0.h6xqxwuHSD87uoQQsOB0RLzcv3E-nICz60x4ApWllns"
+}
+
+###
+POST {{Plot_HostAddress}}/api/auth/password-reset-request
+Content-Type: application/json
+Accept: application/json
+
+{
+    "EmailAddress": "jordan_houlihan@yahoo.com"
 }

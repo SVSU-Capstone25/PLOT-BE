@@ -223,10 +223,9 @@ public class AuthController : ControllerBase
 
         var token = _tokenService.GenerateToken(user);
 
-        return Ok(new
-        {
-            Token = token
-        });
+        Response.Cookies.Append("Auth", token);
+
+        return Redirect("/stores");
     }
 
     /// <summary>
