@@ -11,7 +11,8 @@ COPY . ./
 RUN dotnet restore
 
 # Build and publish the app (for production)
-RUN dotnet publish -c Release -o /publish
+RUN dotnet publish -c Release -o /publish \
+    /p:ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT
 
 # Stage 2: Serve
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
