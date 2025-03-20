@@ -40,10 +40,13 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("Owner", policy => policy.RequireClaim("Role", "1"));
 
 // Add DbContext classes as scoped services.
-builder.Services.AddScoped<IAuthContext, AuthContext>();
-builder.Services.AddScoped<IStoreContext, StoreContext>();
-builder.Services.AddScoped<IUserContext, UserContext>();
-builder.Services.AddScoped<IFloorsetContext, FloorsetContext>();
+builder.Services.AddSingleton<IAuthContext, AuthContext>();
+builder.Services.AddSingleton<IUserContext, UserContext>();
+builder.Services.AddSingleton<IStoreContext, StoreContext>();
+builder.Services.AddSingleton<IFloorsetContext, FloorsetContext>();
+builder.Services.AddSingleton<IFixtureContext, FixtureContext>();
+builder.Services.AddSingleton<ISalesContext, SalesContext>();
+
 // Add EmailService as a scoped service
 // allows for settings to be used when injected.
 builder.Services.AddScoped<EmailService>();

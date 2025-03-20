@@ -14,7 +14,6 @@
     Written by: Jordan Houlihan
 */
 
-using System.Diagnostics;
 using System.Security.Cryptography;
 using Dapper;
 using Microsoft.AspNetCore.Identity;

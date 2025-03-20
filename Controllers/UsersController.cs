@@ -10,9 +10,11 @@
     Written by: Jordan Houlihan
 */
 
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Users;
+
 using Plot.DataAccess.Interfaces;
 
 namespace Plot.Controllers;
@@ -35,9 +37,9 @@ public class UsersController : ControllerBase
     [Authorize]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<UserDTO[]> GetAll()
+    public async Task<ActionResult<IEnumerable<UserDTO>>> GetAll()
     {
-        return NoContent();
+        return Ok(await _userContext.GetUsers());
     }
 
     /// <summary>
@@ -70,6 +72,11 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<UserDTO> UpdatePublicInfo(int userId, UpdatePublicInfoUser user)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         return NoContent();
     }
 

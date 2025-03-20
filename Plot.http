@@ -38,7 +38,7 @@ POST {{Plot_HostAddress}}/api/auth/logout
 POST {{Plot_HostAddress}}/api/auth/register
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImJhcnRzaW1wc29uQGdtYWlsLmNvbSIsIlJvbGUiOiIxIiwibmJmIjoxNzQyMTc2MTU4LCJleHAiOjE3NDIxNzk3NTgsImlhdCI6MTc0MjE3NjE1OCwiaXNzIjoiaHR0cDovLzAuMC4wLjA6ODA4NSIsImF1ZCI6Imh0dHA6Ly8wLjAuMC4wOjgwODAifQ.29Uq0hZtuKX-PI0EoBc5x-K7J-oiHhB6UB7_xHWbTSc
+Authorization: Bearer <insert auth token here without angle brackets>
 
 {
     "Email": "jordan_houlihan@yahoo.com",
@@ -56,7 +56,7 @@ Accept: application/json
 
 {
     "NewPassword": "ILovePizza34",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImpvcmRhbl9ob3VsaWhhbkB5YWhvby5jb20iLCJSb2xlIjoiMSIsIm5iZiI6MTc0MjI1OTg4NywiZXhwIjoxNzQyMjYzNDg3LCJpYXQiOjE3NDIyNTk4ODcsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODUiLCJhdWQiOiJodHRwOi8vMC4wLjAuMDo4MDgwIn0.h6xqxwuHSD87uoQQsOB0RLzcv3E-nICz60x4ApWllns"
+    "token": "<insert auth token here without angle brackets>"
 }
 
 ###
@@ -66,4 +66,20 @@ Accept: application/json
 
 {
     "EmailAddress": "jordan_houlihan@yahoo.com"
+}
+
+###
+GET {{Plot_HostAddress}}/api/users
+Accept: application/json
+Authorization: Bearer <insert auth token here without angle brackets>
+
+###
+PATCH {{Plot_HostAddress}}/api/users/public-info/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer <insert auth token here without angle brackets>
+
+{
+    "FirstName": "",
+    "LastName": ""
 }

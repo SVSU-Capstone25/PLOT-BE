@@ -21,7 +21,7 @@ namespace Plot.DataAccess.Contexts;
 
 public class FloorsetContext : DbContext, IFloorsetContext
 {
-    public Task<Floorset[]?> GetFloorsetsByStoreId(int storeId)
+    public Task<IEnumerable<Floorset[]>?> GetFloorsetsByStoreId(int storeId)
     {
         throw new NotImplementedException();
     }
