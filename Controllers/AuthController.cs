@@ -223,9 +223,12 @@ public class AuthController : ControllerBase
 
         var token = _tokenService.GenerateToken(user);
 
-        Response.Cookies.Append("Auth", token);
-
-        return Redirect("/stores");
+        Response.Cookies.Append("Auth", token, new CookieOptions
+        {
+            Expires = DateTimeOffset.UtcNow.AddMinutes(30),
+        });
+        
+        return Ok();
     }
 
     /// <summary>
