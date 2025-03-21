@@ -41,12 +41,12 @@ public class FixtureContext : DbContext, IFixtureContext
         throw new NotImplementedException();
     }
 
-    public Task<FixtureInstance[]?> GetFixtureInstances(int floorsetId)
+    public Task<IEnumerable<FixtureInstance[]>?> GetFixtureInstances(int floorsetId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<FixtureModel[]?> GetFixtureModels(int floorsetId)
+    public Task<IEnumerable<FixtureModel[]>?> GetFixtureModels(int floorsetId)
     {
         throw new NotImplementedException();
     }

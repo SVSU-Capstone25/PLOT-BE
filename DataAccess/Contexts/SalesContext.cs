@@ -20,7 +20,7 @@ namespace Plot.DataAccess.Contexts;
 
 public class SalesContext : DbContext, ISalesContext
 {
-    public Task<FixtureAllocations[]?> GetFixtureAllocations(int floorsetId)
+    public Task<IEnumerable<FixtureAllocations[]>?> GetFixtureAllocations(int floorsetId)
     {
         throw new NotImplementedException();
     }

@@ -18,5 +18,5 @@ namespace Plot.DataAccess.Interfaces;
 public interface ISalesContext
 {
     Task<int> UploadSales(int floorsetId, IFormFile excelFile);
-    Task<FixtureAllocations[]?> GetFixtureAllocations(int floorsetId);
+    Task<IEnumerable<FixtureAllocations[]>?> GetFixtureAllocations(int floorsetId);
 }

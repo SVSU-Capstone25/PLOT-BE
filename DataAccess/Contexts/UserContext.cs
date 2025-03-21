@@ -14,6 +14,8 @@
     Written by: Jordan Houlihan
 */
 
+using Dapper;
+using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Users;
 using Plot.DataAccess.Interfaces;
 
@@ -21,9 +23,15 @@ namespace Plot.DataAccess.Contexts;
 
 public class UserContext : DbContext, IUserContext
 {
-    public Task<UserDTO[]?> GetUsers()
+    public async Task<IEnumerable<UserDTO>?> GetUsers()
     {
-        throw new NotImplementedException();
+        using SqlConnection connection = GetConnection();
+
+        var GetUsersSQL = "SELECT TUID As 'UserId', FIRST_NAME As 'FirstName', LAST_NAME As " +
+                          "'LastName', EMAIL As 'Email', ACTIVE As 'Active', ROLE_TUID As 'Role' " +
+                          "FROM Users;";
+
+        return await connection.QueryAsync<UserDTO>(GetUsersSQL);
     }
 
     public Task<UserDTO?> GetUserById(int userId)
