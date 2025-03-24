@@ -9,6 +9,19 @@ using Plot.Services;
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://0.0.0.0:8085");
 
+// Add CORS configuration
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost", policy =>
+    {
+        policy.WithOrigins("http://localhost:8080") 
+              .AllowAnyMethod()  
+              .AllowAnyHeader()  
+              .AllowCredentials(); 
+    });
+});
+
+
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -34,8 +47,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+
 builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("Employee", policy => policy.RequireClaim("Role", "3"))
+    .AddPolicy("Employee", policy => policy.RequireClaim("Role", "3","2","1"))
     .AddPolicy("Manager", policy => policy.RequireClaim("Role", "1", "2"))
     .AddPolicy("Owner", policy => policy.RequireClaim("Role", "1"));
 
@@ -65,8 +79,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
-app.UseHttpsRedirection();
-app.UseCors();
+//app.UseHttpsRedirection();
+app.UseCors("AllowLocalhost");
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
