@@ -225,7 +225,7 @@ public class AuthController : ControllerBase
 
         Response.Cookies.Append("Auth", token, new CookieOptions
         {
-            Expires = DateTimeOffset.UtcNow.AddMinutes(30),
+            Expires = DateTimeOffset.UtcNow.AddMinutes(30)
         });
         
         return Ok();
@@ -242,5 +242,22 @@ public class AuthController : ControllerBase
     public ActionResult Logout()
     {
         return Ok();
+    }
+// Small test for endpoints----------------------------------------------------------------------------
+    [Authorize(Policy = "Owner")]
+    [HttpPost("auth-test")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public ActionResult TestPass()
+    {
+        Console.WriteLine("Pass");
+        return Ok();
+    }
+
+    [HttpPost("data-test")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public ActionResult<ResetPasswordRequest> TestFail([FromBody] ResetPasswordRequest email)
+    {
+        email.EmailAddress="new@email.com";
+        return Ok(email);
     }
 }
