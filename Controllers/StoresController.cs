@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Stores;
 using Plot.DataAccess.Interfaces;
+using Plot.Services;
 
 namespace Plot.Controllers;
 
@@ -22,17 +23,19 @@ namespace Plot.Controllers;
 public class StoresController : ControllerBase
 {
     private readonly IStoreContext _storeContext;
+    private readonly ClaimParserService _claimParserService;
 
-    public StoresController(IStoreContext storeContext)
+    public StoresController(IStoreContext storeContext, ClaimParserService claimParserService)
     {
         _storeContext = storeContext;
+        _claimParserService = claimParserService;
     }
 
     /// <summary>
     /// This endpoint deals with getting all of the stores.
     /// </summary>
-    /// <returns>Array of Stores</returns>
-    [Authorize]
+    /// <returns>Array of stores</returns>
+    [Authorize(Policy = "Owner")]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<Store[]> GetAll()
@@ -41,16 +44,16 @@ public class StoresController : ControllerBase
     }
 
     /// <summary>
-    /// This endpoint deals with getting a store with a specified id.
+    /// This endpoint deals with getting stores based on a user's access.
     /// </summary>
-    /// <param name="storeId">The id of the store</param>
-    /// <returns>The store</returns>
+    /// <param name="storeId">The id of the user</param>
+    /// <returns>Array of stores</returns>
     [Authorize]
-    [HttpGet("{storeId:int}")]
+    [HttpGet("{userId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<Store> GetById(int storeId)
+    public ActionResult<Store[]> GetByAccess(int userId)
     {
         return NoContent();
     }

@@ -47,6 +47,7 @@ builder.Services.AddSingleton<IFloorsetContext, FloorsetContext>();
 builder.Services.AddSingleton<IFixtureContext, FixtureContext>();
 builder.Services.AddSingleton<ISalesContext, SalesContext>();
 
+builder.Services.AddScoped<ClaimParserService>();
 // Add EmailService as a scoped service
 // allows for settings to be used when injected.
 builder.Services.AddScoped<EmailService>();

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Fixtures;
 using Plot.DataAccess.Interfaces;
+using Plot.Services;
 
 namespace Plot.Controllers;
 
@@ -23,11 +24,13 @@ public class FixturesController : ControllerBase
 {
     private readonly IFixtureContext _fixtureContext;
     private readonly ISalesContext _salesContext;
+    private readonly ClaimParserService _claimParserService;
 
-    public FixturesController(IFixtureContext fixtureContext, ISalesContext salesContext)
+    public FixturesController(IFixtureContext fixtureContext, ISalesContext salesContext, ClaimParserService claimParserService)
     {
         _fixtureContext = fixtureContext;
         _salesContext = salesContext;
+        _claimParserService = claimParserService;
     }
 
     /// <summary>

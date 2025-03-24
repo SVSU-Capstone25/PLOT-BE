@@ -10,12 +10,12 @@
     Written by: Jordan Houlihan
 */
 
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Users;
 
 using Plot.DataAccess.Interfaces;
+using Plot.Services;
 
 namespace Plot.Controllers;
 
@@ -24,10 +24,12 @@ namespace Plot.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly IUserContext _userContext;
+    private readonly ClaimParserService _claimParserService;
 
-    public UsersController(IUserContext userContext)
+    public UsersController(IUserContext userContext, ClaimParserService claimParserService)
     {
         _userContext = userContext;
+        _claimParserService = claimParserService;
     }
 
     /// <summary>
@@ -55,7 +57,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<UserDTO> GetById(int userId)
     {
-        return NoContent();
+        return Ok();
     }
 
     /// <summary>
@@ -65,7 +67,7 @@ public class UsersController : ControllerBase
     /// <param name="userId">The id of the user</param>
     /// <param name="user">The updated public information</param>
     /// <returns>The updated user</returns>
-    [Authorize(Policy = "Manager")]
+    [Authorize]
     [HttpPatch("public-info/{userId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

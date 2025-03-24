@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Floorsets;
 using Plot.DataAccess.Interfaces;
+using Plot.Services;
 
 namespace Plot.Controllers;
 
@@ -22,10 +23,12 @@ namespace Plot.Controllers;
 public class FloorsetsController : ControllerBase
 {
     private readonly IFloorsetContext _floorsetContext;
+    private readonly ClaimParserService _claimParserService;
 
-    public FloorsetsController(IFloorsetContext floorsetContext)
+    public FloorsetsController(IFloorsetContext floorsetContext, ClaimParserService claimParserService)
     {
         _floorsetContext = floorsetContext;
+        _claimParserService = claimParserService;
     }
 
     /// <summary>

@@ -12,6 +12,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.DataAccess.Interfaces;
+using Plot.Services;
 
 namespace Plot.Controllers;
 
@@ -20,10 +21,12 @@ namespace Plot.Controllers;
 public class SalesController : ControllerBase
 {
     private readonly ISalesContext _salesContext;
+    private readonly ClaimParserService _claimParserService;
 
-    public SalesController(ISalesContext salesContext)
+    public SalesController(ISalesContext salesContext, ClaimParserService claimParserService)
     {
         _salesContext = salesContext;
+        _claimParserService = claimParserService;
     }
 
     /// <summary>

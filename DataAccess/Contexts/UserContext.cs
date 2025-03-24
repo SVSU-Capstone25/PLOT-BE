@@ -29,7 +29,8 @@ public class UserContext : DbContext, IUserContext
 
         var GetUsersSQL = "SELECT TUID As 'UserId', FIRST_NAME As 'FirstName', LAST_NAME As " +
                           "'LastName', EMAIL As 'Email', ACTIVE As 'Active', ROLE_TUID As 'Role' " +
-                          "FROM Users;";
+                          "FROM Users" +
+                          "WHERE ACTIVE = 1;";
 
         return await connection.QueryAsync<UserDTO>(GetUsersSQL);
     }

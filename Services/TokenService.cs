@@ -51,8 +51,9 @@ public class TokenService
     // Stores expiration time (in hours).
     private readonly string _expirationTime;
     private readonly double _defaultExpirationTime;
+    private readonly ClaimParserService _claimParserService;
 
-    public TokenService()
+    public TokenService(ClaimParserService claimParserService)
     {
         _audience = Environment.GetEnvironmentVariable("AUDIENCE") ?? throw new
                     ArgumentNullException(Environment.GetEnvironmentVariable("AUDIENCE"));
@@ -62,6 +63,7 @@ public class TokenService
                     ArgumentNullException(Environment.GetEnvironmentVariable("SECRET_KEY"));
         _expirationTime = (Environment.GetEnvironmentVariable("EXPIRATION_TIME")) ?? throw new
                     ArgumentNullException(Environment.GetEnvironmentVariable("EXPIRATION_TIME"));
+        _claimParserService = claimParserService;
     }
 
     /// <summary>
@@ -82,7 +84,8 @@ public class TokenService
             Subject = new ClaimsIdentity(
                 [
                     new("Email", user.Email!),
-                    new("Role", user.Role.ToString()!)
+                    new("Role", user.Role.ToString()!),
+                    new("UserId", user.UserId.ToString()!)
                 ]),
             Issuer = _issuer,
             Audience = _audience,
@@ -147,12 +150,7 @@ public class TokenService
             var principal = tokenHandler.ValidateToken(
                 token, validationParameters, out _);
 
-            // Find the first email claim in the token.
-            // This email will be used to identify the user.
-            var emailClaim = principal.FindFirst(ClaimTypes.Email);
-
-            // Return the users email if found in the claim.
-            return emailClaim?.Value;
+            return _claimParserService.GetEmail(principal);
         }
         catch
         {
