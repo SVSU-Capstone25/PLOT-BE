@@ -9,7 +9,7 @@ namespace Plot.Services;
 
 /// <summary>
 /// Filename: TokenService.cs
-/// Part of Project: PLOT (can rename later)
+/// Part of Project: PLOT/PLOT-BE/Plot/Services
 ///
 /// File Purpose:
 /// This file defines the TokenService class, responsible for generating

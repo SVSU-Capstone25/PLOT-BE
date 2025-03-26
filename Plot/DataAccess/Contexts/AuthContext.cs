@@ -1,6 +1,6 @@
 /*
     Filename: AuthContext.cs
-    Part of Project: PLOT/PLOT-BE/DataAccess/Contexts
+    Part of Project: PLOT/PLOT-BE/Plot/DataAccess/Contexts
 
     File Purpose:
     This file contains the database context for database operations 
@@ -20,7 +20,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Auth.Login;
 using Plot.Data.Models.Auth.Registration;
-using Plot.Data.Models.Env;
 using Plot.Data.Models.Users;
 using Plot.DataAccess.Interfaces;
 

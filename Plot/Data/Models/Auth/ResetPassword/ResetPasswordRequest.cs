@@ -1,6 +1,6 @@
 /*
     Filename: ResetPasswordRequest.cs
-    Part of Project: PLOT/PLOT-BE/Data/Models/Auth/ResetPassword
+    Part of Project: PLOT/PLOT-BE/Plot/Data/Models/Auth/ResetPassword
 
     File Purpose:
     This file defines the ResetPasswordRequest model class, 

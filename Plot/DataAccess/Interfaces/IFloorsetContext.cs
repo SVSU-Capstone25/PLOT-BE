@@ -1,6 +1,6 @@
 /*
     Filename: IFloorsetContext.cs
-    Part of Project: PLOT/PLOT-BE/DataAccess/Interfaces
+    Part of Project: PLOT/PLOT-BE/Plot/DataAccess/Interfaces
 
     File Purpose:
     This file contains the interface for database operations 

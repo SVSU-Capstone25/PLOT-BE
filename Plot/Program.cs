@@ -1,3 +1,15 @@
+/*
+    Filename: ClaimParserService.cs
+    Part of Project: PLOT/PLOT-BE/Plot
+
+    Project Purpose: This project is the backend for Plato's Closet
+    PLOT floorset allocation software, linking the frontend and the database
+    together through backend API endpoints.
+
+    Written by: SVSU 2025 Capstone Team
+*/
+
+
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;

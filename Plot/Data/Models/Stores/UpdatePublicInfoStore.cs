@@ -1,6 +1,6 @@
 /*
     Filename: UpdatePublicInfoStore.cs
-    Part of Project: PLOT/PLOT-BE/Data/Models/Stores
+    Part of Project: PLOT/PLOT-BE/Plot/Data/Models/Stores
 
     File Purpose:
     This file contains the store object model tied

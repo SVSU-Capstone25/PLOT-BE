@@ -5,7 +5,7 @@ namespace Plot.Services;
 
 /// <summary>
 /// Filename: RazorEmailRenderer.cs
-/// Part of Project: PLOT (can rename later)
+/// Part of Project: PLOT/PLOT-BE/Plot/Services
 /// 
 /// File Purpose:
 /// This file contains the implementation of the RazorEmailRenderer class,

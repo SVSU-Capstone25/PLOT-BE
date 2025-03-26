@@ -1,6 +1,6 @@
 /*
     Filename: UpdateFixtureInstance.cs
-    Part of Project: PLOT/PLOT-BE/Data/Models/Fixtures
+    Part of Project: PLOT/PLOT-BE/Plot/Data/Models/Fixtures
 
     File Purpose:
     This file contains the fixture object model tied

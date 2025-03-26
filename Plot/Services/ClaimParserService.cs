@@ -1,6 +1,6 @@
 /*
     Filename: ClaimParserService.cs
-    Part of Project: PLOT
+    Part of Project: PLOT/PLOT-BE/Plot/Services
 
     File Purpose: This file defines the ClaimParserService class,
     which will be used to parse claims from the user's JWT token

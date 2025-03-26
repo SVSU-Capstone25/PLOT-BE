@@ -1,6 +1,6 @@
 /*
     Filename: UserContext.cs
-    Part of Project: PLOT/PLOT-BE/DataAccess/Contexts
+    Part of Project: PLOT/PLOT-BE/Plot/DataAccess/Contexts
 
     File Purpose:
     This file contains the database context for database operations 

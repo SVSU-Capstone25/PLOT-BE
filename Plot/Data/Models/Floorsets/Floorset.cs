@@ -1,6 +1,6 @@
 /*
     Filename: Floorset.cs
-    Part of Project: PLOT/PLOT-BE/Data/Models/Floorset
+    Part of Project: PLOT/PLOT-BE/Plot/Data/Models/Floorset
 
     File Purpose:
     This file contains the floorset object model.

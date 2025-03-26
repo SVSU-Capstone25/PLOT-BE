@@ -1,6 +1,6 @@
 /*
     Filename: UserDTO.cs
-    Part of Project: PLOT/PLOT-BE/Data/Models/Users
+    Part of Project: PLOT/PLOT-BE/Plot/Data/Models/Users
 
     File Purpose:
     This file contains the DTO (Data-Transfer Object)
