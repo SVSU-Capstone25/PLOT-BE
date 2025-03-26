@@ -2,20 +2,25 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Plot.Data.Models.Auth.Email;
+using Plot.Data.Models.Env;
 using Plot.DataAccess.Contexts;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
 using Xunit;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://0.0.0.0:8085");
+
+EnvironmentSettings envSettings = new();
+builder.Services.AddScoped<EnvironmentSettings>();
+
+builder.WebHost.UseUrls(envSettings.issuer);
 
 // Add CORS configuration
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost", policy =>
     {
-        policy.WithOrigins("http://localhost:8080")
+        policy.WithOrigins(envSettings.audience)
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
@@ -38,12 +43,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = Environment.GetEnvironmentVariable("ISSUER"),
+            ValidIssuer = envSettings.issuer,
             ValidateAudience = true,
-            ValidAudience = Environment.GetEnvironmentVariable("AUDIENCE"),
+            ValidAudience = envSettings.audience,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET_KEY")!)),
+                Encoding.UTF8.GetBytes(envSettings.secret_key)),
             ValidateLifetime = true,
         };
     });
@@ -65,6 +70,7 @@ builder.Services.AddSingleton<ISalesContext, SalesContext>();
 builder.Services.AddScoped<ClaimParserService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<TokenService>();
+
 builder.Services.AddControllers();
 
 var app = builder.Build();

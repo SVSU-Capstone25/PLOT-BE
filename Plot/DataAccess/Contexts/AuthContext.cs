@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Auth.Login;
 using Plot.Data.Models.Auth.Registration;
+using Plot.Data.Models.Env;
 using Plot.Data.Models.Users;
 using Plot.DataAccess.Interfaces;
 

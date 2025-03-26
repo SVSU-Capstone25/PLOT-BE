@@ -1,5 +1,55 @@
 @Plot_HostAddress = http://localhost:8085
 
+// To use this as a testing area for the endpoints, note that
+// most endpoints need an authentication token and the user
+// needs certain roles to be able to execute some endpoints
+// for the program. If the request doesn't have the authentication
+// token in the bearer header or the user doesn't have the 
+// permissions to do the endpoint, then the endpoint will
+// send back a 401 unauthorized response. To send a request
+// with the authentication header, you will need to send
+// the login endpoint post request with correct permissions and
+// the authentication token will be in the Set-Cookie header from
+// the response. Copy, paste, and replace the
+// <insert auth token here without angle brackets> with
+// the token and hit the send request button above the endpoint request.
+// Each request needs to be seperated by the ### comment line and
+// the header for the authentication bearer token needs to be
+//
+// Authorization: Bearer exampletokenvalue
+// 
+// With the space afterwards.
+// If you don't have a space, then it will not work because the 
+// request will try to think that the body of the request is also
+// apart of the token (It is weird and I spent way too long to figure that out)
+// Example requests with authorization:
+//
+// ###
+//
+// GET {{Plot_HostAddress}}/api/users
+// Accept: application/json
+// Authorization: Bearer randomtokenvalue
+//
+// ###
+// 
+// ###
+// POST {{Plot_HostAddress}}/api/auth/register
+// Content-Type: application/json
+// Accept: application/json
+// Authorization: Bearer randomtokenvalue
+//
+// {
+//    "Email": "jordan_houlihan@yahoo.com",
+//    "Password": "pizzachips",
+//    "FirstName": "Jordan",
+//   "LastName": "Houlihan",
+//    "Role": 1,
+//    "Active": 1
+// }
+//
+// ###
+//
+
 GET {{Plot_HostAddress}}/api/users/
 Accept: application/json
 
@@ -9,6 +59,7 @@ GET {{Plot_HostAddress}}/api/users/1
 Accept: application/json
 
 ###
+
 POST {{Plot_HostAddress}}/api/auth/register
 Content-Type: application/json
 Accept: application/json
@@ -22,6 +73,7 @@ Accept: application/json
 }
 
 ###
+
 POST {{Plot_HostAddress}}/api/auth/login
 Content-Type: application/json
 Accept: application/json
@@ -32,9 +84,11 @@ Accept: application/json
 }
 
 ###
+
 POST {{Plot_HostAddress}}/api/auth/logout
 
 ###
+
 POST {{Plot_HostAddress}}/api/auth/register
 Content-Type: application/json
 Accept: application/json
@@ -50,6 +104,7 @@ Authorization: Bearer <insert auth token here without angle brackets>
 }
 
 ###
+
 POST {{Plot_HostAddress}}/api/auth/reset-password
 Content-Type: application/json
 Accept: application/json
@@ -60,6 +115,7 @@ Accept: application/json
 }
 
 ###
+
 POST {{Plot_HostAddress}}/api/auth/password-reset-request
 Content-Type: application/json
 Accept: application/json
@@ -69,11 +125,13 @@ Accept: application/json
 }
 
 ###
+
 GET {{Plot_HostAddress}}/api/users
 Accept: application/json
-Authorization: Bearer 
+Authorization: Bearer <insert auth token here without angle brackets>
 
 ###
+
 PATCH {{Plot_HostAddress}}/api/users/public-info/1
 Content-Type: application/json
 Accept: application/json

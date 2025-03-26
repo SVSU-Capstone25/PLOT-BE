@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Plot.Data.Models.Users;
+using Plot.Data.Models.Env;
 
 namespace Plot.Services;
 
@@ -51,20 +52,26 @@ public class TokenService
     private readonly string _secretKey;
 
     // Stores expiration time (in hours).
-    private readonly string _expirationTime;
+    private readonly double _expirationTime;
     private readonly ClaimParserService _claimParserService;
+    private readonly EnvironmentSettings _envSettings;
 
-    public TokenService(ClaimParserService claimParserService)
+    public TokenService(ClaimParserService claimParserService, EnvironmentSettings envSettings)
     {
-        _audience = Environment.GetEnvironmentVariable("AUDIENCE") ?? throw new
-                    ArgumentNullException(Environment.GetEnvironmentVariable("AUDIENCE"));
-        _issuer = Environment.GetEnvironmentVariable("ISSUER") ?? throw new
-                    ArgumentNullException(Environment.GetEnvironmentVariable("ISSUER"));
-        _secretKey = Environment.GetEnvironmentVariable("SECRET_KEY") ?? throw new
-                    ArgumentNullException(Environment.GetEnvironmentVariable("SECRET_KEY"));
-        _expirationTime = (Environment.GetEnvironmentVariable("EXPIRATION_TIME")) ?? throw new
-                    ArgumentNullException(Environment.GetEnvironmentVariable("EXPIRATION_TIME"));
+        _envSettings = envSettings;
         _claimParserService = claimParserService;
+        _audience = _envSettings.audience;
+        _issuer = _envSettings.issuer;
+        _secretKey = _envSettings.secret_key;
+
+        if (double.TryParse(_envSettings.expiration_time, out double expirationTime))
+        {
+            _expirationTime = expirationTime;
+        }
+        else
+        {
+            _expirationTime = _DEFAULT_EXPIRATION_TIME;
+        }
     }
 
     /// <summary>
@@ -90,17 +97,9 @@ public class TokenService
                 ]),
             Issuer = _issuer,
             Audience = _audience,
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+            Expires = DateTime.UtcNow.AddMinutes(_expirationTime)
         };
-
-        if (double.TryParse(_expirationTime, out double expirationTime))
-        {
-            tokenDescriptor.Expires = DateTime.UtcNow.AddMinutes(expirationTime);
-        }
-        else
-        {
-            tokenDescriptor.Expires = DateTime.UtcNow.AddMinutes(_DEFAULT_EXPIRATION_TIME);
-        }
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
 

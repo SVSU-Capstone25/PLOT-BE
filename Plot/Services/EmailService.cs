@@ -2,6 +2,7 @@ using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using Plot.Data.Models.Auth.Email;
+using Plot.Data.Models.Env;
 
 namespace Plot.Services;
 
@@ -56,6 +57,7 @@ public class EmailService
 
     // SMTP server password 
     private readonly string _senderSmtpPass;
+    private readonly EnvironmentSettings _envSettings;
 
     // Methods -- Methods -- Methods -- Methods -- Methods -- Methods -----
     /// <summary>
@@ -67,8 +69,9 @@ public class EmailService
     /// application settings.</param> 
     /// <exception cref="ArgumentNullException"> Thrown when an email 
     /// configuration is missing. </exception>
-    public EmailService(IOptions<EmailSettings> emailSettings)
+    public EmailService(IOptions<EmailSettings> emailSettings, EnvironmentSettings envSettings)
     {
+        _envSettings = envSettings;
         //Use the emailSettings instance to get the email settings.
         _senderName = emailSettings.Value.SenderName ?? throw new
             ArgumentNullException(emailSettings.Value.SenderName);
@@ -82,9 +85,7 @@ public class EmailService
         _smtpPort = emailSettings.Value.SmtpPort ?? throw new
             ArgumentNullException(nameof(emailSettings.Value.SmtpPort));
 
-        _senderSmtpPass = Environment.GetEnvironmentVariable("EMAIL_PASS")
-            ?? throw new ArgumentNullException(
-                Environment.GetEnvironmentVariable("EMAIL_PASS"));
+        _senderSmtpPass = _envSettings.email_pass;
     }
 
 

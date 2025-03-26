@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Auth.Login;
 using Plot.Data.Models.Auth.Registration;
 using Plot.Data.Models.Auth.ResetPassword;
+using Plot.Data.Models.Env;
 using Plot.Data.Models.Users;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
@@ -33,8 +34,7 @@ public class AuthController : ControllerBase
 
     // Base link for the password reset page.
     // (Need to change when we have the actual route)
-    private const string RESET_LINK_TEMPLATE
-        = "https://www.plot.com/reset-password?token=";
+    private readonly string RESET_LINK_TEMPLATE;
 
     // VARIABLES -- VARIABLES -- VARIABLES -- VARIABLES -- VARIABLES ------
 
@@ -45,7 +45,7 @@ public class AuthController : ControllerBase
     private readonly TokenService _tokenService;
 
     private readonly IAuthContext _authContext;
-
+    private readonly EnvironmentSettings _envSettings;
     // Methods -- Methods -- Methods -- Methods -- Methods -- Methods -----
 
     /// <summary>
@@ -55,11 +55,14 @@ public class AuthController : ControllerBase
     /// <param name="emailService"></param>
     /// <param name="tokenService"></param>
     /// <param name="authContext"></param>
-    public AuthController(EmailService emailService, TokenService tokenService, IAuthContext authContext)
+    public AuthController(EmailService emailService, TokenService tokenService, IAuthContext authContext, EnvironmentSettings envSettings)
     {
         _emailService = emailService;
         _tokenService = tokenService;
         _authContext = authContext;
+        _envSettings = envSettings;
+
+        RESET_LINK_TEMPLATE = $"{_envSettings.audience}/reset-password?token=";
     }
 
     /// <summary>
@@ -72,7 +75,7 @@ public class AuthController : ControllerBase
     /// <param name="receivedEmailRequest">Model with a users email.
     //  </param>
     /// <returns>200 OK response regardless of email validity.</returns>
-    [HttpPost("password-reset-request")]
+    [HttpPost("reset-password-request")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> ResetPasswordRequest([FromBody] ResetPasswordRequest receivedEmailRequest)
     {

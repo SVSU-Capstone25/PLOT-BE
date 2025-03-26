@@ -14,21 +14,19 @@
 */
 
 using Microsoft.Data.SqlClient;
+using Plot.Data.Models.Env;
 
 namespace Plot.DataAccess.Contexts;
 
 public class DbContext
 {
+    private readonly EnvironmentSettings _envSettings;
     private readonly string _databaseConnection;
 
     public DbContext()
     {
-        _databaseConnection = Environment.GetEnvironmentVariable("DB_CONNECTION")!;
-
-        if (string.IsNullOrEmpty(_databaseConnection))
-        {
-            throw new ArgumentNullException("Database connection not found in environment file.");
-        }
+        _envSettings = new();
+        _databaseConnection = _envSettings.databaseConnection;
     }
 
     public SqlConnection GetConnection()
