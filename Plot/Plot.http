@@ -1,6 +1,85 @@
-@Plot_HostAddress = http://localhost:5268
+@Plot_HostAddress = http://localhost:8085
 
-GET {{Plot_HostAddress}}/weatherforecast/
+GET {{Plot_HostAddress}}/api/users/
 Accept: application/json
 
 ###
+
+GET {{Plot_HostAddress}}/api/users/1
+Accept: application/json
+
+###
+POST {{Plot_HostAddress}}/api/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+    "FirstName": "Bart",
+    "LastName": "Simpson",
+    "Email": "bartsimpson@gmail.com",
+    "Role": 1,
+    "Store": 1
+}
+
+###
+POST {{Plot_HostAddress}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "Email": "jordan_houlihan@yahoo.com",
+    "Password": "ILovePizza34"
+}
+
+###
+POST {{Plot_HostAddress}}/api/auth/logout
+
+###
+POST {{Plot_HostAddress}}/api/auth/register
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer <insert auth token here without angle brackets>
+
+{
+    "Email": "jordan_houlihan@yahoo.com",
+    "Password": "pizzachips",
+    "FirstName": "Jordan",
+    "LastName": "Houlihan",
+    "Role": 1,
+    "Active": 1
+}
+
+###
+POST {{Plot_HostAddress}}/api/auth/reset-password
+Content-Type: application/json
+Accept: application/json
+
+{
+    "NewPassword": "ILovePizza34",
+    "token": "<insert auth token here without angle brackets>"
+}
+
+###
+POST {{Plot_HostAddress}}/api/auth/password-reset-request
+Content-Type: application/json
+Accept: application/json
+
+{
+    "EmailAddress": "jordan_houlihan@yahoo.com"
+}
+
+###
+GET {{Plot_HostAddress}}/api/users
+Accept: application/json
+Authorization: Bearer 
+
+###
+PATCH {{Plot_HostAddress}}/api/users/public-info/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer <insert auth token here without angle brackets>
+
+{
+    "FirstName": "",
+    "LastName": ""
+}
