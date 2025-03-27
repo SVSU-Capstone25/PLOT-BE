@@ -263,4 +263,21 @@ public class AuthController : ControllerBase
         email.EmailAddress = "new@email.com";
         return Ok(email);
     }
+
+    [HttpPost("test-password")]
+    public async Task<ActionResult<string>> TestPassword()
+    {
+        PasswordHasher<User> hasher = new();
+        User user = new() { FirstName = "admin", LastName = "admin", Email = "NickLeja@email.com", Password = "admin", Role = 1, Active = true };
+
+        LoginRequest newUserInfo = new()
+        {
+            Email = user.Email,
+            Password = hasher.HashPassword(user, "admin")
+        };
+
+        int rowsAffected = await _authContext.UpdatePassword(newUserInfo);
+
+        return Ok(rowsAffected);
+    }
 }
