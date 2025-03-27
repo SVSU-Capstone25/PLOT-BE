@@ -13,7 +13,8 @@
 
     Written by: Jordan Houlihan
 */
-
+using Dapper;
+using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Floorsets;
 using Plot.DataAccess.Interfaces;
 
@@ -21,9 +22,27 @@ namespace Plot.DataAccess.Contexts;
 
 public class FloorsetContext : DbContext, IFloorsetContext
 {
-    public Task<IEnumerable<Floorset[]>?> GetFloorsetsByStoreId(int storeId)
+    public async Task<IEnumerable<Floorset>> GetFloorsetsByStoreId(int storeId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            using SqlConnection connection = GetConnection();
+
+            var GetFloorsetsById = "SELECT TUID As 'FloorsetId', NAME As 'Name', " +
+                                   "STORE_TUID As 'StoreId', DATE_CREATED As 'DateCreated', " +
+                                   "CREATED_BY As 'CreatedBy', DATE_MODIFIED As 'DateModified', MODIFIED_BY As 'ModifiedBy' " +
+                                   "FROM Floorsets WHERE STORE_TUID = @StoreId;";
+            object UpdatePasswordParameters = new { StoreId = storeId };
+
+            return await connection.QueryAsync<Floorset>(GetFloorsetsById, UpdatePasswordParameters);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return [];
+        }
+
+        // throw new NotImplementedException();
     }
     public Task<Floorset> CreateFloorset(CreateFloorset floorset)
     {
