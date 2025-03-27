@@ -27,16 +27,19 @@ builder.Services.AddScoped<EnvironmentSettings>();
 
 builder.WebHost.UseUrls(envSettings.issuer);
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 // Add CORS configuration
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost", policy =>
-    {
-        policy.WithOrigins(envSettings.audience)
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
-    });
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins(envSettings.audience, "http://localhost:8080");
+                          policy.AllowAnyHeader();
+                          policy.AllowAnyMethod();
+                          policy.AllowCredentials();
+                      });
 });
 
 // Add services to the container.
@@ -93,10 +96,9 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseRouting();
 //app.UseHttpsRedirection();
-app.UseCors("AllowLocalhost");
-
+app.UseRouting();
+app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapHealthChecks("/health");

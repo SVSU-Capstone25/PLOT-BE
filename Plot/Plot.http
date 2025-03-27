@@ -79,8 +79,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-    "Email": "jordan_houlihan@yahoo.com",
-    "Password": "ILovePizza34"
+    "Email": "NickLeja@email.com",
+    "Password": "admin"
 }
 
 ###
@@ -141,3 +141,11 @@ Authorization: Bearer <insert auth token here without angle brackets>
     "FirstName": "",
     "LastName": ""
 }
+
+###
+
+POST {{Plot_HostAddress}}/api/auth/test-password
+Content-Type: application/json
+Accept: application/json
+
+###
