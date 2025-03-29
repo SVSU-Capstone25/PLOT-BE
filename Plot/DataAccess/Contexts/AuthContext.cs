@@ -119,4 +119,22 @@ public class AuthContext : DbContext, IAuthContext
             return 0;
         }
     }
+        public async Task<int> DeleteUserById(int userId)
+    {
+         try
+        {
+            using SqlConnection connection = GetConnection();
+
+            var DeleteUserSQL = "UPDATE Users " + 
+                                "SET ACTIVE = 0 "
+                                "WHERE TUID = " + userId;
+
+            return await connection.ExecuteAsync(DeleteUserSQL);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return 0;
+        }
+    }
 }

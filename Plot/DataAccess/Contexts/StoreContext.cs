@@ -32,7 +32,7 @@ public class StoreContext : DbContext, IStoreContext
             var GetStoresSQL = "SELECT TUID As 'StoreId', NAME As 'Name', ADDRESS As " +
                               "'Address', CITY As 'City', STATE As 'State', ZIP As 'ZipCode', " +
                               "WIDTH As 'Width', HEIGHT As 'Height, BLUEPRINT_IMAGE As 'BlueprintImage'" +
-                              "FROM Store " +
+                              "FROM Stores " +
                               "WHERE ACTIVE = 1;";
             
             return await connection.QueryAsync<Store>(GetStoresSQL);
@@ -53,7 +53,7 @@ public class StoreContext : DbContext, IStoreContext
             var GetStoresSQL = "SELECT TUID As 'StoreId', NAME As 'Name', ADDRESS As " +
                               "'ADDRESS', CITY As 'City', STATE As 'State', ZIP As 'ZipCode', " +
                               "WIDTH As 'Width', HEIGHT As 'Height, BLUEPRINT_IMAGE As 'BlueprintImage'" +
-                              "FROM Store " +
+                              "FROM Stores " +
                               "WHERE TUID = " + storeId + ";";
             
             return await connection.QueryAsync<Store>(GetStoresSQL);
@@ -71,7 +71,7 @@ public class StoreContext : DbContext, IStoreContext
         {
             using SqlConnection connection = GetConnection();
 
-            var UpdateStoreSQL = "UPDATE Store" +
+            var UpdateStoreSQL = "UPDATE Stores" +
                                 "SET NAME = " + store.Name +
                                 ", ADDRESS = " + store.Address + 
                                 ", CITY = " + store.City + 
@@ -93,7 +93,7 @@ public class StoreContext : DbContext, IStoreContext
         {
             using SqlConnection connection = GetConnection();
 
-            var UpdateStoreSQL = "UPDATE Store" +
+            var UpdateStoreSQL = "UPDATE Stores" +
                                 "SET WIDTH = " + store.Width +
                                 ", HEIGHT = " + store.Height + 
                                 "WHERE TUID = " + storeId;

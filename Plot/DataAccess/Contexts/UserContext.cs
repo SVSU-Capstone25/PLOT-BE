@@ -73,6 +73,7 @@ public class UserContext : DbContext, IUserContext
             var UpdateUserSQL = "UPDATE Users" +
                                 "SET FIRST_NAME = " + user.FirstName +
                                 ", LAST_NAME = " + user.LastName + 
+                                ", ROLE_TUID = " + user.role + 
                                 "WHERE TUID = " + userId + ";";
 
             return await connection.ExecuteAsync(UpdateUserSQL);
@@ -84,46 +85,8 @@ public class UserContext : DbContext, IUserContext
         }
     }
 
-    public async Task<int> DeleteUserById(int userId)
-    {
-         try
-        {
-            using SqlConnection connection = GetConnection();
 
-            var DeleteUserSQL = "DELETE FROM Users" + 
-                                "WHERE TUID = " + userId;
-
-            return await connection.ExecuteAsync(DeleteUserSQL);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception));
-            return 0;
-        }
-    }
-
-
-
-    public async Task<int> CreateUser(User user)
-    {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-
-            var CreateUser = "INSERT INTO Users (FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, ROLE_TUID," +
-                                    " ACTIVE)" +
-                                   "VALUES ('" + user.FirstName +"','" + user.LastName + "','" +
-                                   user.Email + "','"  + user.Password + "','" +
-                                   user.Role + "','" + user.Active + "');";
-
-            return await connection.ExecuteAsync(CreateUser);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception));
-            return 0;
-        }
-    }
+   
     public async Task<int> AddUserToStore(int userid, int storeid)
     {
         try
@@ -201,4 +164,5 @@ public class UserContext : DbContext, IUserContext
             return [];
         }
     }
+
 }

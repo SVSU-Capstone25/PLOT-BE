@@ -56,7 +56,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<UserDTO> GetById(int userId)
     {
-        return Ok();
+        return Ok(await _userContext.GetById(userId));
     }
 
     /// <summary>
@@ -71,14 +71,14 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<UserDTO> UpdatePublicInfo(int userId, UpdatePublicInfoUser user)
+    public ActionResult<int> UpdatePublicInfo(int userId, UpdatePublicInfoUser user)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        return NoContent();
+       return Ok(await _userContext.UpdateUserPublicInfo(userId, user));
     }
 
     /// <summary>
@@ -88,15 +88,15 @@ public class UsersController : ControllerBase
     /// <param name="userId">The id of the user</param>
     /// <param name="role">The new role for the user</param>
     /// <returns>The updated user</returns>
-    [Authorize(Policy = "Owner")]
-    [HttpPatch("role/{userId:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<UserDTO> UpdateRole(int userId, [FromBody] int role)
-    {
-        return Ok();
-    }
+    // [Authorize(Policy = "Owner")]
+    // [HttpPatch("role/{userId:int}")]
+    // [ProducesResponseType(StatusCodes.Status200OK)]
+    // [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    // [ProducesResponseType(StatusCodes.Status404NotFound)]
+    // public ActionResult<UserDTO> UpdateRole(int userId, [FromBody] int role)
+    // {
+    //     return Ok();
+    // }
 
     /// <summary>
     /// This endpoint deals with deleting a specific user
@@ -111,6 +111,8 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult Delete(int userId)
     {
-        return NoContent();
+        return Ok(await _userContext.DeleteUserById(userId));
     }
+
+    
 }
