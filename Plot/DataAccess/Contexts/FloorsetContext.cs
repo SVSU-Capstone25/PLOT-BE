@@ -28,10 +28,9 @@ public class FloorsetContext : DbContext, IFloorsetContext
         {
             using SqlConnection connection = GetConnection();
 
-            var GetFloorsetsById = "SELECT TUID As 'FloorsetId', NAME As 'Name', " +
-                                   "STORE_TUID As 'StoreId', DATE_CREATED As 'DateCreated', " +
-                                   "CREATED_BY As 'CreatedBy', DATE_MODIFIED As 'DateModified', MODIFIED_BY As 'ModifiedBy' " +
-                                   "FROM Floorsets WHERE STORE_TUID = @StoreId;";
+            var GetFloorsetsById = "SELECT * " +
+                                   "FROM Floorsets " +
+                                   "WHERE STORE_TUID = @StoreId;";
             object UpdatePasswordParameters = new { StoreId = storeId };
 
             return await connection.QueryAsync<Floorset>(GetFloorsetsById, UpdatePasswordParameters);
@@ -52,9 +51,9 @@ public class FloorsetContext : DbContext, IFloorsetContext
 
             var CreateFloorsetSQL = "INSERT INTO Floorsets (NAME, STORE_TUID, DATE_CREATED, CREATED_BY," +
                                     " DATE_MODIFIED, MODIFIED_BY)" +
-                                   "VALUES ('" + floorset.Name +"','" + floorset.StoreId + "','" +
-                                   floorset.DateCreated + "','"  + floorset.CreatedBy + "','" +
-                                   floorset.DateModified + "','" + floorset.ModifiedBy + "');";
+                                   "VALUES ('" + floorset.NAME +"','" + floorset.STORE_TUID + "','" +
+                                   floorset.CREATED_BY + "','"  + floorset.CREATED_BY + "','" +
+                                   floorset.DATE_MODIFIED + "','" + floorset.MODIFIED_BY + "');";
 
             return await connection.ExecuteAsync(CreateFloorsetSQL);
         }
@@ -74,9 +73,9 @@ public class FloorsetContext : DbContext, IFloorsetContext
             using SqlConnection connection = GetConnection();
 
             var UpdateFloorset = "UPDATE Floorsets" + 
-                                    "SET NAME = " + floorset.Name +
-                                    ", DATE_MODIFIED = " + floorset.DateModified +
-                                    ", MODIFIED_BY = " + floorset.ModifiedBy + 
+                                    "SET NAME = " + floorset.NAME +
+                                    ", DATE_MODIFIED = " + floorset.DATE_MODIFIED +
+                                    ", MODIFIED_BY = " + floorset.MODIFIED_BY + 
                                     "WHERE TUID = " + floorsetId;
 
             return await connection.ExecuteAsync(UpdateFloorset);

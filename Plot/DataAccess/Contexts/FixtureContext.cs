@@ -31,12 +31,12 @@ public class FixtureContext : DbContext, IFixtureContext
             var CreateFixtureInstance = "INSERT INTO Floorsets_Fixtures (FLOORSET_TUID, " + 
                                     "FIXTURE_TUID, X_POS,Y_POS, HANGER_STACK, ALLOCATED_LF, TOT_LF,"+
                                     " CATEGORY, NOTE )" +
-                                   "VALUES ('" + fixtureInstance.FloorsetId +"','" + 
-                                   fixtureInstance.FixtureId + "','" +
-                                   fixtureInstance.XPosition + "','"  + fixtureInstance.YPosition + "','" +
-                                   fixtureInstance.HangerStack + "','" + fixtureInstance.LFAllocated +
-                                   "','" + fixtureInstance.LFTarget+
-                                    "','" + fixtureInstance.Category + "','" + fixtureInstance.Note +"');";
+                                   "VALUES ('" + fixtureInstance.TUID +"','" + 
+                                   fixtureInstance.FIXTURE_TUID + "','" +
+                                   fixtureInstance.X_POS + "','"  + fixtureInstance.Y_POS + "','" +
+                                   fixtureInstance.HANGER_STACK + "','" + fixtureInstance.ALLOCATED_LF +
+                                   "','" + fixtureInstance.TOT_LF +
+                                    "','" + fixtureInstance.CATEGORY + "','" + fixtureInstance.NOTE +"');";
 
             return await connection.ExecuteAsync(CreateFixtureInstance);
         }
@@ -57,10 +57,10 @@ public class FixtureContext : DbContext, IFixtureContext
 
             var CreateFixtureModel = "INSERT INTO Fixtures (NAME, " + 
                                     "WIDTH, HEIGHT, LF_CAP, ICON, STORE_TUID)"+
-                                   "VALUES ('" + fixtureModel.Name +"','" + 
-                                   fixtureModel.Width + "','" +
-                                   fixtureModel.Height + "','"  + fixtureModel.LFCapacity + "','" +
-                                   fixtureModel.FixtureImage + "','" + fixtureModel.StoreId +
+                                   "VALUES ('" + fixtureModel.NAME +"','" + 
+                                   fixtureModel.WIDTH + "','" +
+                                   fixtureModel.HEIGHT + "','"  + fixtureModel.LF_CAP + "','" +
+                                   fixtureModel.ICON + "','" + fixtureModel.STORE_TUID +
                                     "');";
 
             return await connection.ExecuteAsync(CreateFixtureModel);
@@ -111,18 +111,15 @@ public class FixtureContext : DbContext, IFixtureContext
         //throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<FixtureInstance>> GetFixtureInstances(int floorsetId)
+    public async Task<IEnumerable<FixtureInstance>?> GetFixtureInstances(int floorsetId)
     {
         try
         {
             using SqlConnection connection = GetConnection();
 
-            var GetFixtureInstancesbyId = "SELECT TUID As 'FixtureInstanceId', FLOORSET_TUID As 'FloorsetId'," +
-                                    "FIXTURE_TUID As 'FixtureModelId', X_POS As 'XPosition'"+
-                                    ", Y_POS As 'YPosition', ALLOCATED_LF As 'LFAllocated',"+
-                                    "TOT_LF As 'LFTarget', HANGER_STACK As 'HangerStack',"+
-                                    "CATEGORY As 'Category', NOTE As 'Note'"+
-                                   "FROM Floorsets_Fixtures WHERE FLOORSET_TUID = @floorsetId;";
+            var GetFixtureInstancesbyId = "SELECT TUID * " +
+                                          "FROM Floorsets_Fixtures " +
+                                          "WHERE FLOORSET_TUID = @floorsetId;";
             
 
             return await connection.QueryAsync<FixtureInstance>(GetFixtureInstancesbyId);
@@ -135,16 +132,15 @@ public class FixtureContext : DbContext, IFixtureContext
         //throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<FixtureModel>> GetFixtureModels(int StoreId)
+    public async Task<IEnumerable<FixtureModel>?> GetFixtureModels(int StoreId)
     {
         try
         {
             using SqlConnection connection = GetConnection();
 
-            var GetFixtureModelsbyId = "SELECT TUID As 'FixtureId', NAME As 'Name',"+
-                                    " WIDTH As 'Width', HEIGHT As 'Height', LF_CAP As 'LFCapacity" +
-                                    ", ICON As 'FixtureImage', STORE_TUID As 'StoreId'"+
-                                   "FROM Fixtures WHERE STORE_TUID = @StoreId;";
+            var GetFixtureModelsbyId = "SELECT * " +
+                                       "FROM Fixtures " +
+                                       "WHERE STORE_TUID = " + StoreId + ";";
             
 
             return await connection.QueryAsync<FixtureModel>(GetFixtureModelsbyId);
@@ -152,7 +148,7 @@ public class FixtureContext : DbContext, IFixtureContext
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return null;
         }
         //throw new NotImplementedException();
     }
@@ -164,14 +160,14 @@ public class FixtureContext : DbContext, IFixtureContext
             using SqlConnection connection = GetConnection();
 
             var UpdateFloorset = "UPDATE Floorsets_Fixtures " + 
-                                    "SET X_POS = " + fixtureInstance.XPosition +
-                                    ",Y_POS = " + fixtureInstance.YPosition +
-                                    ",ALLOCATED_LF = " + fixtureInstance.LFAllocated +
-                                    ",HANGER_STACK = " + fixtureInstance.HangerStack + 
-                                    ",TOT_LF = " + fixtureInstance.LFTarget +
-                                    ",CATEGORY = " + fixtureInstance.Category+
-                                    ",NOTE = " + fixtureInstance.Note +
-                                    " WHERE TUID = " + fixtureInstance.FixtureInstanceId;
+                                    "SET X_POS = " + fixtureInstance.X_POS +
+                                    ",Y_POS = " + fixtureInstance.Y_POS +
+                                    ",ALLOCATED_LF = " + fixtureInstance.ALLOCATED_LF +
+                                    ",HANGER_STACK = " + fixtureInstance.HANGER_STACK + 
+                                    ",TOT_LF = " + fixtureInstance.TOT_LF +
+                                    ",CATEGORY = " + fixtureInstance.CATEGORY +
+                                    ",NOTE = " + fixtureInstance.NOTE +
+                                    " WHERE TUID = " + fixtureInstance.TUID;
 
             return await connection.ExecuteAsync(UpdateFloorset);
         }
@@ -190,12 +186,12 @@ public class FixtureContext : DbContext, IFixtureContext
             using SqlConnection connection = GetConnection();
 
             var UpdateFloorset = "UPDATE Fixtures" + 
-                                    "SET NAME = " + fixtureModel.Name +
-                                    ", WIDTH = " + fixtureModel.Width +
-                                    ", HEIGHT = " + fixtureModel.Height +
-                                    "LF_CAP = " + fixtureModel.LFCapacity +
-                                    "ICON = " + fixtureModel.FixtureImage +
-                                    "WHERE TUID = " + fixtureModel.FixtureId;
+                                    "SET NAME = " + fixtureModel.NAME +
+                                    ", WIDTH = " + fixtureModel.WIDTH +
+                                    ", HEIGHT = " + fixtureModel.HEIGHT +
+                                    "LF_CAP = " + fixtureModel.LF_CAP +
+                                    "ICON = " + fixtureModel.ICON +
+                                    "WHERE TUID = " + fixtureModel.TUID;
 
             return await connection.ExecuteAsync(UpdateFloorset);
         }

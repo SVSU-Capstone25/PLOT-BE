@@ -22,7 +22,7 @@ namespace Plot.DataAccess.Contexts;
 
 public class SalesContext : DbContext, ISalesContext
 {
-    public async Task<IEnumerable<FixtureAllocations>> GetFixtureAllocations(int floorsetId)
+    public async Task<IEnumerable<FixtureAllocations>?> GetSalesAllocations(int floorsetId)
     {
          try
         {
@@ -35,7 +35,7 @@ public class SalesContext : DbContext, ISalesContext
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return null;
         }
     }
 

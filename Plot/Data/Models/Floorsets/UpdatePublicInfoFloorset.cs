@@ -17,7 +17,7 @@ namespace Plot.Data.Models.Floorsets;
 
 public record UpdatePublicInfoFloorset
 {
-    public string? Name { get; set; }
-    public DateTime? DateModified { get; set; }
-    public int? ModifiedBy { get; set; }
+    public string? NAME { get; set; }
+    public DateTime? DATE_CREATED { get; set; }
+    public int? MODIFIED_BY { get; set; }
 }

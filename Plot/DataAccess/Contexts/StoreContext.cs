@@ -29,11 +29,9 @@ public class StoreContext : DbContext, IStoreContext
         {
             using SqlConnection connection = GetConnection();
 
-            var GetStoresSQL = "SELECT TUID As 'StoreId', NAME As 'Name', ADDRESS As " +
-                              "'Address', CITY As 'City', STATE As 'State', ZIP As 'ZipCode', " +
-                              "WIDTH As 'Width', HEIGHT As 'Height, BLUEPRINT_IMAGE As 'BlueprintImage'" +
-                              "FROM Stores " +
-                              "WHERE ACTIVE = 1;";
+            var GetStoresSQL = "SELECT * " +
+                               "FROM Stores " +
+                               "WHERE ACTIVE = 1;";
             
             return await connection.QueryAsync<Store>(GetStoresSQL);
         }
@@ -50,11 +48,9 @@ public class StoreContext : DbContext, IStoreContext
         {
             using SqlConnection connection = GetConnection();
 
-            var GetStoresSQL = "SELECT TUID As 'StoreId', NAME As 'Name', ADDRESS As " +
-                              "'ADDRESS', CITY As 'City', STATE As 'State', ZIP As 'ZipCode', " +
-                              "WIDTH As 'Width', HEIGHT As 'Height, BLUEPRINT_IMAGE As 'BlueprintImage'" +
-                              "FROM Stores " +
-                              "WHERE TUID = " + storeId + ";";
+            var GetStoresSQL = "SELECT * " +
+                               "FROM Stores " +
+                               "WHERE TUID = " + storeId + ";";
             
             return await connection.QueryAsync<Store>(GetStoresSQL);
         }
@@ -67,16 +63,16 @@ public class StoreContext : DbContext, IStoreContext
 
     public async Task<int> UpdatePublicInfoStore(int storeId, UpdatePublicInfoStore store)
     {
-         try
+        try
         {
             using SqlConnection connection = GetConnection();
 
             var UpdateStoreSQL = "UPDATE Stores" +
-                                "SET NAME = " + store.Name +
-                                ", ADDRESS = " + store.Address + 
-                                ", CITY = " + store.City + 
-                                ", ZIP = " + store.ZipCode + 
-                                ", BLUEPRINT_IMAGE = " + store.BlueprintImage + 
+                                "SET NAME = " + store.NAME +
+                                ", ADDRESS = " + store.ADDRESS + 
+                                ", CITY = " + store.CITY + 
+                                ", ZIP = " + store.ZIP + 
+                                ", BLUEPRINT_IMAGE = " + store.ICON + 
                                 "WHERE TUID = " + storeId;
 
             return await connection.ExecuteAsync(UpdateStoreSQL);
@@ -87,15 +83,15 @@ public class StoreContext : DbContext, IStoreContext
             return 0;
         }
     }
-      public async Task<int> UpdateSizeStore(int storeId, UpdateSizeStore store)
+    public async Task<int> UpdateSizeStore(int storeId, UpdateSizeStore store)
     {
          try
         {
             using SqlConnection connection = GetConnection();
 
             var UpdateStoreSQL = "UPDATE Stores" +
-                                "SET WIDTH = " + store.Width +
-                                ", HEIGHT = " + store.Height + 
+                                "SET WIDTH = " + store.WIDTH +
+                                ", HEIGHT = " + store.HEIGHT + 
                                 "WHERE TUID = " + storeId;
 
             return await connection.ExecuteAsync(UpdateStoreSQL);
@@ -117,6 +113,46 @@ public class StoreContext : DbContext, IStoreContext
                                 "WHERE TUID = " + storeId;
 
             return await connection.ExecuteAsync(DeleteStoreSQL);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return 0;
+        }
+    }
+    public async Task<IEnumerable<UserDTO>?> GetUsersAtStore(int storeid)
+    {
+        try
+        {
+            using SqlConnection connection = GetConnection();
+
+            var GetUserByIdSQL = "SELECT Users.TUID, Users.FIRST_NAME, Users.LAST_NAME, " +
+                                 "Users.EMAIL, Users.ACTIVE, Users.ROLE_TUID " +
+                              "FROM Users " +
+                              "INNER JOIN Access " +
+                              "ON Users.TUID = Access.USER_TUID " +
+                              "WHERE Access.STORE_TUID = " + storeid + ";";
+
+            return await connection.QueryAsync<UserDTO>(GetUserByIdSQL);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return [];
+        }
+    }
+    public async Task<int> CreateStoreEntry(CreateStore store)
+    {
+        try
+        {
+            using SqlConnection connection = GetConnection();
+
+            var CreateStoreSQL = "INSERT INTO Stores (NAME, ADDRESS, CITY, STATE, ZIP, WIDTH, HEIGHT, BLUEPRINT_IMAGE)" +
+                                "VALUES ('" + store.NAME + "','" + store.ADDRESS + "','" + 
+                                store.CITY + "','" + store.STATE + "','" + store.ZIP + "','" +
+                                store.WIDTH + "','" + store.HEIGHT + "','" + store.ICON + "');";
+
+            return await connection.ExecuteAsync(CreateStoreSQL);
         }
         catch (SqlException exception)
         {

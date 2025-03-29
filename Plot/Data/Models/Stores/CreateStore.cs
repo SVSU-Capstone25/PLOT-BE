@@ -19,12 +19,12 @@ namespace Plot.Data.Models.Stores;
 
 public record CreateStore
 {
-    public string? Name { get; set; }
-    public string? Address { get; set; }
-    public string? City { get; set; }
-    public string? State { get; set; }
-    public string? ZipCode { get; set; }
-    public int? Width { get; set; }
-    public int? Height { get; set; }
-    public IFormFile? BlueprintImage { get; set; }
+    public string? NAME { get; set; }
+    public string? ADDRESS { get; set; }
+    public string? CITY { get; set; }
+    public string? STATE { get; set; }
+    public string? ZIP { get; set; }
+    public int? WIDTH { get; set; }
+    public int? HEIGHT { get; set; }
+    public IFormFile? BLUEPRINT_IMAGE { get; set; }
 }

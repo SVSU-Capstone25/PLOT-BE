@@ -17,12 +17,12 @@ namespace Plot.Data.Models.Fixtures;
 
 public record CreateFixtureModel
 {
-    public string? Name { get; set; }
-    public int? Width { get; set; }
-    public int? Height { get; set; }
-    public float? LFCapacity { get; set; }
-    public int? StoreId { get; set; }
+    public string? NAME { get; set; }
+    public int? WIDTH { get; set; }
+    public int? HEIGHT { get; set; }
+    public float? LF_CAP { get; set; }
+    public int? STORE_TUID { get; set; }
     //TODO: define how we convert this file to 
     // be store in the database
-    public IFormFile? FixtureImage { get; set; }
+    public IFormFile? ICON { get; set; }
 }

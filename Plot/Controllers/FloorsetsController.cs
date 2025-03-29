@@ -56,9 +56,9 @@ public class FloorsetsController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<Floorset> Create(CreateFloorset floorset)
+    public async ActionResult<Floorset> Create(CreateFloorset floorset)
     {
-        return NoContent();
+        return OK(await _floorsetContext.CreateFloorset(floorset));
     }
 
     /// <summary>
@@ -72,9 +72,9 @@ public class FloorsetsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<Floorset> UpdatePublicInfo(int floorsetId, UpdatePublicInfoFloorset floorset)
+    public async ActionResult<Floorset> UpdatePublicInfo(int floorsetId, UpdatePublicInfoFloorset floorset)
     {
-        return NoContent();
+        return OK(await _floorsetContext.UpdateFloorsetById(floorsetId, floorset));
     }
 
     /// <summary>
@@ -87,8 +87,8 @@ public class FloorsetsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult Delete(int floorsetId)
+    public async ActionResult Delete(int floorsetId)
     {
-        return NoContent();
+        return OK(await _floorsetContext.DeleteFloorsetById(floorsetId));
     }
 }

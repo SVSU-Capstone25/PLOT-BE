@@ -40,8 +40,8 @@ public class SalesController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult UploadSales(int floorsetId, [FromBody] IFormFile excelFile)
+    public async ActionResult UploadSales(int floorsetId, [FromBody] IFormFile excelFile)
     {
-        return Ok();
+        return Ok(await _salesContext.UploadSales(floorsetId, excelFile));
     }
 }

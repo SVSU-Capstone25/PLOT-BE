@@ -79,7 +79,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> ResetPasswordRequest([FromBody] ResetPasswordRequest receivedEmailRequest)
     {
-        var user = await _authContext.GetUserByEmail(receivedEmailRequest.EmailAddress);
+        var user = await _authContext.GetUserByEmail(receivedEmailRequest.EMAIL);
 
         if (user == null)
         {
@@ -96,7 +96,7 @@ public class AuthController : ControllerBase
         // Pass the users name, email, and reset link to the email service
         // to send the password reset email.
         await _emailService.SendPasswordResetEmailAsync(
-            user.Email!, user.FirstName!, resetLink);
+            user.EMAIL!, user.FIRST_NAME!, resetLink);
         return Ok();
     }
 
@@ -146,8 +146,8 @@ public class AuthController : ControllerBase
 
         LoginRequest newUserInfo = new()
         {
-            Email = email,
-            Password = hasher.HashPassword(user, receivedResetPassword.NewPassword)
+            EMAIL = email,
+            PASSWORD = hasher.HashPassword(user, receivedResetPassword.NewPassword)
         };
 
         int rowsAffected = await _authContext.UpdatePassword(newUserInfo);
@@ -191,7 +191,7 @@ public class AuthController : ControllerBase
         string resetToken = _tokenService.GenerateToken(registeredUser!);
         string resetLink = RESET_LINK_TEMPLATE + resetToken;
 
-        await _emailService.SendRegistrationEmailAsync(registeredUser.Email!, registeredUser.FirstName!, resetLink);
+        await _emailService.SendRegistrationEmailAsync(registeredUser.EMAIL!, registeredUser.FIRST_NAME!, resetLink);
 
         return Ok();
     }
@@ -209,7 +209,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Login(LoginRequest userLoginAttempt)
     {
-        var user = await _authContext.GetUserByEmail(userLoginAttempt.Email!);
+        var user = await _authContext.GetUserByEmail(userLoginAttempt.EMAIL!);
 
         if (user == null || userLoginAttempt.Password == null)
         {
@@ -219,7 +219,7 @@ public class AuthController : ControllerBase
         PasswordHasher<User> passwordHasher = new();
 
 
-        if (passwordHasher.VerifyHashedPassword(user, user.Password!, userLoginAttempt.Password) == PasswordVerificationResult.Failed)
+        if (passwordHasher.VerifyHashedPassword(user, user.PASSWORD!, userLoginAttempt.PASSWORD) == PasswordVerificationResult.Failed)
         {
             return BadRequest();
         }
@@ -260,7 +260,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<ResetPasswordRequest> TestFail([FromBody] ResetPasswordRequest email)
     {
-        email.EmailAddress = "new@email.com";
+        email.EMAIL = "new@email.com";
         return Ok(email);
     }
 
@@ -268,11 +268,11 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<string>> TestPassword()
     {
         PasswordHasher<User> hasher = new();
-        User user = new() { FirstName = "admin", LastName = "admin", Email = "NickLeja@email.com", Password = "admin", Role = 1, Active = true };
+        User user = new() { FIRST_NAME = "admin", LAST_NAME = "admin", EMAIL = "NickLeja@email.com", PASSWORD = "admin", ROLE = 1, ACTIVE = true };
 
         LoginRequest newUserInfo = new()
         {
-            Email = user.Email,
+            EMAIL = user.EMAIL,
             Password = hasher.HashPassword(user, "admin")
         };
 

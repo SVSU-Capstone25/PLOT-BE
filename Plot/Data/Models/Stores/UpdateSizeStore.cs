@@ -17,6 +17,6 @@ namespace Plot.Data.Models.Stores;
 
 public record UpdateSizeStore
 {
-    public int? Width { get; set; }
-    public int? Height { get; set; }
+    public int? WIDTH { get; set; }
+    public int? HEIGHT { get; set; }
 }

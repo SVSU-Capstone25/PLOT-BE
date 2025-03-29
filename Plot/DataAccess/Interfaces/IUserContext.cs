@@ -27,6 +27,6 @@ public interface IUserContext
     Task<int> CreateUser(User user);
     Task<int> AddUserToStore(int userid, int storeid);
     Task<int> DeleteUserFromStore(int userid, int storeid);
-    Task<IEnumerable<UserDTO>?> GetUsersAtStore(int storeid);
     Task<IEnumerable<Store>?> GetStoresForUser(int userid);
+
 }

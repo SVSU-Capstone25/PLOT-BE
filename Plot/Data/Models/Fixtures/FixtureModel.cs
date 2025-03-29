@@ -18,11 +18,11 @@ namespace Plot.Data.Models.Fixtures;
 
 public class FixtureModel
 {
-    public int? FixtureId { get; set; }
-    public string? Name { get; set; }
-    public int? Width { get; set; }
-    public int? Height { get; set; }
-    public float? LFCapacity { get; set; }
-    public int? StoreId { get; set; }
-    public IFormFile? FixtureImage { get; set; }
+    public int? TUID { get; set; }
+    public string? NAME { get; set; }
+    public int? WIDTH { get; set; }
+    public int? HEIGHT { get; set; }
+    public float? LF_CAP { get; set; }
+    public int? STORE_TUID { get; set; }
+    public IFormFile? ICON { get; set; }
 }

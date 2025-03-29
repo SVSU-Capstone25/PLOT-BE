@@ -44,9 +44,32 @@ public class FixturesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<FloorsetFixtureInformation> GetFixtureInformation(int floorsetId)
+    public async ActionResult<FloorsetFixtureInformation> GetFixtureInformation(int floorsetId, int storeId)
     {
-        return NoContent();
+        FloorsetFixtureInformation ffi = new FloorsetFixtureInformation();
+
+        ffi.FixtureModels = await _fixtureContext.GetFixtureModels(storetId);
+
+        if (ffi.FixtureModels == null) 
+        {
+            return InternalServerError();
+        }
+
+        ffi.FixtureInstances = await _fixtureContext.GetFixtureInstances(floorsetId);
+
+        if (ffi.FixtureInstances == null)
+        {
+            return InternalServerError();
+        }
+
+        ffi.Allocations = await _salesContext.GetSalesAllocations(floorsetId);
+
+        if (ffi.Allocations == null)
+        {
+            return InternalServerError();
+        }
+        
+        return Ok(ffi);
     }
 
     /// <summary>
@@ -62,8 +85,9 @@ public class FixturesController : ControllerBase
     [HttpPatch("{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<FloorsetFixtureInformation> UpdateFixtureInformation(int floorsetId, UpdateFloorsetFixtureInformation floorsetFixtureInformation)
+    public ActionResult<FloorsetFixtureInformation> UpdateFixtureInformation(int floorsetId, UpdateFloorsetFixtureInformation ffi)
     {
+        
         return Ok();
     }
 }

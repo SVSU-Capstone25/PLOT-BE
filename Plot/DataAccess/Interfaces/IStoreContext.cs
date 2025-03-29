@@ -24,4 +24,6 @@ public interface IStoreContext
     Task<int> UpdatePublicInfoStore(int storeId, UpdatePublicInfoStore store);
     Task<int> UpdateSizeStore(int storeId, UpdateSizeStore store);
     Task<int> DeleteStoreById(int storeId);
+    Task<IEnumerable<UserDTO>?> GetUsersAtStore(int storeid);
+    Task<int> CreateStoreEntry(CreateStore store);
 }

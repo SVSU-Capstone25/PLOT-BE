@@ -30,8 +30,8 @@ public class UserContext : DbContext, IUserContext
         {
             using SqlConnection connection = GetConnection();
 
-            var GetUsersSQL = "SELECT TUID As 'UserId', FIRST_NAME As 'FirstName', LAST_NAME As " +
-                              "'LastName', EMAIL As 'Email', ACTIVE As 'Active', ROLE_TUID As 'Role' " +
+            var GetUsersSQL = "SELECT TUID, FIRST_NAME, LAST_NAME, " +
+                              "EMAIL, ACTIVE, ROLE_TUID " +
                               "FROM Users " +
                               "WHERE ACTIVE = 1;";
 
@@ -50,8 +50,8 @@ public class UserContext : DbContext, IUserContext
         {
             using SqlConnection connection = GetConnection();
 
-            var GetUserByIdSQL = "SELECT TUID As 'UserId', FIRST_NAME As 'FirstName', LAST_NAME As " +
-                              "'LastName', EMAIL As 'Email', ACTIVE As 'Active', ROLE_TUID As 'Role' " +
+            var GetUserByIdSQL = "SELECT TUID, FIRST_NAME, LAST_NAME, " +
+                              "EMAIL, ACTIVE, ROLE_TUID " +
                               "FROM Users " +
                               "WHERE TUID = " + userId + ";";
 
@@ -71,9 +71,9 @@ public class UserContext : DbContext, IUserContext
             using SqlConnection connection = GetConnection();
 
             var UpdateUserSQL = "UPDATE Users" +
-                                "SET FIRST_NAME = " + user.FirstName +
-                                ", LAST_NAME = " + user.LastName + 
-                                ", ROLE_TUID = " + user.role + 
+                                "SET FIRST_NAME = " + user.FIRST_NAME +
+                                ", LAST_NAME = " + user.LAST_NAME + 
+                                ", ROLE_TUID = " + user.ROLE + 
                                 "WHERE TUID = " + userId + ";";
 
             return await connection.ExecuteAsync(UpdateUserSQL);
@@ -94,7 +94,7 @@ public class UserContext : DbContext, IUserContext
             using SqlConnection connection = GetConnection();
 
             var CreateHiring = "INSERT INTO Access (USER_TUID, STORE_TUID)" +
-                                   "VALUES ('" + userid+"','" + storeid + "');";
+                                   "VALUES ('" + userid+"', '" + storeid + "');";
 
             return await connection.ExecuteAsync(CreateHiring);
         }
@@ -110,7 +110,7 @@ public class UserContext : DbContext, IUserContext
         {
             using SqlConnection connection = GetConnection();
 
-            var DeleteRelation = "DELETE FROM Access" +
+            var DeleteRelation = "DELETE FROM Access " +
                                    "WHERE USER_TUID = " +userid + " AND STORE_TUID = " + storeid;
 
             return await connection.ExecuteAsync(DeleteRelation);
@@ -121,36 +121,16 @@ public class UserContext : DbContext, IUserContext
             return 0;
         }
     }
-    public async Task<IEnumerable<UserDTO>?> GetUsersAtStore(int storeid)
+
+     public async Task<IEnumerable<Store>?> GetStoresForUser(int userid)
     {
         try
         {
             using SqlConnection connection = GetConnection();
 
-            var GetUserByIdSQL = "SELECT Users.TUID As 'UserId', Users.FIRST_NAME As 'FirstName', Users.LAST_NAME As " +
-                              "'LastName', Users.EMAIL As 'Email', Users.ACTIVE As 'Active', Users.ROLE_TUID As 'Role' " +
-                              "FROM Users " +
-                              "INNER JOIN Access " +
-                              "ON Users.TUID = Access.USER_TUID " +
-                              "WHERE Access.STORE_TUID = " + storeid + ";";
-
-            return await connection.QueryAsync<UserDTO>(GetUserByIdSQL);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception));
-            return [];
-        }
-    }
-    public async Task<IEnumerable<Store>?> GetStoresForUser(int userid)
-    {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-
-            var GetStoresSQL = "SELECT Store.TUID As 'StoreId', Store.NAME As 'Name', Store.ADDRESS As " +
-                              "'Address', Store.CITY As 'City', Store.STATE As 'State', Store.ZIP As 'ZipCode', " +
-                              "Store.WIDTH As 'Width', Store.HEIGHT As 'Height, Store.BLUEPRINT_IMAGE As 'BlueprintImage'" +
+            var GetStoresSQL = "SELECT Store.TUID, Store.NAME, Store.ADDRESS, " +
+                              "Store.CITY, Store.STATE, Store.ZIP, " +
+                              "Store.WIDTH, Store.HEIGHT, Store.BLUEPRINT_IMAGE, " +
                               "FROM Store " +
                               "INNER JOIN Access " +
                               "ON Store.TUID = Access.STORE_TUID " +
@@ -164,5 +144,4 @@ public class UserContext : DbContext, IUserContext
             return [];
         }
     }
-
 }
