@@ -154,3 +154,5 @@ Content-Type: application/json
 Accept: application/json
 
 ###
+GET {{Plot_HostAddress}}/api/stores
+Accept: application/json

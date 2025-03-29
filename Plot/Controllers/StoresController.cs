@@ -1,6 +1,6 @@
 /*
     Filename: StoresController.cs
-    Part of Project: PLOT/PLOT-BE/Plot/Controllers
+    Part of Project: PLOT/PLOT-BE/Controllers
 
     File Purpose:
     This file contains the store controller endpoint mapping,
@@ -38,9 +38,9 @@ public class StoresController : ControllerBase
     [Authorize(Policy = "Owner")]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<Store[]> GetAll()
+    public async ActionResult<Store[]> GetAll()
     {
-        return NoContent();
+        return OK(await _storeContext.getStores());
     }
 
     /// <summary>

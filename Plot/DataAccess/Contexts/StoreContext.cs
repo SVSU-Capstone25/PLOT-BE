@@ -1,6 +1,6 @@
 /*
     Filename: StoreContext.cs
-    Part of Project: PLOT/PLOT-BE/Plot/DataAccess/Contexts
+    Part of Project: PLOT/PLOT-BE/DataAccess/Contexts
 
     File Purpose:
     This file contains the database context for database operations 
@@ -14,6 +14,8 @@
     Written by: Jordan Houlihan
 */
 
+using Dapper;
+using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Stores;
 using Plot.DataAccess.Interfaces;
 
@@ -23,7 +25,14 @@ public class StoreContext : DbContext, IStoreContext
 {
     public Task<IEnumerable<Store[]>?> GetStores()
     {
-        throw new NotImplementedException();
+        using SqlConnection connection = GetConnection();
+
+        var GetStoresSQL = "SELECT TUID As 'StoreId', NAME As 'Name', ADDRESS As " +
+                          "'Address', CITY As 'City', STATE As 'State', ZIP As 'ZipCode', " +
+                          " WIDTH As 'Width', HEIGHT As 'Height', BLUEPRINT_IMAGE As 'BlueprintImage'"
+                          "FROM Stores";
+
+        return await connection.QueryAsync<Store>(GetStoresSQL);
     }
 
     public Task<Store?> GetStoreById(int storeId)
