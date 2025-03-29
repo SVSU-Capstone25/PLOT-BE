@@ -149,3 +149,13 @@ Content-Type: application/json
 Accept: application/json
 
 ###
+
+POST {{Plot_HostAddress}}/api/auth/test-get-token
+Content-Type: application/json
+Accept: application/json
+
+###
+
+GET {{Plot_HostAddress}}/api/auth/test-validate
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImVtYWlsQGVtYWlsLmNvbSIsIlJvbGUiOiIxIiwiVXNlcklkIjoiMSIsIm5iZiI6MTc0MzE5OTE2MCwiZXhwIjoxNzQzMjAyNzYwLCJpYXQiOjE3NDMxOTkxNjAsImlzcyI6Imh0dHA6Ly9iYWNrZW5kOjgwODUiLCJhdWQiOiJodHRwOi8vZnJvbnRlbmQ6ODA4MCJ9.c2RWQr3KaY4jEo_hZy37RMxCWp191mpn1jSg-irlKz4

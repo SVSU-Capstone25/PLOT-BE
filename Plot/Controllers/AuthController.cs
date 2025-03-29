@@ -13,6 +13,7 @@
     Written by: Michael Polhill, Jordan Houlihan
 */
 
+using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -228,6 +229,9 @@ public class AuthController : ControllerBase
 
         Response.Cookies.Append("Auth", token, new CookieOptions
         {
+            HttpOnly = true,
+            Secure = false, // Set to false for localhost testing
+            SameSite = SameSiteMode.Lax,
             Expires = DateTimeOffset.UtcNow.AddMinutes(30)
         });
 
@@ -246,6 +250,51 @@ public class AuthController : ControllerBase
     {
         return Ok();
     }
+
+
+    [HttpPost("test-get-token")]
+    public IActionResult testGetToken()
+    {
+        var user = new User
+        {
+            Email="email@email.com",
+            Role=3,
+            UserId=1
+        };
+
+        var testToken=_tokenService.GenerateToken(user);
+
+        return Ok(testToken);
+    }
+
+    [HttpGet("test-validate")]
+    public IActionResult testValidate()
+    {
+        Console.WriteLine(Request.Headers);
+
+        var authHeader = Request.Headers["Authorization"].ToString();
+        Console.WriteLine(authHeader);
+        var token = authHeader.Substring("Bearer ".Length).Trim();
+        Console.WriteLine(token);
+        
+
+
+
+        var principal=_tokenService.ValidateTokenTest(token);
+        Console.WriteLine(principal);
+
+
+
+
+
+        
+
+
+
+        return Ok(principal);
+    }
+
+
     // Small test for endpoints----------------------------------------------------------------------------
     [Authorize(Policy = "Owner")]
     [HttpPost("auth-test")]
