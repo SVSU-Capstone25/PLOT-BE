@@ -23,16 +23,24 @@ namespace Plot.DataAccess.Contexts;
 
 public class StoreContext : DbContext, IStoreContext
 {
-    public Task<IEnumerable<Store[]>?> GetStores()
+    public async Task<IEnumerable<Store[]>?> GetStores()
     {
-        using SqlConnection connection = GetConnection();
+        try{
+            using SqlConnection connection = GetConnection();
 
-        var GetStoresSQL = "SELECT TUID As 'StoreId', NAME As 'Name', ADDRESS As " +
+            var GetStoresSQL = "SELECT TUID As 'StoreId', NAME As 'Name', ADDRESS As " +
                           "'Address', CITY As 'City', STATE As 'State', ZIP As 'ZipCode', " +
-                          " WIDTH As 'Width', HEIGHT As 'Height', BLUEPRINT_IMAGE As 'BlueprintImage'"
+                          " WIDTH As 'Width', HEIGHT As 'Height', BLUEPRINT_IMAGE As 'BlueprintImage'" + 
                           "FROM Stores";
 
-        return await connection.QueryAsync<Store>(GetStoresSQL);
+            return await connection.QueryAsync<Store[]>(GetStoresSQL);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return [];
+        }
+        
     }
 
     public Task<Store?> GetStoreById(int storeId)

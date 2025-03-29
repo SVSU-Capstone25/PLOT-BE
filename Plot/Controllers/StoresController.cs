@@ -38,9 +38,9 @@ public class StoresController : ControllerBase
     [Authorize(Policy = "Owner")]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async ActionResult<Store[]> GetAll()
+    public async Task<ActionResult<IEnumerable<Store[]>>> GetAll()
     {
-        return OK(await _storeContext.getStores());
+        return Ok(await _storeContext.GetStores());
     }
 
     /// <summary>
