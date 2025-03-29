@@ -16,7 +16,7 @@
 
 using Dapper;
 using Microsoft.Data.SqlClient;
-using Plot.Data.Models.Users;
+using Plot.Data.Models.Stores;
 using Plot.DataAccess.Interfaces;
 
 namespace Plot.DataAccess.Contexts;
@@ -44,7 +44,7 @@ public class StoreContext : DbContext, IStoreContext
         }
     }
 
-    public async Task<Store?> GetStoreById(int storeId)
+    public async Task<IEnumerable<Store>> GetStoreById(int storeId)
     {
         try
         {
@@ -65,7 +65,7 @@ public class StoreContext : DbContext, IStoreContext
         }
     }
 
-    public async Task<Store?> UpdatePublicInfoStore(int storeId, UpdatePublicInfoStore store)
+    public async Task<int> UpdatePublicInfoStore(int storeId, UpdatePublicInfoStore store)
     {
          try
         {
@@ -79,15 +79,15 @@ public class StoreContext : DbContext, IStoreContext
                                 ", BLUEPRINT_IMAGE = " + store.BlueprintImage + 
                                 "WHERE TUID = " + storeId;
 
-            return await connection.Execute(UpdateStoreSQL);
+            return await connection.ExecuteAsync(UpdateStoreSQL);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return 0;
         }
     }
-      public async Task<Store?> UpdateSizeStore(int storeId, UpdateSizeStore store)
+      public async Task<int> UpdateSizeStore(int storeId, UpdateSizeStore store)
     {
          try
         {
@@ -98,12 +98,12 @@ public class StoreContext : DbContext, IStoreContext
                                 ", HEIGHT = " + store.Height + 
                                 "WHERE TUID = " + storeId;
 
-            return await connection.Execute(UpdateStoreSQL);
+            return await connection.ExecuteAsync(UpdateStoreSQL);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return 0;
         }
     }
 
@@ -116,12 +116,12 @@ public class StoreContext : DbContext, IStoreContext
             var DeleteStoreSQL = "DELETE FROM Store" +
                                 "WHERE TUID = " + storeId;
 
-            return await connection.Execute(DeleteStoreSQL);
+            return await connection.ExecuteAsync(DeleteStoreSQL);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return 0;
         }
     }
 }

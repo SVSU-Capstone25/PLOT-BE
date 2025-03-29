@@ -13,7 +13,8 @@
 
     Written by: Jordan Houlihan
 */
-
+using Dapper;
+using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Allocations;
 using Plot.DataAccess.Interfaces;
 
@@ -21,18 +22,15 @@ namespace Plot.DataAccess.Contexts;
 
 public class SalesContext : DbContext, ISalesContext
 {
-    public Task<IEnumerable<FixtureAllocations>> GetFixtureAllocations(int floorsetId)
+    public async Task<IEnumerable<FixtureAllocations>> GetFixtureAllocations(int floorsetId)
     {
          try
         {
             using SqlConnection connection = GetConnection();
 
-            var GetStoresSQL = "SELECT CATEGORY As 'Category', ALLOCATED_LF As 'LFAllocated'"+
-                              ", TOT_LF As 'LFTarget'"+
-                              "FROM Store"+
-                              "WHERE FLOORSET_TUID = " + floorsetId + ";";
+            var GetFixtureInstacesSQL = "SELECT TOT_LF, ALLOCATED_LF ";
             
-            return await connection.QueryAsync<Store>(GetStoresSQL);
+            return await connection.QueryAsync<FixtureAllocations>(GetFixtureInstacesSQL);
         }
         catch (SqlException exception)
         {

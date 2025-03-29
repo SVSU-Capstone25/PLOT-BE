@@ -44,30 +44,30 @@ public class FloorsetContext : DbContext, IFloorsetContext
 
         // throw new NotImplementedException();
     }
-    public Task<Floorset> CreateFloorset(CreateFloorset floorset)
+    public async Task<int> CreateFloorset(CreateFloorset floorset)
     {
         try
         {
             using SqlConnection connection = GetConnection();
 
-            var CreateFloorset = "INSERT INTO Floorsets (NAME, STORE_TUID, DATE_CREATED, CREATED_BY," +
+            var CreateFloorsetSQL = "INSERT INTO Floorsets (NAME, STORE_TUID, DATE_CREATED, CREATED_BY," +
                                     " DATE_MODIFIED, MODIFIED_BY)" +
-                                   "VALUES ('" + floorset.Name +"','" + floorset.storeId + "','" +
+                                   "VALUES ('" + floorset.Name +"','" + floorset.StoreId + "','" +
                                    floorset.DateCreated + "','"  + floorset.CreatedBy + "','" +
                                    floorset.DateModified + "','" + floorset.ModifiedBy + "');";
 
-            return await connection.Execute(CreateFloorset);
+            return await connection.ExecuteAsync(CreateFloorsetSQL);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return 0;
         }
         //insert into Floorset Table
         //throw new NotImplementedException();
     }
 
-    public Task<Floorset?> UpdateFloorsetById(int floorsetId, UpdatePublicInfoFloorset floorset)
+    public async Task<int> UpdateFloorsetById(int floorsetId, UpdatePublicInfoFloorset floorset)
     {
         try
         {
@@ -79,17 +79,17 @@ public class FloorsetContext : DbContext, IFloorsetContext
                                     ", MODIFIED_BY = " + floorset.ModifiedBy + 
                                     "WHERE TUID = " + floorsetId;
 
-            return await connection.Execute(UpdateFloorset);
+            return await connection.ExecuteAsync(UpdateFloorset);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return 0;
         }
         //Update Statement
         //throw new NotImplementedException();
     }
-    public Task<int> DeleteFloorsetById(int floorsetId)
+    public async Task<int> DeleteFloorsetById(int floorsetId)
     {
 
         try
@@ -99,12 +99,12 @@ public class FloorsetContext : DbContext, IFloorsetContext
             var DeleteFloorset = "DELETE FROM Floorsets" + 
                                     "WHERE TUID = " + floorsetId;
 
-            return await connection.Execute(DeleteFloorset);
+            return await connection.ExecuteAsync(DeleteFloorset);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return 0;
         }
         //Delete Statement
         //throw new NotImplementedException();

@@ -13,7 +13,8 @@
 
     Written by: Jordan Houlihan
 */
-
+using Dapper;
+using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Fixtures;
 using Plot.DataAccess.Interfaces;
 
@@ -21,33 +22,34 @@ namespace Plot.DataAccess.Contexts;
 
 public class FixtureContext : DbContext, IFixtureContext
 {
-    public Task<FixtureInstance> CreateFixtureInstance(CreateFixtureInstance fixtureInstance)
+    public async Task<int> CreateFixtureInstance(CreateFixtureInstance fixtureInstance)
     {
          try
         {
             using SqlConnection connection = GetConnection();
 
             var CreateFixtureInstance = "INSERT INTO Floorsets_Fixtures (FLOORSET_TUID, " + 
-                                    "FIXTURE_TUID, X_POS,Y_POS, HANGER_STACK, ALLOCATED_LF,"+
+                                    "FIXTURE_TUID, X_POS,Y_POS, HANGER_STACK, ALLOCATED_LF, TOT_LF,"+
                                     " CATEGORY, NOTE )" +
                                    "VALUES ('" + fixtureInstance.FloorsetId +"','" + 
                                    fixtureInstance.FixtureId + "','" +
                                    fixtureInstance.XPosition + "','"  + fixtureInstance.YPosition + "','" +
                                    fixtureInstance.HangerStack + "','" + fixtureInstance.LFAllocated +
+                                   "','" + fixtureInstance.LFTarget+
                                     "','" + fixtureInstance.Category + "','" + fixtureInstance.Note +"');";
 
-            return await connection.Execute(CreateFixtureInstance);
+            return await connection.ExecuteAsync(CreateFixtureInstance);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return 0;
         }
         
         //throw new NotImplementedException();
     }
 
-    public Task<FixtureModel> CreateFixtureModel(CreateFixtureModel fixtureModel)
+    public async Task<int> CreateFixtureModel(CreateFixtureModel fixtureModel)
     {
          try
         {
@@ -61,55 +63,55 @@ public class FixtureContext : DbContext, IFixtureContext
                                    fixtureModel.FixtureImage + "','" + fixtureModel.StoreId +
                                     "');";
 
-            return await connection.Execute(CreateFixtureModel);
+            return await connection.ExecuteAsync(CreateFixtureModel);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return 0;
         }
         //throw new NotImplementedException();
     }
 
-    public Task<int> DeleteFixtureInstanceById(int fixtureInstanceId)
+    public async Task<int> DeleteFixtureInstanceById(int fixtureInstanceId)
     {
          try
         {
             using SqlConnection connection = GetConnection();
 
-            var DeleteFixtureInstance = "DELETE FROM Floorsets_Fixtures"+
+            var DeleteFixtureInstance = "DELETE FROM Floorsets_Fixtures "+
                                             "WHERE TUID =" + fixtureInstanceId +";";
 
-            return await connection.Execute(DeleteFixtureInstance);
+            return await connection.ExecuteAsync(DeleteFixtureInstance);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return 0;
         }
         //throw new NotImplementedException();
     }
 
-    public Task<int> DeleteFixtureModelById(int fixtureModelId)
+    public async Task<int> DeleteFixtureModelById(int fixtureModelId)
     {
         try
         {
             using SqlConnection connection = GetConnection();
 
-            var DeleteFixtureInstance = "DELETE FROM Fixtures"+
+            var DeleteFixtureInstance = "DELETE FROM Fixtures "+
                                             "WHERE TUID =" + fixtureModelId +";";
 
-            return await connection.Execute(DeleteFixtureInstance);
+            return await connection.ExecuteAsync(DeleteFixtureInstance);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return 0;
         }
         //throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<FixtureInstance>> GetFixtureInstances(int floorsetId)
+    public async Task<IEnumerable<FixtureInstance>> GetFixtureInstances(int floorsetId)
     {
         try
         {
@@ -133,7 +135,7 @@ public class FixtureContext : DbContext, IFixtureContext
         //throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<FixtureModel>> GetFixtureModels(int StoreId)
+    public async Task<IEnumerable<FixtureModel>> GetFixtureModels(int StoreId)
     {
         try
         {
@@ -145,7 +147,7 @@ public class FixtureContext : DbContext, IFixtureContext
                                    "FROM Fixtures WHERE STORE_TUID = @StoreId;";
             
 
-            return await connection.QueryAsync<FixtureModels>(GetFixtureModelsbyId);
+            return await connection.QueryAsync<FixtureModel>(GetFixtureModelsbyId);
         }
         catch (SqlException exception)
         {
@@ -155,13 +157,13 @@ public class FixtureContext : DbContext, IFixtureContext
         //throw new NotImplementedException();
     }
 
-    public Task<FixtureInstance> UpdateFixtureInstanceById(UpdateFixtureInstance fixtureInstance)
+    public async Task<int> UpdateFixtureInstanceById(UpdateFixtureInstance fixtureInstance)
     {
         try
         {
             using SqlConnection connection = GetConnection();
 
-            var UpdateFloorset = "UPDATE Floorsets_Fixtures" + 
+            var UpdateFloorset = "UPDATE Floorsets_Fixtures " + 
                                     "SET X_POS = " + fixtureInstance.XPosition +
                                     ",Y_POS = " + fixtureInstance.YPosition +
                                     ",ALLOCATED_LF = " + fixtureInstance.LFAllocated +
@@ -169,19 +171,19 @@ public class FixtureContext : DbContext, IFixtureContext
                                     ",TOT_LF = " + fixtureInstance.LFTarget +
                                     ",CATEGORY = " + fixtureInstance.Category+
                                     ",NOTE = " + fixtureInstance.Note +
-                                    "WHERE TUID = " + fixtureInstance.FixtureInstanceId;
+                                    " WHERE TUID = " + fixtureInstance.FixtureInstanceId;
 
-            return await connection.Execute(UpdateFloorset);
+            return await connection.ExecuteAsync(UpdateFloorset);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return 0;
         }
         //throw new NotImplementedException();
     }
 
-    public Task<FixtureModel> UpdateFixtureModelById(UpdateFixtureModel fixtureModel)
+    public async Task<int> UpdateFixtureModelById(UpdateFixtureModel fixtureModel)
     {
         try
         {
@@ -195,12 +197,12 @@ public class FixtureContext : DbContext, IFixtureContext
                                     "ICON = " + fixtureModel.FixtureImage +
                                     "WHERE TUID = " + fixtureModel.FixtureId;
 
-            return await connection.Execute(UpdateFloorset);
+            return await connection.ExecuteAsync(UpdateFloorset);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return 0;
         }
         //throw new NotImplementedException();
     }

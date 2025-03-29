@@ -17,6 +17,7 @@
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Users;
+using Plot.Data.Models.Stores;
 using Plot.DataAccess.Interfaces;
 
 namespace Plot.DataAccess.Contexts;
@@ -43,7 +44,7 @@ public class UserContext : DbContext, IUserContext
         }
     }
 
-    public async Task<UserDTO?> GetUserById(int userId)
+    public async Task<IEnumerable<UserDTO>?> GetUserById(int userId)
     {
          try
         {
@@ -63,7 +64,7 @@ public class UserContext : DbContext, IUserContext
         }
     }
 
-    public async Task<UserDTO?> UpdateUserPublicInfo(int userId, UpdatePublicInfoUser user)
+    public async Task<int> UpdateUserPublicInfo(int userId, UpdatePublicInfoUser user)
     {
          try
         {
@@ -72,14 +73,14 @@ public class UserContext : DbContext, IUserContext
             var UpdateUserSQL = "UPDATE Users" +
                                 "SET FIRST_NAME = " + user.FirstName +
                                 ", LAST_NAME = " + user.LastName + 
-                                "WHERE TUID = " + userId;
+                                "WHERE TUID = " + userId + ";";
 
-            return await connection.Execute(UpdateUserSQL);
+            return await connection.ExecuteAsync(UpdateUserSQL);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return 0;
         }
     }
 
@@ -92,18 +93,18 @@ public class UserContext : DbContext, IUserContext
             var DeleteUserSQL = "DELETE FROM Users" + 
                                 "WHERE TUID = " + userId;
 
-            return await connection.Execute(DeleteUserSQL);
+            return await connection.ExecuteAsync(DeleteUserSQL);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return 0;
         }
     }
 
 
 
-    public async Task<User> CreateUser(User user)
+    public async Task<int> CreateUser(User user)
     {
         try
         {
@@ -115,15 +116,15 @@ public class UserContext : DbContext, IUserContext
                                    user.Email + "','"  + user.Password + "','" +
                                    user.Role + "','" + user.Active + "');";
 
-            return await connection.Execute(CreateUser);
+            return await connection.ExecuteAsync(CreateUser);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return 0;
         }
     }
-    public async Task<User> AddUserToStore(int userid, int storeid)
+    public async Task<int> AddUserToStore(int userid, int storeid)
     {
         try
         {
@@ -132,15 +133,15 @@ public class UserContext : DbContext, IUserContext
             var CreateHiring = "INSERT INTO Access (USER_TUID, STORE_TUID)" +
                                    "VALUES ('" + userid+"','" + storeid + "');";
 
-            return await connection.Execute(CreateHiring);
+            return await connection.ExecuteAsync(CreateHiring);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return 0;
         }
     }
-    public async Task<User> DeleteUserFromStore(int userid, int storeid)
+    public async Task<int> DeleteUserFromStore(int userid, int storeid)
     {
         try
         {
@@ -149,15 +150,15 @@ public class UserContext : DbContext, IUserContext
             var DeleteRelation = "DELETE FROM Access" +
                                    "WHERE USER_TUID = " +userid + " AND STORE_TUID = " + storeid;
 
-            return await connection.Execute(DeleteRelation);
+            return await connection.ExecuteAsync(DeleteRelation);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return 0;
         }
     }
-    public async Task<User> GetUsersAtStore(int storeid)
+    public async Task<IEnumerable<UserDTO>?> GetUsersAtStore(int storeid)
     {
         try
         {
@@ -166,11 +167,11 @@ public class UserContext : DbContext, IUserContext
             var GetUserByIdSQL = "SELECT Users.TUID As 'UserId', Users.FIRST_NAME As 'FirstName', Users.LAST_NAME As " +
                               "'LastName', Users.EMAIL As 'Email', Users.ACTIVE As 'Active', Users.ROLE_TUID As 'Role' " +
                               "FROM Users " +
-                              "INNER JOIN Access" +
-                              "ON Users.TUID = Access.USER_TUID" +
+                              "INNER JOIN Access " +
+                              "ON Users.TUID = Access.USER_TUID " +
                               "WHERE Access.STORE_TUID = " + storeid + ";";
 
-            return await connection.Execute(GetUserByIdSQL);
+            return await connection.QueryAsync<UserDTO>(GetUserByIdSQL);
         }
         catch (SqlException exception)
         {
@@ -178,7 +179,7 @@ public class UserContext : DbContext, IUserContext
             return [];
         }
     }
-    public async Task<Store> GetStoresForUser(int userid)
+    public async Task<IEnumerable<Store>?> GetStoresForUser(int userid)
     {
         try
         {
@@ -187,10 +188,10 @@ public class UserContext : DbContext, IUserContext
             var GetStoresSQL = "SELECT Store.TUID As 'StoreId', Store.NAME As 'Name', Store.ADDRESS As " +
                               "'Address', Store.CITY As 'City', Store.STATE As 'State', Store.ZIP As 'ZipCode', " +
                               "Store.WIDTH As 'Width', Store.HEIGHT As 'Height, Store.BLUEPRINT_IMAGE As 'BlueprintImage'" +
-                              "FROM Store" +
-                              "INNER JOIN Access" +
-                              "ON Store.TUID = Access.STORE_TUID" +
-                              "WHERE Access.USER_TUID ="+ userid +";";
+                              "FROM Store " +
+                              "INNER JOIN Access " +
+                              "ON Store.TUID = Access.STORE_TUID " +
+                              "WHERE Access.USER_TUID = "+ userid +";";
             
             return await connection.QueryAsync<Store>(GetStoresSQL);
         }

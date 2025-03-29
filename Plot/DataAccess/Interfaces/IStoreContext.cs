@@ -19,9 +19,9 @@ namespace Plot.DataAccess.Interfaces;
 
 public interface IStoreContext
 {
-    Task<IEnumerable<Store>?> GetStores();
-    Task<Store?> GetStoreById(int storeId);
-    Task<Store?> UpdatePublicInfoStore(int storeId, UpdatePublicInfoStore store);
-    Task<Store?> UpdateSizeStore(int storeId, UpdateSizeStore store);
+    Task<IEnumerable<Store>> GetStores();
+    Task<IEnumerable<Store>> GetStoreById(int storeId);
+    Task<int> UpdatePublicInfoStore(int storeId, UpdatePublicInfoStore store);
+    Task<int> UpdateSizeStore(int storeId, UpdateSizeStore store);
     Task<int> DeleteStoreById(int storeId);
 }

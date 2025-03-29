@@ -21,8 +21,6 @@ public record CreateFixtureModel
     public int? Width { get; set; }
     public int? Height { get; set; }
     public float? LFCapacity { get; set; }
-    public int? HangerStack { get; set; }
-    public float? LFTotal { get; set; }
     public int? StoreId { get; set; }
     //TODO: define how we convert this file to 
     // be store in the database
