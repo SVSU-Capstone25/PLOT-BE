@@ -23,8 +23,6 @@ public class FixtureModel
     public int? Width { get; set; }
     public int? Height { get; set; }
     public float? LFCapacity { get; set; }
-    public int? HangerStack { get; set; }
-    public float? LFTarget { get; set; }
     public int? StoreId { get; set; }
     public IFormFile? FixtureImage { get; set; }
 }

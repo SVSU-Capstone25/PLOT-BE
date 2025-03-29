@@ -17,7 +17,8 @@ namespace Plot.Data.Models.Fixtures;
 
 public record CreateFixtureInstance
 {
-    public FixtureModel? Fixture { get; set; }
+    public int? FloorsetId { get; set; }
+    public int? FixtureId { get; set; }
     public double? XPosition { get; set; }
     public double? YPosition { get; set; }
     public double? LFAllocated { get; set; }

@@ -24,5 +24,7 @@ public record CreateFixtureModel
     public int? HangerStack { get; set; }
     public float? LFTotal { get; set; }
     public int? StoreId { get; set; }
+    //TODO: define how we convert this file to 
+    // be store in the database
     public IFormFile? FixtureImage { get; set; }
 }

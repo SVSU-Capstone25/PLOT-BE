@@ -26,6 +26,5 @@ public record CreateStore
     public string? ZipCode { get; set; }
     public int? Width { get; set; }
     public int? Height { get; set; }
-    public UserDTO[]? Employees { get; set; }
     public IFormFile? BlueprintImage { get; set; }
 }
