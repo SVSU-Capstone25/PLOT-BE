@@ -36,14 +36,15 @@ public class FloorsetsController : ControllerBase
     /// </summary>
     /// <param name="storeId">The id of the store as a route parameter in the url.</param>
     /// <returns>A list of floorset objects.</returns>
-    [Authorize]
+    // [Authorize]
     [HttpGet("{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<Floorset[]> GetFloorsetsByStore(int storeId)
+    public async Task<ActionResult<IEnumerable<Floorset>>> GetFloorsetsByStore(int storeId)
     {
-        return NoContent();
+        return Ok(await _floorsetContext.GetFloorsetsByStoreId(storeId));
+        // return NoContent();
     }
 
     /// <summary>
