@@ -85,9 +85,43 @@ public class FixturesController : ControllerBase
     [HttpPatch("{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<FloorsetFixtureInformation> UpdateFixtureInformation(int floorsetId, UpdateFloorsetFixtureInformation ffi)
+    public async ActionResult UpdateFixtureInformation(int floorsetId, int storeId, UpdateFloorsetFixtureInformation uffi)
     {
+        for(int i = 0; i<uffi.FixtureInstances.size; i++)
+        {
+            var n = await _fixtureContext.UpdateFixtureInstanceById(uffi.FixtureInstances[i]);
+        }
+        for(int i = 0; i<uffi.DeletedFixtureInstances.size; i++)
+        {
+            var n = await _fixtureContext.DeleteFixtureInstanceById(uffi.DeletedFixtureInstances[i]);
+        }
         
+      
         return Ok();
     }
+
+    /// <summary>
+    /// Send a request to 
+    /// </summary>
+    /// <param name="fixtureModel"></param>
+    /// <returns></returns>
+    [Authorize(Policy = "Manager")]
+    [HttpPatch("{storeId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async ActionResult<FixtureModel> CreateModel(CreateFixtureModel fixtureModel)
+    {
+        return OK(await _fixtureContext.CreateFixtureModel(fixtureModel));
+    }
+
+    [Authorize(Policy = "Manager")]
+    [HttpPatch("{storeId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async ActionResult DeleteModel(int modelId)
+    {
+        return OK(await _fixtureContext.DeleteFixtureModelById(modelId));
+    }
+    
+
 }

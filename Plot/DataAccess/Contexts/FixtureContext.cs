@@ -117,7 +117,7 @@ public class FixtureContext : DbContext, IFixtureContext
         {
             using SqlConnection connection = GetConnection();
 
-            var GetFixtureInstancesbyId = "SELECT TUID * " +
+            var GetFixtureInstancesbyId = "SELECT * " +
                                           "FROM Floorsets_Fixtures " +
                                           "WHERE FLOORSET_TUID = @floorsetId;";
             
@@ -161,12 +161,12 @@ public class FixtureContext : DbContext, IFixtureContext
 
             var UpdateFloorset = "UPDATE Floorsets_Fixtures " + 
                                     "SET X_POS = " + fixtureInstance.X_POS +
-                                    ",Y_POS = " + fixtureInstance.Y_POS +
-                                    ",ALLOCATED_LF = " + fixtureInstance.ALLOCATED_LF +
-                                    ",HANGER_STACK = " + fixtureInstance.HANGER_STACK + 
-                                    ",TOT_LF = " + fixtureInstance.TOT_LF +
-                                    ",CATEGORY = " + fixtureInstance.CATEGORY +
-                                    ",NOTE = " + fixtureInstance.NOTE +
+                                    ", Y_POS = " + fixtureInstance.Y_POS +
+                                    ", ALLOCATED_LF = " + fixtureInstance.ALLOCATED_LF +
+                                    ", HANGER_STACK = " + fixtureInstance.HANGER_STACK + 
+                                    ", TOT_LF = " + fixtureInstance.TOT_LF +
+                                    ", CATEGORY = " + fixtureInstance.CATEGORY +
+                                    ", NOTE = " + fixtureInstance.NOTE +
                                     " WHERE TUID = " + fixtureInstance.TUID;
 
             return await connection.ExecuteAsync(UpdateFloorset);
@@ -185,12 +185,12 @@ public class FixtureContext : DbContext, IFixtureContext
         {
             using SqlConnection connection = GetConnection();
 
-            var UpdateFloorset = "UPDATE Fixtures" + 
+            var UpdateFloorset = "UPDATE Fixtures " + 
                                     "SET NAME = " + fixtureModel.NAME +
                                     ", WIDTH = " + fixtureModel.WIDTH +
                                     ", HEIGHT = " + fixtureModel.HEIGHT +
-                                    "LF_CAP = " + fixtureModel.LF_CAP +
-                                    "ICON = " + fixtureModel.ICON +
+                                    ", LF_CAP = " + fixtureModel.LF_CAP +
+                                    ", ICON = " + fixtureModel.ICON +
                                     "WHERE TUID = " + fixtureModel.TUID;
 
             return await connection.ExecuteAsync(UpdateFloorset);
