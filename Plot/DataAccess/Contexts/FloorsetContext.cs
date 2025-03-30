@@ -48,14 +48,17 @@ public class FloorsetContext : DbContext, IFloorsetContext
         try
         {
             using SqlConnection connection = GetConnection();
-
-            var CreateFloorsetSQL = "INSERT INTO Floorsets (NAME, STORE_TUID, DATE_CREATED, CREATED_BY," +
-                                    " DATE_MODIFIED, MODIFIED_BY)" +
-                                   "VALUES ('" + floorset.NAME +"','" + floorset.STORE_TUID + "','" +
-                                   floorset.CREATED_BY + "','"  + floorset.CREATED_BY + "','" +
-                                   floorset.DATE_MODIFIED + "','" + floorset.MODIFIED_BY + "');";
-
-            return await connection.ExecuteAsync(CreateFloorsetSQL);
+  
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("ID", null);
+            parameters.Add("NAME", floorset.NAME);
+            parameters.Add("STORE_TUID", floorset.STORE_TUID);
+            parameters.Add("DATE_CREATED", floorset.DATE_CREATED);
+            parameters.Add("CREATED_BY", floorset.CREATED_BY);
+            parameters.Add("DATE_MODIFIED", floorset.DATE_MODIFIED);
+            parameters.Add("MODIFIED_BY", floorset.MODIFIED_BY);
+            return await connection.ExecuteAsync("Insert_Update_Floorset",parameters, commandType: CommandType.StoredProcedure);
+        
         }
         catch (SqlException exception)
         {
@@ -71,14 +74,16 @@ public class FloorsetContext : DbContext, IFloorsetContext
         try
         {
             using SqlConnection connection = GetConnection();
-
-            var UpdateFloorset = "UPDATE Floorsets" + 
-                                    "SET NAME = " + floorset.NAME +
-                                    ", DATE_MODIFIED = " + floorset.DATE_MODIFIED +
-                                    ", MODIFIED_BY = " + floorset.MODIFIED_BY + 
-                                    "WHERE TUID = " + floorsetId;
-
-            return await connection.ExecuteAsync(UpdateFloorset);
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("ID", floorset.TUID);
+            parameters.Add("NAME", floorset.NAME);
+            parameters.Add("STORE_TUID", floorset.STORE_TUID);
+            parameters.Add("DATE_CREATED", floorset.DATE_CREATED);
+            parameters.Add("CREATED_BY", floorset.CREATED_BY);
+            parameters.Add("DATE_MODIFIED", floorset.DATE_MODIFIED);
+            parameters.Add("MODIFIED_BY", floorset.MODIFIED_BY);
+            return await connection.ExecuteAsync("Insert_Update_Floorset",parameters, commandType: CommandType.StoredProcedure);
+        
         }
         catch (SqlException exception)
         {

@@ -54,15 +54,16 @@ public class FixtureContext : DbContext, IFixtureContext
          try
         {
             using SqlConnection connection = GetConnection();
-
-            var CreateFixtureModel = "INSERT INTO Fixtures (NAME, " + 
-                                    "WIDTH, HEIGHT, LF_CAP, ICON, STORE_TUID)"+
-                                   "VALUES ('" + fixtureModel.NAME +"','" + 
-                                   fixtureModel.WIDTH + "','" +
-                                   fixtureModel.HEIGHT + "','"  + fixtureModel.LF_CAP + "','" +
-                                   fixtureModel.ICON + "','" + fixtureModel.STORE_TUID +
-                                    "');";
-
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("ID", null);
+            parameters.Add("NAME", fixtureModel.NAME);
+            parameters.Add("WIDTH", fixtureModel.WIDTH);
+            parameters.Add("HEIGHT", fixtureModel.HEIGHT);
+            parameters.Add("LF_CAP", fixtureModel.LF_CAP);
+            parameters.Add("ICON", fixtureModel.ICON);
+            parameters.Add("STORE_ID", fixtureModel.STORE_ID);
+            return await connection.ExecuteAsync("Insert_Update_Fixtures",parameters, commandType: CommandType.StoredProcedure);
+        
             return await connection.ExecuteAsync(CreateFixtureModel);
         }
         catch (SqlException exception)
@@ -185,15 +186,16 @@ public class FixtureContext : DbContext, IFixtureContext
         {
             using SqlConnection connection = GetConnection();
 
-            var UpdateFloorset = "UPDATE Fixtures " + 
-                                    "SET NAME = " + fixtureModel.NAME +
-                                    ", WIDTH = " + fixtureModel.WIDTH +
-                                    ", HEIGHT = " + fixtureModel.HEIGHT +
-                                    ", LF_CAP = " + fixtureModel.LF_CAP +
-                                    ", ICON = " + fixtureModel.ICON +
-                                    "WHERE TUID = " + fixtureModel.TUID;
-
-            return await connection.ExecuteAsync(UpdateFloorset);
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("ID", fixtureModel.TUID);
+            parameters.Add("NAME", fixtureModel.NAME);
+            parameters.Add("WIDTH", fixtureModel.WIDTH);
+            parameters.Add("HEIGHT", fixtureModel.HEIGHT);
+            parameters.Add("LF_CAP", fixtureModel.LF_CAP);
+            parameters.Add("ICON", fixtureModel.ICON);
+            parameters.Add("STORE_ID", fixtureModel.STORE_ID);
+            return await connection.ExecuteAsync("Insert_Update_Fixtures",parameters, commandType: CommandType.StoredProcedure);
+        
         }
         catch (SqlException exception)
         {

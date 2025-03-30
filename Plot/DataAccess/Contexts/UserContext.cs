@@ -85,6 +85,16 @@ public class UserContext : DbContext, IUserContext
         }
     }
 
+    public async Task<int> DeleteUserById(int userId)
+    {
+        try
+        {
+            using SqlConnection connection = GetConnection();
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("UserId",userId);
+             return await connection.ExecuteAsync("Delete_User",parameters, commandType: CommandType.StoredProcedure);
+        }
+    }
 
    
     public async Task<int> AddUserToStore(int userid, int storeid)
@@ -109,11 +119,13 @@ public class UserContext : DbContext, IUserContext
         try
         {
             using SqlConnection connection = GetConnection();
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("User_tuid",userid);
+            parameters.Add("Store_tuid",storeid);
+            // var DeleteRelation = "DELETE FROM Access " +
+            //                        "WHERE USER_TUID = " +userid + " AND STORE_TUID = " + storeid;
 
-            var DeleteRelation = "DELETE FROM Access " +
-                                   "WHERE USER_TUID = " +userid + " AND STORE_TUID = " + storeid;
-
-            return await connection.ExecuteAsync(DeleteRelation);
+            return await connection.ExecuteAsync("Delete_Access",parameters, commandType: CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {
