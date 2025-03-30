@@ -126,7 +126,7 @@ public class AuthContext : DbContext, IAuthContext
             using SqlConnection connection = GetConnection();
 
             var DeleteUserSQL = "UPDATE Users " + 
-                                "SET ACTIVE = 0 "
+                                "SET ACTIVE = 0 "+
                                 "WHERE TUID = " + userId;
 
             return await connection.ExecuteAsync(DeleteUserSQL);
