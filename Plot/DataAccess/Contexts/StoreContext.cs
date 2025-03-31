@@ -27,7 +27,7 @@ public class StoreContext : DbContext, IStoreContext
     {
         try{
             using SqlConnection connection = GetConnection();
-
+            //will get replaced by a SP call
             var GetStoresSQL = "SELECT TUID As 'StoreId', NAME As 'Name', ADDRESS As " +
                           "'Address', CITY As 'City', STATE As 'State', ZIP As 'ZipCode', " +
                           " WIDTH As 'Width', HEIGHT As 'Height', BLUEPRINT_IMAGE As 'BlueprintImage'" + 
@@ -47,7 +47,10 @@ public class StoreContext : DbContext, IStoreContext
     {
         throw new NotImplementedException();
     }
-
+    public Task<Store[]?> GetStoresByAccess(int userId)
+    {
+        throw new NotImplementedException();
+    }
     public Task<Store?> UpdateStoreById(int storeId, Store store)
     {
         throw new NotImplementedException();

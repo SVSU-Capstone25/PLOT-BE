@@ -21,6 +21,7 @@ public interface IStoreContext
 {
     Task<IEnumerable<Store[]>?> GetStores();
     Task<Store?> GetStoreById(int storeId);
+    Task<Store[]?> GetStoresByAccess(int userId);
     Task<Store?> UpdateStoreById(int storeId, Store store);
     Task<int> DeleteStoreById(int storeId);
     Task<Store?> CreateStore(CreateStore store);
