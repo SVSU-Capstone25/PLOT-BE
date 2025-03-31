@@ -23,4 +23,5 @@ public interface IStoreContext
     Task<Store?> GetStoreById(int storeId);
     Task<Store?> UpdateStoreById(int storeId, Store store);
     Task<int> DeleteStoreById(int storeId);
+    Task<Store?> CreateStore(CreateStore store);
 }

@@ -57,4 +57,9 @@ public class StoreContext : DbContext, IStoreContext
     {
         throw new NotImplementedException();
     }
+
+    public Task<Store?> CreateStore(CreateStore store)
+    {
+        throw new NotImplementedException();
+    }
 }
