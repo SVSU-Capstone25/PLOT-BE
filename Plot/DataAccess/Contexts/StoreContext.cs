@@ -66,16 +66,16 @@ public class StoreContext : DbContext, IStoreContext
         try
         {
             using SqlConnection connection = GetConnection();
-
-            var UpdateStoreSQL = "UPDATE Stores" +
-                                "SET NAME = " + store.NAME +
-                                ", ADDRESS = " + store.ADDRESS + 
-                                ", CITY = " + store.CITY + 
-                                ", ZIP = " + store.ZIP + 
-                                ", BLUEPRINT_IMAGE = " + store.ICON + 
-                                "WHERE TUID = " + storeId;
-
-            return await connection.ExecuteAsync(UpdateStoreSQL);
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("ID", floorset.TUID);
+            parameters.Add("NAME", floorset.NAME);
+            parameters.Add("STORE_TUID", floorset.STORE_TUID);
+            parameters.Add("DATE_CREATED", floorset.DATE_CREATED);
+            parameters.Add("CREATED_BY", floorset.CREATED_BY);
+            parameters.Add("DATE_MODIFIED", floorset.DATE_MODIFIED);
+            parameters.Add("MODIFIED_BY", floorset.MODIFIED_BY);
+            return await connection.ExecuteAsync("Insert_Update_Floorset",parameters, commandType: CommandType.StoredProcedure);
+        
         }
         catch (SqlException exception)
         {
