@@ -20,19 +20,19 @@ namespace Plot.Data.Models.Stores;
 public record UpdatePublicInfoStore
 {
     [StringLength(100, ErrorMessage = "Store name cannot exceed 100 characters.")]
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     [StringLength(100, ErrorMessage = "Address cannot exceed 100 characters.")]
-    public string Address { get; set; }
+    public required string Address { get; set; }
 
     [StringLength(100, ErrorMessage = "City cannot exceed 100 characters.")]
-    public string City { get; set; }
+    public required string City { get; set; }
 
     [StringLength(25, ErrorMessage = "State cannot exceed 25 characters.")]
-    public string State { get; set; }
+    public required string State { get; set; }
 
     [StringLength(10, ErrorMessage = "Zip code cannot exceed 10 characters.")]
-    public string ZipCode { get; set; }
+    public required string ZipCode { get; set; }
     public UserDTO[]? Employees { get; set; }
     public IFormFile? BlueprintImage { get; set; }
 }

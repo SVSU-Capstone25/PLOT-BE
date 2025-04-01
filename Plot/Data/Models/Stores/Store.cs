@@ -22,19 +22,19 @@ public class Store
     public int? StoreId { get; set; }
 
     [StringLength(100, ErrorMessage = "Store name cannot exceed 100 characters.")]
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     [StringLength(100, ErrorMessage = "Address cannot exceed 100 characters.")]
-    public string Address { get; set; }
+    public required string Address { get; set; }
 
     [StringLength(100, ErrorMessage = "City cannot exceed 100 characters.")]
-    public string City { get; set; }
+    public required string City { get; set; }
 
     [StringLength(25, ErrorMessage = "State cannot exceed 25 characters.")]
-    public string State { get; set; }
+    public required string State { get; set; }
 
     [StringLength(10, ErrorMessage = "Zip code cannot exceed 10 characters.")]
-    public string ZipCode { get; set; }
+    public required string ZipCode { get; set; }
 
     [Range(int.MinValue, int.MaxValue, ErrorMessage = "Width must be an integer.")]
     public int Width { get; set; }

@@ -22,23 +22,23 @@ public record CreateStore
 {
     [Required]
     [StringLength(100, ErrorMessage = "Store name cannot exceed 100 characters.")]
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     [Required]
     [StringLength(100, ErrorMessage = "Address cannot exceed 100 characters.")]
-    public string Address { get; set; }
+    public required string Address { get; set; }
 
     [Required]
     [StringLength(100, ErrorMessage = "City cannot exceed 100 characters.")]
-    public string City { get; set; }
+    public required string City { get; set; }
 
     [Required]
     [StringLength(25, ErrorMessage = "State cannot exceed 25 characters.")]
-    public string State { get; set; }
+    public required string State { get; set; }
 
     [Required]
     [StringLength(10, ErrorMessage = "Zip code cannot exceed 10 characters.")]
-    public string ZipCode { get; set; }
+    public required string ZipCode { get; set; }
 
     [Required]
     [Range(int.MinValue, int.MaxValue, ErrorMessage = "Width must be an integer.")]
