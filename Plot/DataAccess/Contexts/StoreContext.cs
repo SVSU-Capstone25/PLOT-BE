@@ -18,51 +18,152 @@ using Dapper;
 using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Stores;
 using Plot.DataAccess.Interfaces;
+using Plot.Data.Models.Users;
 
 namespace Plot.DataAccess.Contexts;
 
 public class StoreContext : DbContext, IStoreContext
 {
-    public async Task<IEnumerable<Store[]>?> GetStores()
+    public async Task<IEnumerable<Store>> GetStores()
     {
-        try{
+        try
+        {
             using SqlConnection connection = GetConnection();
-            //will get replaced by a SP call
-            var GetStoresSQL = "SELECT TUID As 'StoreId', NAME As 'Name', ADDRESS As " +
-                          "'Address', CITY As 'City', STATE As 'State', ZIP As 'ZipCode', " +
-                          " WIDTH As 'Width', HEIGHT As 'Height', BLUEPRINT_IMAGE As 'BlueprintImage'" + 
-                          "FROM Stores";
 
-            return await connection.QueryAsync<Store[]>(GetStoresSQL);
+            var GetStoresSQL = "SELECT * " +
+                               "FROM Stores " +
+                               "WHERE ACTIVE = 1;";
+            
+            return await connection.QueryAsync<Store>(GetStoresSQL);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
             return [];
         }
+    }
+
+    public async Task<IEnumerable<Store>> GetStoreById(int storeId)
+    {
+        try
+        {
+            using SqlConnection connection = GetConnection();
+
+            var GetStoresSQL = "SELECT * " +
+                               "FROM Stores " +
+                               "WHERE TUID = " + storeId + ";";
+            
+            return await connection.QueryAsync<Store>(GetStoresSQL);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return [];
+        }
+    }
+
+    public async Task<int> UpdatePublicInfoStore(int storeId, UpdatePublicInfoStore store)
+    {
+        try
+        {
+            using SqlConnection connection = GetConnection();
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("ID", floorset.TUID);
+            parameters.Add("NAME", floorset.NAME);
+            parameters.Add("STORE_TUID", floorset.STORE_TUID);
+            parameters.Add("DATE_CREATED", floorset.DATE_CREATED);
+            parameters.Add("CREATED_BY", floorset.CREATED_BY);
+            parameters.Add("DATE_MODIFIED", floorset.DATE_MODIFIED);
+            parameters.Add("MODIFIED_BY", floorset.MODIFIED_BY);
+            return await connection.ExecuteAsync("Insert_Update_Floorset",parameters, commandType: CommandType.StoredProcedure);
         
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return 0;
+        }
+    }
+    public async Task<int> UpdateSizeStore(int storeId, UpdateSizeStore store)
+    {
+         try
+        {
+            using SqlConnection connection = GetConnection();
+
+            var UpdateStoreSQL = "UPDATE Stores" +
+                                "SET WIDTH = " + store.WIDTH +
+                                ", HEIGHT = " + store.HEIGHT + 
+                                "WHERE TUID = " + storeId;
+
+            return await connection.ExecuteAsync(UpdateStoreSQL);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return 0;
+        }
     }
 
-    public Task<Store?> GetStoreById(int storeId)
+    public async Task<int> DeleteStoreById(int storeId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            using SqlConnection connection = GetConnection();
+
+            var DeleteStoreSQL = "DELETE FROM Store" +
+                                "WHERE TUID = " + storeId;
+
+            return await connection.ExecuteAsync(DeleteStoreSQL);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return 0;
+        }
     }
-    public Task<Store[]?> GetStoresByAccess(int userId)
-    {
-        throw new NotImplementedException();
-    }
-    public Task<Store?> UpdateStoreById(int storeId, Store store)
+    public async Task<IEnumerable<UserDTO>?> GetUsersAtStore(int storeid)
     {
         throw new NotImplementedException();
     }
 
-    public Task<int> DeleteStoreById(int storeId)
+    public async Task<int> DeleteStoreById(int storeId)
     {
-        throw new NotImplementedException();
-    }
+        try
+        {
+            using SqlConnection connection = GetConnection();
 
-    public Task<Store?> CreateStore(CreateStore store)
+            var GetUserByIdSQL = "SELECT Users.TUID, Users.FIRST_NAME, Users.LAST_NAME, " +
+                                 "Users.EMAIL, Users.ACTIVE, Users.ROLE_TUID " +
+                              "FROM Users " +
+                              "INNER JOIN Access " +
+                              "ON Users.TUID = Access.USER_TUID " +
+                              "WHERE Access.STORE_TUID = " + storeid + ";";
+
+            return await connection.QueryAsync<UserDTO>(GetUserByIdSQL);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return [];
+        }
+    }
+    public async Task<int> CreateStoreEntry(CreateStore store)
     {
-        throw new NotImplementedException();
+        try
+        {
+            using SqlConnection connection = GetConnection();
+
+            var CreateStoreSQL = "INSERT INTO Stores (NAME, ADDRESS, CITY, STATE, ZIP, WIDTH, HEIGHT, BLUEPRINT_IMAGE)" +
+                                "VALUES ('" + store.NAME + "','" + store.ADDRESS + "','" + 
+                                store.CITY + "','" + store.STATE + "','" + store.ZIP + "','" +
+                                store.WIDTH + "','" + store.HEIGHT + "','" + store.ICON + "');";
+
+            return await connection.ExecuteAsync(CreateStoreSQL);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return 0;
+        }
     }
 }

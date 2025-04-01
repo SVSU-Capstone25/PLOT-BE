@@ -28,10 +28,9 @@ public class FloorsetContext : DbContext, IFloorsetContext
         {
             using SqlConnection connection = GetConnection();
 
-            var GetFloorsetsById = "SELECT TUID As 'FloorsetId', NAME As 'Name', " +
-                                   "STORE_TUID As 'StoreId', DATE_CREATED As 'DateCreated', " +
-                                   "CREATED_BY As 'CreatedBy', DATE_MODIFIED As 'DateModified', MODIFIED_BY As 'ModifiedBy' " +
-                                   "FROM Floorsets WHERE STORE_TUID = @StoreId;";
+            var GetFloorsetsById = "SELECT * " +
+                                   "FROM Floorsets " +
+                                   "WHERE STORE_TUID = @StoreId;";
             object UpdatePasswordParameters = new { StoreId = storeId };
 
             return await connection.QueryAsync<Floorset>(GetFloorsetsById, UpdatePasswordParameters);
@@ -44,17 +43,74 @@ public class FloorsetContext : DbContext, IFloorsetContext
 
         // throw new NotImplementedException();
     }
-    public Task<Floorset> CreateFloorset(CreateFloorset floorset)
+    public async Task<int> CreateFloorset(CreateFloorset floorset)
     {
-        throw new NotImplementedException();
+        try
+        {
+            using SqlConnection connection = GetConnection();
+  
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("ID", null);
+            parameters.Add("NAME", floorset.NAME);
+            parameters.Add("STORE_TUID", floorset.STORE_TUID);
+            parameters.Add("DATE_CREATED", floorset.DATE_CREATED);
+            parameters.Add("CREATED_BY", floorset.CREATED_BY);
+            parameters.Add("DATE_MODIFIED", floorset.DATE_MODIFIED);
+            parameters.Add("MODIFIED_BY", floorset.MODIFIED_BY);
+            return await connection.ExecuteAsync("Insert_Update_Floorset",parameters, commandType: CommandType.StoredProcedure);
+        
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return 0;
+        }
+        //insert into Floorset Table
+        //throw new NotImplementedException();
     }
 
-    public Task<Floorset?> UpdateFloorsetById(int floorsetId, Floorset floorset)
+    public async Task<int> UpdateFloorsetById(int floorsetId, UpdatePublicInfoFloorset floorset)
     {
-        throw new NotImplementedException();
+        try
+        {
+            using SqlConnection connection = GetConnection();
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("ID", floorset.TUID);
+            parameters.Add("NAME", floorset.NAME);
+            parameters.Add("STORE_TUID", floorset.STORE_TUID);
+            parameters.Add("DATE_CREATED", floorset.DATE_CREATED);
+            parameters.Add("CREATED_BY", floorset.CREATED_BY);
+            parameters.Add("DATE_MODIFIED", floorset.DATE_MODIFIED);
+            parameters.Add("MODIFIED_BY", floorset.MODIFIED_BY);
+            return await connection.ExecuteAsync("Insert_Update_Floorset",parameters, commandType: CommandType.StoredProcedure);
+        
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return 0;
+        }
+        //Update Statement
+        //throw new NotImplementedException();
     }
-    public Task<int> DeleteFloorsetById(int floorsetId)
+    public async Task<int> DeleteFloorsetById(int floorsetId)
     {
-        throw new NotImplementedException();
+
+        try
+        {
+            using SqlConnection connection = GetConnection();
+
+            var DeleteFloorset = "DELETE FROM Floorsets" + 
+                                    "WHERE TUID = " + floorsetId;
+
+            return await connection.ExecuteAsync(DeleteFloorset);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return 0;
+        }
+        //Delete Statement
+        //throw new NotImplementedException();
     }
 }

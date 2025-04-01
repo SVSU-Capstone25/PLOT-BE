@@ -22,31 +22,30 @@ public record CreateStore
 {
     [Required]
     [StringLength(100, ErrorMessage = "Store name cannot exceed 100 characters.")]
-    public required string Name { get; set; }
+    public required string NAME { get; set; }
 
     [Required]
     [StringLength(100, ErrorMessage = "Address cannot exceed 100 characters.")]
-    public required string Address { get; set; }
+    public required string ADDRESS { get; set; }
 
     [Required]
     [StringLength(100, ErrorMessage = "City cannot exceed 100 characters.")]
-    public required string City { get; set; }
+    public required string CITY { get; set; }
 
     [Required]
     [StringLength(25, ErrorMessage = "State cannot exceed 25 characters.")]
-    public required string State { get; set; }
+    public required string STATE { get; set; }
 
     [Required]
     [StringLength(10, ErrorMessage = "Zip code cannot exceed 10 characters.")]
-    public required string ZipCode { get; set; }
+    public required string ZIP { get; set; }
 
     [Required]
     [Range(int.MinValue, int.MaxValue, ErrorMessage = "Width must be an integer.")]
-    public int Width { get; set; }
+    public int WIDTH { get; set; }
 
     [Required]
     [Range(int.MinValue, int.MaxValue, ErrorMessage = "Height must be an integer.")]
-    public int Height { get; set; }
-    public UserDTO[]? Employees { get; set; }
-    public IFormFile? BlueprintImage { get; set; }
+    public int HEIGHT { get; set; }
+    public IFormFile? BLUEPRINT_IMAGE { get; set; }
 }

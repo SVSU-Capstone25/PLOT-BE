@@ -17,11 +17,11 @@ namespace Plot.Data.Models.Users;
 
 public record User
 {
-    public int? UserId { get; set; }
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
-    public string? Email { get; set; }
-    public string? Password { get; set; }
-    public int? Role { get; set; }
-    public bool Active { get; set; }
+    public int? TUID { get; set; }
+    public string? FIRST_NAME { get; set; }
+    public string? LAST_NAME { get; set; }
+    public string? EMAIL { get; set; }
+    public string? PASSWORD { get; set; }
+    public string? ROLE { get; set; }
+    public bool ACTIVE { get; set; }
 }

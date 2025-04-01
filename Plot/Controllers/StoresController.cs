@@ -38,7 +38,7 @@ public class StoresController : ControllerBase
     [Authorize(Policy = "Owner")]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<Store[]>>> GetAll()
+    public async Task<ActionResult<IEnumerable<Store>>> GetAll()
     {
         return Ok(await _storeContext.GetStores());
     }
@@ -46,7 +46,7 @@ public class StoresController : ControllerBase
     /// <summary>
     /// This endpoint deals with getting stores based on a user's access.
     /// </summary>
-    /// <param name="storeId">The id of the user</param>
+    /// <param name="userId">The id of the user</param>
     /// <returns>Array of stores</returns>
     [Authorize]
     [HttpGet("{userId:int}")]
@@ -56,8 +56,8 @@ public class StoresController : ControllerBase
     public async Task<ActionResult<Store[]>> GetByAccess(int userId)
     {
         
-        //controller logic could get added from other branches
-        var storeList = await _storeContext.GetStoresByAccess(userId);
+        //controller logic should get added from other branches
+        var storeList = await _storeContext.GetStoreById(userId);
         //return 404 error if no store was found
         if (storeList == null) return NotFound();
         return NoContent();
@@ -80,8 +80,7 @@ public class StoresController : ControllerBase
         }
 
         //controller logic could get added from other branches
-        var createdStore = await _storeContext.CreateStore(store);
-        return CreatedAtAction(nameof(GetByAccess), createdStore);
+        return Ok(await _storeContext.CreateStoreEntry(store));
     }
 
     /// <summary>
@@ -107,7 +106,7 @@ public class StoresController : ControllerBase
         if (existingStore == null) return NotFound();
 
         //controller logic could get added from other branches
-        return Ok(existingStore);
+        return Ok(await _storeContext.UpdatePublicInfoStore(storeId, store));
     }
 
     /// <summary>
@@ -132,7 +131,7 @@ public class StoresController : ControllerBase
         if (existingStore == null) return NotFound();
 
         //controller logic could get added from other branches
-        return Ok(existingStore);
+        return Ok(await _storeContext.UpdateSizeStore(storeId, store));
     }
 
     /// <summary>
@@ -151,7 +150,6 @@ public class StoresController : ControllerBase
         if (existingStore == null) return NotFound();
 
         //controller logic should get overridden by other branches
-        await _storeContext.DeleteStoreById(storeId);
-        return NoContent();
+        return Ok(await _storeContext.DeleteStoreById(storeId));
     }
 }

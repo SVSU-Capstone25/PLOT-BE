@@ -21,5 +21,5 @@ public record ResetPasswordRequest
     // VARIABLES -- VARIABLES -- VARIABLES -- VARIABLES -- VARIABLES ------
 
     // Email address of the user requesting a password reset.
-    public required string EmailAddress { get; set; }
+    public required string EMAIL { get; set; }
 }

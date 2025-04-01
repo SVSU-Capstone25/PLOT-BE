@@ -17,11 +17,10 @@ namespace Plot.Data.Models.Fixtures;
 
 public record UpdateFixtureModel
 {
-    public string? Name { get; set; }
-    public int? Width { get; set; }
-    public int? Height { get; set; }
-    public float? LFCapacity { get; set; }
-    public int? HangerStack { get; set; }
-    public float? LFTotal { get; set; }
-    public IFormFile? FixtureImage { get; set; }
+    public int? TUID { get; set; }
+    public string? NAME { get; set; }
+    public int? WIDTH { get; set; }
+    public int? HEIGHT { get; set; }
+    public float? LF_CAP { get; set; }
+    public IFormFile? ICON { get; set; }
 }

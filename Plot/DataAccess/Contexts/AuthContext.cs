@@ -47,11 +47,11 @@ public class AuthContext : DbContext, IAuthContext
                              "(@FIRST_NAME, @LAST_NAME, @Email, @Password, @ROLE_TUID, @ACTIVE)";
             object CreateUserParameters = new
             {
-                FIRST_NAME = user.FirstName,
-                LAST_NAME = user.LastName,
-                EMAIL = user.Email,
+                FIRST_NAME = user.FIRST_NAME,
+                LAST_NAME = user.LAST_NAME,
+                EMAIL = user.EMAIL,
                 PASSWORD = hasher.HashPassword(user, oneTimePassword.ToString()),
-                ROLE_TUID = user.Role,
+                ROLE_TUID = user.ROLE,
                 ACTIVE = true
             };
 
@@ -109,13 +109,31 @@ public class AuthContext : DbContext, IAuthContext
             var UpdatePasswordSQL = "UPDATE Users " +
                                     "SET PASSWORD = @Password " +
                                     "WHERE EMAIL = @Email";
-            object UpdatePasswordParameters = new { EMAIL = user.Email, PASSWORD = user.Password };
+            object UpdatePasswordParameters = new { EMAIL = user.EMAIL, PASSWORD = user.PASSWORD };
 
             return await connection.ExecuteAsync(UpdatePasswordSQL, UpdatePasswordParameters);
         }
         catch (SqlException exception)
         {
             Console.WriteLine("Database connection failed: ", exception);
+            return 0;
+        }
+    }
+        public async Task<int> DeleteUserById(int userId)
+    {
+         try
+        {
+            using SqlConnection connection = GetConnection();
+
+            var DeleteUserSQL = "UPDATE Users " + 
+                                "SET ACTIVE = 0 "+
+                                "WHERE TUID = " + userId;
+
+            return await connection.ExecuteAsync(DeleteUserSQL);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
             return 0;
         }
     }

@@ -56,7 +56,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<UserDTO> GetById(int userId)
     {
-        return Ok();
+        return Ok(await _userContext.GetById(userId));
     }
 
     /// <summary>
@@ -71,14 +71,14 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<UserDTO> UpdatePublicInfo(int userId, UpdatePublicInfoUser user)
+    public ActionResult<int> UpdatePublicInfo(int userId, UpdatePublicInfoUser user)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        return NoContent();
+       return Ok(await _userContext.UpdateUserPublicInfo(userId, user));
     }
 
     /// <summary>
@@ -88,15 +88,15 @@ public class UsersController : ControllerBase
     /// <param name="userId">The id of the user</param>
     /// <param name="role">The new role for the user</param>
     /// <returns>The updated user</returns>
-    [Authorize(Policy = "Owner")]
-    [HttpPatch("role/{userId:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<UserDTO> UpdateRole(int userId, [FromBody] int role)
-    {
-        return Ok();
-    }
+    // [Authorize(Policy = "Owner")]
+    // [HttpPatch("role/{userId:int}")]
+    // [ProducesResponseType(StatusCodes.Status200OK)]
+    // [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    // [ProducesResponseType(StatusCodes.Status404NotFound)]
+    // public ActionResult<UserDTO> UpdateRole(int userId, [FromBody] int role)
+    // {
+    //     return Ok();
+    // }
 
     /// <summary>
     /// This endpoint deals with deleting a specific user
@@ -111,6 +111,53 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult Delete(int userId)
     {
-        return NoContent();
+        return Ok(await _userContext.DeleteUserById(userId));
     }
+
+    /// <summary>
+    /// Adds a user as an employee to a store 
+    /// </summary>
+    /// <param name="userid">id of user being assigned</param>
+    /// <param name="storeid">id of store being registered at</param>
+    /// <returns></returns>
+    [Authorize (Policy = "Manager")]
+    [HttpPost("StoreRegistration")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> AddUserToStore(int userid, int storeid)
+    {
+        return OK(await _userContext.AddUserToStore(userid, storeid));
+    }
+
+    /// <summary>
+    /// remove association between an employee and astore
+    /// </summary>
+    /// <param name="userId">id of user being assigned</param>
+    /// <param name="storeId">id of store being registered at</param>
+    /// <returns></returns>
+    [Authorize(Policy = "Manager")]
+    [HttpDelete("{userId:int,storeId:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult DeleteFromStore(int userId, int storeId)
+    {
+        return Ok(await _userContext.DeleteUserFromStore(userId));
+    }
+
+    /// <summary>
+    /// returns all the stores a user works at
+    /// </summary>
+    /// <param name="userId">The id of the user</param>
+    /// <returns>UserDTO object</returns>
+    [Authorize]
+    [HttpGet("{userId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<Store> GetById(int userId)
+    {
+        return Ok(await _userContext.GetStoreById(userId));
+    }
+    
 }

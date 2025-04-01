@@ -13,7 +13,8 @@
 
     Written by: Jordan Houlihan
 */
-
+using Dapper;
+using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Allocations;
 using Plot.DataAccess.Interfaces;
 
@@ -21,13 +22,26 @@ namespace Plot.DataAccess.Contexts;
 
 public class SalesContext : DbContext, ISalesContext
 {
-    public Task<IEnumerable<FixtureAllocations[]>?> GetFixtureAllocations(int floorsetId)
+    public async Task<IEnumerable<FixtureAllocations>?> GetSalesAllocations(int floorsetId)
     {
-        throw new NotImplementedException();
+         try
+        {
+            using SqlConnection connection = GetConnection();
+
+            var GetFixtureInstacesSQL = "SELECT TOT_LF, ALLOCATED_LF ";
+            
+            return await connection.QueryAsync<FixtureAllocations>(GetFixtureInstacesSQL);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return null;
+        }
     }
 
     public Task<int> UploadSales(int floorsetId, IFormFile excelFile)
     {
+        //Need to come back to this with more eyes
         throw new NotImplementedException();
     }
 }

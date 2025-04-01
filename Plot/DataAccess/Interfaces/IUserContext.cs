@@ -14,13 +14,19 @@
 */
 
 using Plot.Data.Models.Users;
+using Plot.Data.Models.Stores;
 
 namespace Plot.DataAccess.Interfaces;
 
 public interface IUserContext
 {
     Task<IEnumerable<UserDTO>?> GetUsers();
-    Task<UserDTO?> GetUserById(int userId);
-    Task<UserDTO?> UpdateUserPublicInfo(int userId, UpdatePublicInfoUser user);
+    Task<IEnumerable<UserDTO>?> GetUserById(int userId);
+    Task<int> UpdateUserPublicInfo(int userId, UpdatePublicInfoUser user);
     Task<int> DeleteUserById(int userId);
+    Task<int> CreateUser(User user);
+    Task<int> AddUserToStore(int userid, int storeid);
+    Task<int> DeleteUserFromStore(int userid, int storeid);
+    Task<IEnumerable<Store>?> GetStoresForUser(int userid);
+
 }
