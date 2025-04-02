@@ -9,7 +9,7 @@
     
     Written by: Jordan Houlihan
 */
-
+using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Stores;
@@ -40,6 +40,7 @@ public class StoresController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<Store>>> GetAll()
     {
+        return Ok(await _storeContext.GetStores);
         return Ok(await _storeContext.GetStores());
     }
 
@@ -69,7 +70,7 @@ public class StoresController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Store>> Create(CreateStore store)
     {
-        return Ok(await _storeContext.CreateStoreEntry(store));
+        return Ok(await _storeContext.CreateStore(store));
     }
 
     /// <summary>
@@ -83,7 +84,7 @@ public class StoresController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Store>> UpdatePublicInfo(int storeId, UpdatePublicInfoStore store)
+    public async Task<ActionResult<Store>> UpdatePublicInfo(int storeId,[FromBody] UpdatePublicInfoStore store)
     {
         return Ok(await _storeContext.UpdatePublicInfoStore(storeId, store));
     }
@@ -98,7 +99,7 @@ public class StoresController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Store>> UpdateSize(int storeId, UpdateSizeStore store)
+    public async Task<ActionResult<Store>> UpdateSize(int storeId, [FromBody] UpdateSizeStore store)
     {
         return Ok(await _storeContext.UpdateSizeStore(storeId, store));
     }

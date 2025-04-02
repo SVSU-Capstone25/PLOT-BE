@@ -25,7 +25,6 @@ public class FixtureInstance
     public double? Y_POS { get; set; }
     public double? ALLOCATED_LF { get; set; }
     public int? HANGER_STACK { get; set; }
-    public float? ALLOCATED_LF { get; set; }
     public string? CATEGORY { get; set; }
     public string? NOTE { get; set; }
 }

@@ -91,9 +91,9 @@ public class TokenService
         {
             Subject = new ClaimsIdentity(
                 [
-                    new("Email", user.Email!),
-                    new("Role", user.Role.ToString()!),
-                    new("UserId", user.UserId.ToString()!)
+                    new("Email", user.EMAIL!),
+                    new("Role", user.ROLE),
+                    new("UserId", user.TUID.ToString()!)
                 ]),
             Issuer = _issuer,
             Audience = _audience,

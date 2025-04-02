@@ -22,21 +22,9 @@ namespace Plot.DataAccess.Contexts;
 
 public class SalesContext : DbContext, ISalesContext
 {
-    public async Task<IEnumerable<FixtureAllocations>?> GetSalesAllocations(int floorsetId)
+    public async Task<IEnumerable<FixtureAllocations>> GetFixtureAllocations(int floorsetId)
     {
-         try
-        {
-            using SqlConnection connection = GetConnection();
-
-            var GetFixtureInstacesSQL = "SELECT TOT_LF, ALLOCATED_LF ";
-            
-            return await connection.QueryAsync<FixtureAllocations>(GetFixtureInstacesSQL);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception));
-            return null;
-        }
+         throw new NotImplementedException();
     }
 
     public Task<int> UploadSales(int floorsetId, IFormFile excelFile)

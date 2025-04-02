@@ -94,7 +94,7 @@ public class UserContext : DbContext, IUserContext
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("UserId",userId);
              return await connection.ExecuteAsync("Delete_User",parameters, commandType: CommandType.StoredProcedure);
-        }catch(SqlException exception)
+        } catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
             return 0;
@@ -102,7 +102,7 @@ public class UserContext : DbContext, IUserContext
     }
 
    
-    public async Task<int> AddUserToStore(int userid, int storeid)
+    public async Task<int?> AddUserToStore(int userid, int storeid)
     {
         try
         {

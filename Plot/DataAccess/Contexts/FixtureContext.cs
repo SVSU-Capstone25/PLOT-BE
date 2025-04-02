@@ -112,7 +112,7 @@ public class FixtureContext : DbContext, IFixtureContext
         //throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<FixtureInstance>?> GetFixtureInstances(int floorsetId)
+    public async Task<IEnumerable<FixtureInstance>> GetFixtureInstances(int floorsetId)
     {
         try
         {
@@ -133,7 +133,7 @@ public class FixtureContext : DbContext, IFixtureContext
         //throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<FixtureModel>?> GetFixtureModels(int StoreId)
+    public async Task<IEnumerable<FixtureModel>> GetFixtureModels(int StoreId)
     {
         try
         {
@@ -193,7 +193,6 @@ public class FixtureContext : DbContext, IFixtureContext
             parameters.Add("HEIGHT", fixtureModel.HEIGHT);
             parameters.Add("LF_CAP", fixtureModel.LF_CAP);
             parameters.Add("ICON", fixtureModel.ICON);
-            parameters.Add("STORE_ID", fixtureModel.STORE_ID);
             return await connection.ExecuteAsync("Insert_Update_Fixtures",parameters, commandType: CommandType.StoredProcedure);
         
         }
