@@ -147,8 +147,8 @@ public class StoreContext : DbContext, IStoreContext
 
             var CreateStoreSQL = "INSERT INTO Stores (NAME, ADDRESS, CITY, STATE, ZIP, WIDTH, HEIGHT, BLUEPRINT_IMAGE)" +
                                 "VALUES ('" + store.NAME + "','" + store.ADDRESS + "','" + 
-                                store.CITY + "','" + store.STATE + "','" + store.ZIP + "','" +
-                                store.WIDTH + "','" + store.HEIGHT + "','" + store.BLUEPRINT_IMAGE + "');";
+                                store.CITY + "','" + store.STATE + "','" + store.ZIP + "'," +
+                                store.WIDTH + "," + store.HEIGHT + ",'" + store.BLUEPRINT_IMAGE + "');";
 
             return await connection.ExecuteAsync(CreateStoreSQL);
         }

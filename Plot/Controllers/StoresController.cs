@@ -72,7 +72,7 @@ public class StoresController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Store>> Create(CreateStore store)
+    public async Task<ActionResult<Store>> Create([FromBody] CreateStore store)
     {
         if (!ModelState.IsValid)
         {

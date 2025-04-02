@@ -151,9 +151,24 @@ Accept: application/json
 ###
 GET {{Plot_HostAddress}}/api/stores
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MTE1NzksImV4cCI6MTc0MzYxNTE3OSwiaWF0IjoxNzQzNjExNTc5LCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.hlre2Rp9RWco5-J0Y-ZKl4CX3aYmfzD2MRXjwUtcoxo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MTc2MDUsImV4cCI6MTc0MzYyMTIwNSwiaWF0IjoxNzQzNjE3NjA1LCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.nWl2ujpm5uc59E4ncKxUsuKqI3pfEMOkvMUBUjY2Uis
 
 ###
 GET {{Plot_HostAddress}}/api/stores/access/1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MDk2MTYsImV4cCI6MTc0MzYxMzIxNiwiaWF0IjoxNzQzNjA5NjE2LCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.8glqYvEs_O_mWCUlEJeb38jJYOHq1b-zh4J-fmuVyts
 
+###
+POST {{Plot_HostAddress}}/api/stores
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MTc2MDUsImV4cCI6MTc0MzYyMTIwNSwiaWF0IjoxNzQzNjE3NjA1LCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.nWl2ujpm5uc59E4ncKxUsuKqI3pfEMOkvMUBUjY2Uis
+
+{
+    "NAME":"Detroit Plato",
+    "ADDRESS":"123 Main St.",
+    "CITY": "Detroit",
+    "STATE":"Michigan",
+    "ZIP":"12345",
+    "WIDTH":50,
+    "HEIGHT":50,
+}
