@@ -171,4 +171,9 @@ public class UserContext : DbContext, IUserContext
             return 0;
         }
     }
+
+    Task<int> IUserContext.AddUserToStore(int userid, int storeid)
+    {
+        throw new NotImplementedException();
+    }
 }
