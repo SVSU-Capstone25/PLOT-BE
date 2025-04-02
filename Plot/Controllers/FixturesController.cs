@@ -92,14 +92,14 @@ public class FixturesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> UpdateFixtureInformation(int floorsetId, int storeId, UpdateFloorsetFixtureInformation uffi)
     {
-        var n;
-        for(int i = 0; i<uffi.FixtureInstances.size; i++)
+        
+        for(int i = 0; i<uffi.FixtureInstances.Count(); i++)
         {
-            n = await _fixtureContext.UpdateFixtureInstanceById(uffi.FixtureInstances[i]);
+             await _fixtureContext.UpdateFixtureInstanceById(uffi.FixtureInstances[i]);
         }
-        for(int i = 0; i<uffi.DeletedFixtureInstances.size; i++)
+        for(int i = 0; i<uffi.DeletedFixtureInstances.Count(); i++)
         {
-            n = await _fixtureContext.DeleteFixtureInstanceById(uffi.DeletedFixtureInstances[i]);
+             await _fixtureContext.DeleteFixtureInstanceById(uffi.DeletedFixtureInstances[i]);
         }
         
       

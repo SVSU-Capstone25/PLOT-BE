@@ -12,7 +12,7 @@
 
     Written by: Michael Polhill, Jordan Houlihan
 */
-using Dapper;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -181,7 +181,7 @@ public class AuthController : ControllerBase
             return BadRequest();
         }
 
-        var registeredUser = await _authContext.GetUserByEmail(user.Email!);
+        var registeredUser = await _authContext.GetUserByEmail(user.EMAIL!);
 
         if (registeredUser == null)
         {
@@ -211,7 +211,7 @@ public class AuthController : ControllerBase
     {
         var user = await _authContext.GetUserByEmail(userLoginAttempt.EMAIL!);
 
-        if (user == null || userLoginAttempt.Password == null)
+        if (user == null || userLoginAttempt.PASSWORD == null)
         {
             return BadRequest();
         }
@@ -268,12 +268,12 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<string>> TestPassword()
     {
         PasswordHasher<User> hasher = new();
-        User user = new() { FIRST_NAME = "admin", LAST_NAME = "admin", EMAIL = "NickLeja@email.com", PASSWORD = "admin", ROLE = 1, ACTIVE = true };
+        User user = new() { FIRST_NAME = "admin", LAST_NAME = "admin", EMAIL = "NickLeja@email.com", PASSWORD = "admin", ROLE = "Owner", ACTIVE = true };
 
         LoginRequest newUserInfo = new()
         {
             EMAIL = user.EMAIL,
-            Password = hasher.HashPassword(user, "admin")
+            PASSWORD = hasher.HashPassword(user, "admin")
         };
 
         int rowsAffected = await _authContext.UpdatePassword(newUserInfo);

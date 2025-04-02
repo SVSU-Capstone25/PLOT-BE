@@ -49,7 +49,7 @@ public class StoresController : ControllerBase
     /// <param name="userId">The id of the user</param>
     /// <returns>Array of stores</returns>
     [Authorize]
-    [HttpGet("{userId:int}")]
+    [HttpGet("access/{userId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -19,6 +19,7 @@ using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Users;
 using Plot.Data.Models.Stores;
 using Plot.DataAccess.Interfaces;
+using System.Data;
 
 namespace Plot.DataAccess.Contexts;
 
@@ -101,7 +102,7 @@ public class UserContext : DbContext, IUserContext
     }
 
    
-    public async Task<int?> AddUserToStore(int userid, int storeid)
+    public async Task<int> AddUserToStore(int userid, int storeid)
     {
         try
         {

@@ -26,7 +26,7 @@ public class UsersController : ControllerBase
     private readonly IUserContext _userContext;
     private readonly ClaimParserService _claimParserService;
 
-    public UsersController(IUserContext userContext, ClaimParserService claimParserService)
+    public UsersController(IUserContext userContext, IAuthContext authContext, ClaimParserService claimParserService)
     {
         _userContext = userContext;
         _claimParserService = claimParserService;
@@ -143,7 +143,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteFromStore(int userId, [FromBody] int storeId)
     {
-        return Ok(await _userContext.DeleteUserFromStore(userId));
+        return Ok(await _userContext.DeleteUserFromStore(userId, storeId));
     }
 
     /// <summary>
@@ -158,7 +158,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Store>> GetStoreById(int userId)
     {
-        return Ok(await _userContext.GetStoreById(userId));
+        return Ok(await _userContext.GetStoresForUser(userId));
     }
     
 }

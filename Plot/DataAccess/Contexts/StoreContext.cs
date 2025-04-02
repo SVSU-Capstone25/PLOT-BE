@@ -18,9 +18,7 @@ using Dapper;
 using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Stores;
 using Plot.Data.Models.Users;
-using Plot.Data.Models.Floorsets;
 using Plot.DataAccess.Interfaces;
-using Plot.Data.Models.Users;
 
 namespace Plot.DataAccess.Contexts;
 
@@ -40,7 +38,7 @@ public class StoreContext : DbContext, IStoreContext
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine(("Database connection failed: ", exception.Message));
             return [];
         }
     }
@@ -59,7 +57,7 @@ public class StoreContext : DbContext, IStoreContext
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine(("Database connection failed: ", exception.Message));
             return [];
         }
     }
@@ -102,7 +100,7 @@ public class StoreContext : DbContext, IStoreContext
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine(("Database connection failed: ", exception.Message));
             return 0;
         }
     }
@@ -120,36 +118,28 @@ public class StoreContext : DbContext, IStoreContext
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine(("Database connection failed: ", exception.Message));
             return 0;
         }
     }
     public async Task<IEnumerable<UserDTO>?> GetUsersAtStore(int storeid)
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task<int> DeleteStoreById(int storeId)
-    {
         try
         {
             using SqlConnection connection = GetConnection();
 
-            var GetUserByIdSQL = "SELECT Users.TUID, Users.FIRST_NAME, Users.LAST_NAME, " +
-                                 "Users.EMAIL, Users.ACTIVE, Users.ROLE_TUID " +
-                              "FROM Users " +
-                              "INNER JOIN Access " +
-                              "ON Users.TUID = Access.USER_TUID " +
-                              "WHERE Access.STORE_TUID = " + storeid + ";";
-
-            return await connection.QueryAsync<UserDTO>(GetUserByIdSQL);
-        }
-        catch (SqlException exception)
+            var GetUsersByStore = "SELECT TUID, FIRST_NAME, LAST_NAME, EMAIL, ROLE, ACTIVE " +
+                                  "FROM Users " +
+                                  $"WHERE TUID IN (SELECT USER_TUID FROM Access WHERE STORE_TUID = {storeid});";
+            
+            return await connection.QueryAsync<UserDTO>(GetUsersByStore);
+        } catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine("Database connection failed: ", exception.Message);
             return [];
         }
     }
+
     public async Task<int> CreateStoreEntry(CreateStore store)
     {
         try
@@ -165,7 +155,7 @@ public class StoreContext : DbContext, IStoreContext
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine(("Database connection failed: ", exception.Message));
             return 0;
         }
     }

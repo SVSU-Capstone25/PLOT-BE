@@ -19,6 +19,6 @@ namespace Plot.Data.Models.Users;
 
 public record DeleteUserFromStoreRequest
 {
-    public int? userid { get; set; }
-    public int? storeid { get; set; }
+    public required int userid { get; set; }
+    public required int storeid { get; set; }
 }

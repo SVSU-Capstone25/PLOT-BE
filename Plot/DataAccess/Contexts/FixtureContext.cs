@@ -13,6 +13,7 @@
 
     Written by: Jordan Houlihan
 */
+using System.Data;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Fixtures;
@@ -61,10 +62,8 @@ public class FixtureContext : DbContext, IFixtureContext
             parameters.Add("HEIGHT", fixtureModel.HEIGHT);
             parameters.Add("LF_CAP", fixtureModel.LF_CAP);
             parameters.Add("ICON", fixtureModel.ICON);
-            parameters.Add("STORE_ID", fixtureModel.STORE_ID);
+            parameters.Add("STORE_ID", fixtureModel.STORE_TUID);
             return await connection.ExecuteAsync("Insert_Update_Fixtures",parameters, commandType: CommandType.StoredProcedure);
-        
-            return await connection.ExecuteAsync(CreateFixtureModel);
         }
         catch (SqlException exception)
         {
@@ -112,7 +111,7 @@ public class FixtureContext : DbContext, IFixtureContext
         //throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<FixtureInstance>> GetFixtureInstances(int floorsetId)
+    public async Task<IEnumerable<FixtureInstance>>? GetFixtureInstances(int floorsetId)
     {
         try
         {
@@ -128,12 +127,12 @@ public class FixtureContext : DbContext, IFixtureContext
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return null;
         }
         //throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<FixtureModel>> GetFixtureModels(int StoreId)
+    public async Task<IEnumerable<FixtureModel>>? GetFixtureModels(int StoreId)
     {
         try
         {
