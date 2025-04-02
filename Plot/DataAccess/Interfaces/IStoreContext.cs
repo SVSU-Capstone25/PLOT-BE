@@ -12,7 +12,7 @@
 
     Written by: Jordan Houlihan
 */
-
+using Plot.Data.Models.Users;
 using Plot.Data.Models.Stores;
 
 namespace Plot.DataAccess.Interfaces;

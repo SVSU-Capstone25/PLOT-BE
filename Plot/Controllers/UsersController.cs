@@ -9,10 +9,11 @@
 
     Written by: Jordan Houlihan
 */
-
+using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Users;
+using Plot.Data.Models.Stores;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
 
@@ -36,7 +37,7 @@ public class UsersController : ControllerBase
     /// </summary>
     /// <returns>Array of userDTO objects</returns>
     [Authorize]
-    [HttpGet]
+    [HttpGet("get-all")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<UserDTO>>> GetAll()
     {
@@ -50,13 +51,13 @@ public class UsersController : ControllerBase
     /// <param name="userId">The id of the user</param>
     /// <returns>UserDTO object</returns>
     [Authorize]
-    [HttpGet("{userId:int}")]
+    [HttpGet("get-users-by-id/{userId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<UserDTO> GetById(int userId)
+    public async Task<ActionResult<UserDTO>> GetById(int userId)
     {
-        return Ok(await _userContext.GetById(userId));
+        return Ok(await _userContext.GetUserById(userId));
     }
 
     /// <summary>
@@ -71,7 +72,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<int> UpdatePublicInfo(int userId, UpdatePublicInfoUser user)
+    public async Task<ActionResult<int>> UpdatePublicInfo(int userId, [FromBody] UpdatePublicInfoUser user)
     {
         if (!ModelState.IsValid)
         {
@@ -105,11 +106,11 @@ public class UsersController : ControllerBase
     /// <param name="userId">The id of the user</param>
     /// <returns>UserDTO object</returns>
     [Authorize(Policy = "Manager")]
-    [HttpDelete("{userId:int}")]
+    [HttpDelete("delete-user/{userId:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult Delete(int userId)
+    public async Task<ActionResult> Delete(int userId)
     {
         return Ok(await _userContext.DeleteUserById(userId));
     }
@@ -121,12 +122,12 @@ public class UsersController : ControllerBase
     /// <param name="storeid">id of store being registered at</param>
     /// <returns></returns>
     [Authorize (Policy = "Manager")]
-    [HttpPost("StoreRegistration")]
+    [HttpPost("store-registration")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> AddUserToStore(int userid, int storeid)
+    public async Task<ActionResult> AddUserToStore([FromBody] DeleteUserFromStoreRequest dufsr)
     {
-        return OK(await _userContext.AddUserToStore(userid, storeid));
+        return Ok(await _userContext.AddUserToStore(dufsr.userid, dufsr.storeid));
     }
 
     /// <summary>
@@ -136,11 +137,11 @@ public class UsersController : ControllerBase
     /// <param name="storeId">id of store being registered at</param>
     /// <returns></returns>
     [Authorize(Policy = "Manager")]
-    [HttpDelete("{userId:int,storeId:int}")]
+    [HttpPost("delete-user-from-store")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult DeleteFromStore(int userId, int storeId)
+    public async Task<ActionResult> DeleteFromStore(int userId, [FromBody] int storeId)
     {
         return Ok(await _userContext.DeleteUserFromStore(userId));
     }
@@ -151,11 +152,11 @@ public class UsersController : ControllerBase
     /// <param name="userId">The id of the user</param>
     /// <returns>UserDTO object</returns>
     [Authorize]
-    [HttpGet("{userId:int}")]
+    [HttpGet("stores/{userId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<Store> GetById(int userId)
+    public async Task<ActionResult<Store>> GetStoreById(int userId)
     {
         return Ok(await _userContext.GetStoreById(userId));
     }

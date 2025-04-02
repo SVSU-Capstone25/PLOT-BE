@@ -93,6 +93,10 @@ public class UserContext : DbContext, IUserContext
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("UserId",userId);
              return await connection.ExecuteAsync("Delete_User",parameters, commandType: CommandType.StoredProcedure);
+        } catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return 0;
         }
     }
 
