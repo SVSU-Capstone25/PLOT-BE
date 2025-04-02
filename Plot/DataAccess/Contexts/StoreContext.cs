@@ -30,9 +30,8 @@ public class StoreContext : DbContext, IStoreContext
         {
             using SqlConnection connection = GetConnection();
 
-            var GetStoresSQL = "SELECT * " +
-                               "FROM Stores " +
-                               "WHERE ACTIVE = 1;";
+            var GetStoresSQL = "SELECT TUID, NAME, ADDRESS, CITY, STATE, ZIP, WIDTH, HEIGHT " +
+                               "FROM Stores;";
             
             return await connection.QueryAsync<Store>(GetStoresSQL);
         }

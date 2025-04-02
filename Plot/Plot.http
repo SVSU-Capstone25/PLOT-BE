@@ -50,11 +50,6 @@
 // ###
 //
 
-GET {{Plot_HostAddress}}/api/floorsets/1
-Accept: application/json
-
-### 
-
 GET {{Plot_HostAddress}}/api/users/
 Accept: application/json
 
@@ -156,8 +151,9 @@ Accept: application/json
 ###
 GET {{Plot_HostAddress}}/api/stores
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MTAzNjUsImV4cCI6MTc0MzYxMzk2NSwiaWF0IjoxNzQzNjEwMzY1LCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.3Mh_7dziiwIvl5YKozIA2Q2zyeazgpIacP9dAnOAHPY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MTE1NzksImV4cCI6MTc0MzYxNTE3OSwiaWF0IjoxNzQzNjExNTc5LCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.hlre2Rp9RWco5-J0Y-ZKl4CX3aYmfzD2MRXjwUtcoxo
 
 ###
 GET {{Plot_HostAddress}}/api/stores/access/1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MDk2MTYsImV4cCI6MTc0MzYxMzIxNiwiaWF0IjoxNzQzNjA5NjE2LCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.8glqYvEs_O_mWCUlEJeb38jJYOHq1b-zh4J-fmuVyts
+

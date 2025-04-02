@@ -41,5 +41,5 @@ public class Store
 
     [Range(int.MinValue, int.MaxValue, ErrorMessage = "Height must be an integer.")]
     public int HEIGHT { get; set; }
-    public IFormFile? BLUEPRINT_IMAGE { get; set; }
+    public byte[]? BLUEPRINT_IMAGE { get; set; }
 }
