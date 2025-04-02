@@ -101,7 +101,7 @@ public class UserContext : DbContext, IUserContext
     }
 
    
-    public async Task<int> AddUserToStore(int userid, int storeid)
+    public async Task<int?> AddUserToStore(int userid, int storeid)
     {
         try
         {
