@@ -40,7 +40,7 @@ public class StoresController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<Store>>> GetAll()
     {
-        return OK(await _storeContext.GetStores);
+        return Ok(await _storeContext.GetStores());
     }
 
     /// <summary>
@@ -53,7 +53,7 @@ public class StoresController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public Task<ActionResult<IEnumerable<Store>>> GetByAccess(int userId)
+    public async Task<ActionResult<IEnumerable<Store>>> GetByAccess(int userId)
     {
         return NoContent();
     }
@@ -67,9 +67,9 @@ public class StoresController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async ActionResult<Store> Create(CreateStore store)
+    public async Task<ActionResult<Store>> Create(CreateStore store)
     {
-        return OK(await _storeContext.CreateStore(store));
+        return Ok(await _storeContext.CreateStoreEntry(store));
     }
 
     /// <summary>
@@ -83,9 +83,9 @@ public class StoresController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async ActionResult<Store> UpdatePublicInfo(int storeId, UpdatePublicInfoStore store)
+    public async Task<ActionResult<Store>> UpdatePublicInfo(int storeId, UpdatePublicInfoStore store)
     {
-        return OK(await _storeContext.UpdatePublicInfoStore(storeId, store));
+        return Ok(await _storeContext.UpdatePublicInfoStore(storeId, store));
     }
 
     /// <summary>
@@ -98,9 +98,9 @@ public class StoresController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<Store> UpdateSize(int storeId, UpdateSizeStore store)
+    public async Task<ActionResult<Store>> UpdateSize(int storeId, UpdateSizeStore store)
     {
-        return OK(await _storeContext.UpdatePublicInfoStore(storeId, store));
+        return Ok(await _storeContext.UpdateSizeStore(storeId, store));
     }
 
     /// <summary>
@@ -112,8 +112,8 @@ public class StoresController : ControllerBase
     [HttpDelete("{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult Delete(int storeId)
+    public async Task<ActionResult> Delete(int storeId)
     {
-        return OK(await _storeContext.DeleteStoreById(storeId));
+        return Ok(await _storeContext.DeleteStoreById(storeId));
     }
 }

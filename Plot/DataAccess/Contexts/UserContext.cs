@@ -19,6 +19,7 @@ using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Users;
 using Plot.Data.Models.Stores;
 using Plot.DataAccess.Interfaces;
+using System.Data;
 
 namespace Plot.DataAccess.Contexts;
 
@@ -93,6 +94,10 @@ public class UserContext : DbContext, IUserContext
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("UserId",userId);
              return await connection.ExecuteAsync("Delete_User",parameters, commandType: CommandType.StoredProcedure);
+        }catch(SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return 0;
         }
     }
 
@@ -154,6 +159,16 @@ public class UserContext : DbContext, IUserContext
         {
             Console.WriteLine(("Database connection failed: ", exception));
             return [];
+        }
+    }
+    public async Task<int> CreateUser(CreateUser user){
+        try{
+            using SqlConnection connection = GetConnection();
+            var CreateUserSQL = "";
+            return await connection.ExecuteAsync(CreateUserSQL);
+        }catch (SqlException exception){
+            Console.WriteLine(("Database connection failed: ", exception));
+            return 0;
         }
     }
 }

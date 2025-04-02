@@ -71,7 +71,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<int> UpdatePublicInfo(int userId, UpdatePublicInfoUser user)
+    public ActionResult<int> UpdatePublicInfo( int userId, UpdatePublicInfoUser user)
     {
         if (!ModelState.IsValid)
         {
@@ -126,7 +126,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> AddUserToStore(int userid, int storeid)
     {
-        return OK(await _userContext.AddUserToStore(userid, storeid));
+        return Ok(await _userContext.AddUserToStore(userid, storeid));
     }
 
     /// <summary>
@@ -159,5 +159,18 @@ public class UsersController : ControllerBase
     {
         return Ok(await _userContext.GetStoreById(userId));
     }
-    
+    /// <summary>
+    /// This endpoint deals with creating a user.
+    /// </summary>
+    /// <param name="user">The new user</param>
+    /// <returns>The newly created user</returns>
+    public async Task<ActionResult<User>> CreateUser(CreateUser user){
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        
+        return Ok(await _userContext.CreateUser(user));
+    }
 }
