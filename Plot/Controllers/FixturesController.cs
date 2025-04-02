@@ -46,30 +46,35 @@ public class FixturesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<FloorsetFixtureInformation>> GetFixtureInformation(int floorsetId, int storeId)
     {
-        FloorsetFixtureInformation ffi = new FloorsetFixtureInformation();
-        var ilist = await _fixtureContext.GetFixtureModels(storeId);
+        FloorsetFixtureInformation floorsetFixtureInformation = new FloorsetFixtureInformation();
+        var fixtureModels = await _fixtureContext.GetFixtureModels(storeId);
 
-        ffi.FixtureModels = ilist.ToList();
-        if (ffi.FixtureModels == null) 
+        if (fixtureModels == null)
         {
-            return InternalServerError();
+            return NotFound(storeId);
         }
-        ilist = await _fixtureContext.GetFixtureInstances(floorsetId);
-        ffi.FixtureInstances = ilist.ToList();
 
-        if (ffi.FixtureInstances == null)
-        {
-            return InternalServerError();
-        }
-        ilist = await _salesContext.GetSalesAllocations(floorsetId);
+        floorsetFixtureInformation.FixtureModels = fixtureModels;
 
-        ffi.Allocations = ilist.ToList();
-        if (ffi.Allocations == null)
+        var fixtureInstances = await _fixtureContext.GetFixtureInstances(floorsetId);
+
+        if (fixtureInstances == null)
         {
-            return InternalServerError();
+            return NotFound(storeId);
         }
+
+        floorsetFixtureInformation.FixtureInstances = fixtureInstances;
+
+        var salesAllocations = await _salesContext.GetFixtureAllocations(floorsetId);
+
+        if (salesAllocations == null)
+        {
+            return NotFound(storeId);
+        }
+
+        floorsetFixtureInformation.Allocations = salesAllocations;
         
-        return Ok(ffi);
+        return Ok(floorsetFixtureInformation);
     }
 
     /// <summary>

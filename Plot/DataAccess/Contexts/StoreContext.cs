@@ -1,6 +1,6 @@
 /*
     Filename: StoreContext.cs
-    Part of Project: PLOT/PLOT-BE/Plot/DataAccess/Contexts
+    Part of Project: PLOT/PLOT-BE/DataAccess/Contexts
 
     File Purpose:
     This file contains the database context for database operations 
@@ -20,6 +20,7 @@ using Plot.Data.Models.Stores;
 using Plot.Data.Models.Users;
 using Plot.Data.Models.Floorsets;
 using Plot.DataAccess.Interfaces;
+using Plot.Data.Models.Users;
 
 namespace Plot.DataAccess.Contexts;
 
@@ -124,6 +125,11 @@ public class StoreContext : DbContext, IStoreContext
         }
     }
     public async Task<IEnumerable<UserDTO>?> GetUsersAtStore(int storeid)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<int> DeleteStoreById(int storeId)
     {
         try
         {

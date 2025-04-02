@@ -14,7 +14,7 @@
 */
 using Plot.Data.Models.Users;
 using Plot.Data.Models.Stores;
-
+using Plot.Data.Models.Users;
 namespace Plot.DataAccess.Interfaces;
 
 public interface IStoreContext
