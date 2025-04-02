@@ -22,8 +22,10 @@ using Plot.Data.Models.Auth.Registration;
 using Plot.Data.Models.Auth.ResetPassword;
 using Plot.Data.Models.Env;
 using Plot.Data.Models.Users;
+using Microsoft.AspNetCore.Authentication;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
+using System.Security.Claims;
 
 namespace Plot.Controllers;
 
@@ -227,12 +229,13 @@ public class AuthController : ControllerBase
 
         var token = _tokenService.GenerateToken(user);
 
+        // Set the token in the response cookies for authentication.
         Response.Cookies.Append("Auth", token, new CookieOptions
         {
-            HttpOnly = true,
-            Secure = false, // Set to false for localhost testing
-            SameSite = SameSiteMode.Lax,
-            Expires = DateTimeOffset.UtcNow.AddMinutes(30)
+            HttpOnly = true, 
+            Secure = true,   
+            SameSite = SameSiteMode.None,
+            Expires = DateTimeOffset.UtcNow.AddMinutes(double.Parse(_envSettings.expiration_time)),
         });
 
         return Ok();
@@ -248,85 +251,18 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult Logout()
     {
+        //Reset the token in the response cookies for authentication.
+        // This will delete the token from the user.
+        var token = "";
+        Response.Cookies.Append("Auth", token, new CookieOptions
+        {
+            HttpOnly = true, 
+            Secure = true,   
+            SameSite = SameSiteMode.None,
+            Expires = DateTimeOffset.UtcNow.AddMinutes(-5),//Browser will delete the cookie due to old experation
+        });
+
         return Ok();
     }
 
-
-    [HttpPost("test-get-token")]
-    public IActionResult testGetToken()
-    {
-        var user = new User
-        {
-            Email="email@email.com",
-            Role=3,
-            UserId=1
-        };
-
-        var testToken=_tokenService.GenerateToken(user);
-
-        return Ok(testToken);
-    }
-
-    [HttpGet("test-validate")]
-    public IActionResult testValidate()
-    {
-        Console.WriteLine(Request.Headers);
-
-        var authHeader = Request.Headers["Authorization"].ToString();
-        Console.WriteLine(authHeader);
-        var token = authHeader.Substring("Bearer ".Length).Trim();
-        Console.WriteLine(token);
-        
-
-
-
-        var principal=_tokenService.ValidateTokenTest(token);
-        Console.WriteLine(principal);
-
-
-
-
-
-        
-
-
-
-        return Ok(principal);
-    }
-
-
-    // Small test for endpoints----------------------------------------------------------------------------
-    [Authorize(Policy = "Owner")]
-    [HttpPost("auth-test")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult TestPass()
-    {
-        Console.WriteLine("Pass");
-        return Ok();
-    }
-
-    [HttpPost("data-test")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<ResetPasswordRequest> TestFail([FromBody] ResetPasswordRequest email)
-    {
-        email.EmailAddress = "new@email.com";
-        return Ok(email);
-    }
-
-    [HttpPost("test-password")]
-    public async Task<ActionResult<string>> TestPassword()
-    {
-        PasswordHasher<User> hasher = new();
-        User user = new() { FirstName = "admin", LastName = "admin", Email = "NickLeja@email.com", Password = "admin", Role = 1, Active = true };
-
-        LoginRequest newUserInfo = new()
-        {
-            Email = user.Email,
-            Password = hasher.HashPassword(user, "admin")
-        };
-
-        int rowsAffected = await _authContext.UpdatePassword(newUserInfo);
-
-        return Ok(rowsAffected);
-    }
 }
