@@ -16,6 +16,7 @@ using Plot.Data.Models.Users;
 using Plot.Data.Models.Stores;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
+using Microsoft.Extensions.FileProviders;
 
 namespace Plot.Controllers;
 
@@ -57,7 +58,11 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserDTO>> GetById(int userId)
     {
-        return Ok(await _userContext.GetUserById(userId));
+        var user = await _userContext.GetUserById(userId);
+        if(user == null || !user.Any()){
+            return NotFound();
+        }
+        return Ok(user);
     }
 
     /// <summary>
@@ -78,8 +83,12 @@ public class UsersController : ControllerBase
         {
             return BadRequest(ModelState);
         }
-
-       return Ok(await _userContext.UpdateUserPublicInfo(userId, user));
+        var update = await _userContext.UpdateUserPublicInfo(userId, user);
+    
+        if(update == -1){
+            return NotFound();
+        }
+       return Ok(update);
     }
 
     /// <summary>
@@ -106,13 +115,17 @@ public class UsersController : ControllerBase
     /// <param name="userId">The id of the user</param>
     /// <returns>UserDTO object</returns>
     [Authorize(Policy = "Manager")]
-    [HttpDelete("delete-user/{userId:int}")]
+    [HttpPatch("delete-user/{userId:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> Delete(int userId)
+    public async Task<ActionResult<int>> Delete(int userId)
     {
-        return Ok(await _userContext.DeleteUserById(userId));
+        var deleted = await _userContext.DeleteUserById(userId);
+        if(deleted == 0){
+            return NotFound();
+        }
+        return NoContent();
     }
 
     /// <summary>
@@ -124,10 +137,20 @@ public class UsersController : ControllerBase
     [Authorize (Policy = "Manager")]
     [HttpPost("store-registration")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> AddUserToStore([FromBody] DeleteUserFromStoreRequest dufsr)
+    public async Task<ActionResult> AddUserToStore([FromBody] UserStoreRequest dufsr)
     {
-        return Ok(await _userContext.AddUserToStore(dufsr.userid, dufsr.storeid));
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var added = await _userContext.AddUserToStore(dufsr.userid, dufsr.storeid);
+        if(added == -1){
+            return NotFound();
+        }
+        return Ok(added);
     }
 
     /// <summary>
@@ -141,9 +164,18 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> DeleteFromStore(int userId, [FromBody] int storeId)
+    public async Task<ActionResult> DeleteFromStore([FromBody] UserStoreRequest dufsr)
     {
-        return Ok(await _userContext.DeleteUserFromStore(userId));
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var removed = await _userContext.DeleteUserFromStore(dufsr.userid, dufsr.storeid);
+        if(removed == -1){
+            return NotFound();
+        }
+        return NoContent();
     }
 
     /// <summary>
@@ -156,22 +188,13 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Store>> GetStoreById(int userId)
+    public async Task<ActionResult<Store>?> GetStoresForUser(int userId)
     {
-        return Ok(await _userContext.GetStoreById(userId));
-    }
-    /// <summary>
-    /// This endpoint deals with creating a user.
-    /// </summary>
-    /// <param name="user">The new user</param>
-    /// <returns>The newly created user</returns>
-    public async Task<ActionResult<User>> CreateUser(CreateUser user){
-
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
+        var stores = await _userContext.GetStoresForUser(userId);
+        if(stores == null || !stores.Any()){
+            return NotFound();
         }
-        
-        return Ok(await _userContext.CreateUser(user));
+
+        return Ok(stores);
     }
 }

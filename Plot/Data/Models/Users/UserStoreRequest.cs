@@ -1,5 +1,5 @@
 /*
-    Filename: DeleteUserFromStoreRequest.cs
+    Filename: UserStoreRequest.cs
     Part of Project: PLOT/PLOT-BE/Plot/Data/Models/Users
 
     File Purpose:
@@ -7,7 +7,7 @@
     
     Class Purpose:
     This record is used as the file 
-    to pass back the values to remove
+    to pass back the values to remove or add
     a user from a store.
     
     Written by: Josh Rodack
@@ -15,10 +15,16 @@
 
 
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Plot.Data.Models.Users;
 
-public record DeleteUserFromStoreRequest
+public record UserStoreRequest
 {
+    [Required]
+    [Range(1,int.MaxValue, ErrorMessage = "RoleId must be an integer")]
     public int userid { get; set; }
+    [Required]
+    [Range(1,int.MaxValue, ErrorMessage = "storeId must be an integer")]
     public int storeid { get; set; }
 }

@@ -67,17 +67,48 @@ public class UserContext : DbContext, IUserContext
 
     public async Task<int> UpdateUserPublicInfo(int userId, UpdatePublicInfoUser user)
     {
-         try
+        try
         {
             using SqlConnection connection = GetConnection();
 
-            var UpdateUserSQL = "UPDATE Users" +
-                                "SET FIRST_NAME = " + user.FIRST_NAME +
-                                ", LAST_NAME = " + user.LAST_NAME + 
-                                ", ROLE_TUID = " + user.ROLE + 
-                                "WHERE TUID = " + userId + ";";
+            // Check if user exists
+            var existingUser = await connection.QueryFirstOrDefaultAsync<UserDTO>(
+                "SELECT * FROM Users WHERE TUID = @UserId",
+                new { UserId = userId }
+            );
 
-            return await connection.ExecuteAsync(UpdateUserSQL);
+            if (existingUser == null)
+                return -1; // User not found
+
+            // Validate Role ID
+            var roleExists = await connection.ExecuteScalarAsync<int>(
+                "SELECT COUNT(1) FROM Roles WHERE TUID = @RoleId",
+                new { RoleId = user.ROLE }
+            );
+
+            if (roleExists == 0)
+                return -1; // Role not found
+
+            // Update User Info
+            var rowsAffected = await connection.ExecuteAsync(
+            @"UPDATE Users
+              SET FIRST_NAME = @FirstName, 
+                  LAST_NAME = @LastName, 
+                  ROLE_TUID = @RoleId
+              WHERE TUID = @UserId;",
+            new
+            {
+                FirstName = user.FIRST_NAME,
+                LastName = user.LAST_NAME,
+                RoleId = user.ROLE,
+                UserId = userId
+            }
+            );
+
+            if (rowsAffected == 0)
+                return 0; // Update failed
+
+            return  1;
         }
         catch (SqlException exception)
         {
@@ -91,31 +122,69 @@ public class UserContext : DbContext, IUserContext
         try
         {
             using SqlConnection connection = GetConnection();
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("UserId",userId);
-             return await connection.ExecuteAsync("Delete_User",parameters, commandType: CommandType.StoredProcedure);
+
+            // Check if user exists first
+            var existingUser = await connection.QueryFirstOrDefaultAsync<int>(
+                "SELECT COUNT(1) FROM Users WHERE TUID = @UserId",
+                new { UserId = userId }
+            );
+
+            if (existingUser == 0)
+                return 0; // User not found
+            
+            //set Active to false
+            var rowsAffected = await connection.ExecuteAsync(
+                "UPDATE Users SET Active = 0 WHERE TUID = @UserId",
+                new { UserId = userId }
+            );
+
+            return rowsAffected;
         } catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
             return 0;
         }
     }
-
-   
-    public async Task<int?> AddUserToStore(int userid, int storeid)
+    public async Task<int> AddUserToStore(int userid, int storeid)
     {
         try
         {
             using SqlConnection connection = GetConnection();
 
-            var CreateHiring = "INSERT INTO Access (USER_TUID, STORE_TUID)" +
-                                   "VALUES ('" + userid+"', '" + storeid + "');";
+            // Check if the user exists
+            var userExists = await connection.QueryFirstOrDefaultAsync<int>(
+                "SELECT COUNT(1) FROM Users WHERE TUID = @UserId",
+                new { UserId = userid });
 
-            return await connection.ExecuteAsync(CreateHiring);
+            if (userExists == 0)
+                return -1; // User not found
+
+            // Check if the store exists
+            var storeExists = await connection.QueryFirstOrDefaultAsync<int>(
+                "SELECT COUNT(1) FROM Stores WHERE StoreID = @StoreId",
+                new { StoreId = storeid });
+
+            if (storeExists == 0)
+                return -1; // Store not found
+
+            // Check if the user is already assigned to the store
+            var accessExists = await connection.QueryFirstOrDefaultAsync<int>(
+                "SELECT COUNT(1) FROM Access WHERE USER_TUID = @UserId AND STORE_TUID = @StoreId",
+                new { UserId = userid, StoreId = storeid });
+
+            if (accessExists > 0)
+                return -1; // User is already assigned
+
+            // Assign user to store
+            var rowsAffected = await connection.ExecuteAsync(
+                "INSERT INTO Access (USER_TUID, STORE_TUID)",
+                new { StoreId = storeid, UserId = userid });
+
+            return rowsAffected;
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine("Database operation failed: " + exception);
             return 0;
         }
     }
@@ -124,56 +193,79 @@ public class UserContext : DbContext, IUserContext
         try
         {
             using SqlConnection connection = GetConnection();
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("User_tuid",userid);
-            parameters.Add("Store_tuid",storeid);
-            // var DeleteRelation = "DELETE FROM Access " +
-            //                        "WHERE USER_TUID = " +userid + " AND STORE_TUID = " + storeid;
 
-            return await connection.ExecuteAsync("Delete_Access",parameters, commandType: CommandType.StoredProcedure);
+            // Check if the user exists
+            var userExists = await connection.QueryFirstOrDefaultAsync<int>(
+                "SELECT COUNT(1) FROM Users WHERE TUID = @UserId",
+                new { UserId = userid });
+
+            if (userExists == 0)
+                return -1; // User not found
+
+            // Check if the store exists
+            var storeExists = await connection.QueryFirstOrDefaultAsync<int>(
+                "SELECT COUNT(1) FROM Stores WHERE StoreID = @StoreId",
+                new { StoreId = storeid });
+
+            if (storeExists == 0)
+                return -1; // Store not found
+
+            // Check if the user is already assigned to the store
+            var accessExists = await connection.QueryFirstOrDefaultAsync<int>(
+                "SELECT COUNT(1) FROM Access WHERE USER_TUID = @UserId AND STORE_TUID = @StoreId",
+                new { UserId = userid, StoreId = storeid });
+
+            if (accessExists > 0)
+                return -1; // User is already assigned
+
+            // Assign user to store
+            var rowsAffected = await connection.ExecuteAsync(
+                "DELETE FROM Access WHERE USER_TUID = @UserId AND STORE_TUID = @StoreId",
+                new { StoreId = storeid, UserId = userid });
+
+            return rowsAffected;
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine("Database operation failed: " + exception);
             return 0;
         }
     }
 
-     public async Task<IEnumerable<Store>?> GetStoresForUser(int userid)
+    public async Task<IEnumerable<Store>?> GetStoresForUser(int userid)
     {
         try
         {
             using SqlConnection connection = GetConnection();
 
-            var GetStoresSQL = "SELECT Store.TUID, Store.NAME, Store.ADDRESS, " +
-                              "Store.CITY, Store.STATE, Store.ZIP, " +
-                              "Store.WIDTH, Store.HEIGHT, Store.BLUEPRINT_IMAGE, " +
-                              "FROM Store " +
-                              "INNER JOIN Access " +
-                              "ON Store.TUID = Access.STORE_TUID " +
-                              "WHERE Access.USER_TUID = "+ userid +";";
-            
-            return await connection.QueryAsync<Store>(GetStoresSQL);
+            // Check if user exists first
+            var userExists = await connection.ExecuteScalarAsync<int>(
+                "SELECT COUNT(1) FROM Users WHERE TUID = @UserId",
+                new { UserId = userid });
+
+            if (userExists == 0)
+            {
+                return null; // User does not exist
+            }
+
+            // Query stores for the given user
+            var GetStoresSQL = @"
+            SELECT Stores.TUID, Stores.NAME, Stores.ADDRESS, 
+                   Stores.CITY, Stores.STATE, Stores.ZIP, 
+                   Stores.WIDTH, Stores.HEIGHT, Stores.BLUEPRINT_IMAGE
+            FROM Stores 
+            INNER JOIN Access 
+            ON Stores.TUID = Access.STORE_TUID 
+            WHERE Access.USER_TUID = @UserId;";
+
+            return await connection.QueryAsync<Store>(GetStoresSQL, new { UserId = userid });
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
-            return [];
-        }
-    }
-    public async Task<int> CreateUser(CreateUser user){
-        try{
-            using SqlConnection connection = GetConnection();
-            var CreateUserSQL = "";
-            return await connection.ExecuteAsync(CreateUserSQL);
-        }catch (SqlException exception){
-            Console.WriteLine(("Database connection failed: ", exception));
-            return 0;
+            Console.WriteLine("Database connection failed: " + exception.Message);
+            return null;
         }
     }
 
-    Task<int> IUserContext.AddUserToStore(int userid, int storeid)
-    {
-        throw new NotImplementedException();
-    }
+
 }

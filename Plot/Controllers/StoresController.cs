@@ -40,7 +40,6 @@ public class StoresController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<Store>>> GetAll()
     {
-        return Ok(await _storeContext.GetStores);
         return Ok(await _storeContext.GetStores());
     }
 
@@ -70,7 +69,7 @@ public class StoresController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Store>> Create(CreateStore store)
     {
-        return Ok(await _storeContext.CreateStore(store));
+        return Ok(await _storeContext.CreateStoreEntry(store));
     }
 
     /// <summary>
