@@ -81,13 +81,13 @@ public class AuthContext : DbContext, IAuthContext
             {
                 return new User()
                 {
-                    UserId = user.TUID,
-                    FirstName = user.FIRST_NAME,
-                    LastName = user.LAST_NAME,
-                    Email = user.EMAIL,
-                    Password = user.PASSWORD,
-                    Role = user.ROLE_TUID,
-                    Active = user.ACTIVE
+                    TUID = user.TUID,
+                    FIRST_NAME = user.FIRST_NAME,
+                    LAST_NAME = user.LAST_NAME,
+                    EMAIL = user.EMAIL,
+                    PASSWORD = user.PASSWORD,
+                    ROLE = user.ROLE_TUID,
+                    ACTIVE = user.ACTIVE
                 };
             }
 
