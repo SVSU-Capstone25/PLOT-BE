@@ -12,11 +12,16 @@
     
     Written by: Jordan Houlihan
 */
-
+using System.ComponentModel.DataAnnotations;
 namespace Plot.Data.Models.Stores;
 
 public record UpdateSizeStore
 {
-    public int? WIDTH { get; set; }
-    public int? HEIGHT { get; set; }
+    [Required]
+    [Range(int.MinValue, int.MaxValue, ErrorMessage = "Width must be an integer.")]
+    public int WIDTH { get; set; }
+
+    [Required]
+    [Range(int.MinValue, int.MaxValue, ErrorMessage = "Height must be an integer.")]
+    public int HEIGHT { get; set; }
 }

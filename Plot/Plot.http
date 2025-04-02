@@ -50,21 +50,56 @@
 // ###
 //
 
-GET {{Plot_HostAddress}}/api/floorsets/1
+GET {{Plot_HostAddress}}/api/users/get-all
+Content-Type: application/json
 Accept: application/json
-
-### 
-
-GET {{Plot_HostAddress}}/api/users/
-Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MTcxMTYsImV4cCI6MTc0MzYyMDcxNiwiaWF0IjoxNzQzNjE3MTE2LCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.uItzB9UUgYv2CN212gmdYJ4JI16Qb5_mbSjsskvJ-Qo
 
 ###
 
-GET {{Plot_HostAddress}}/api/users/1
+GET {{Plot_HostAddress}}/api/users/get-users-by-id/1
+Content-Type: application/json
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MTcxMTYsImV4cCI6MTc0MzYyMDcxNiwiaWF0IjoxNzQzNjE3MTE2LCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.uItzB9UUgYv2CN212gmdYJ4JI16Qb5_mbSjsskvJ-Qo
 
 ###
 
+PATCH {{Plot_HostAddress}}/api/users/public-info/2
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MTcxMTYsImV4cCI6MTc0MzYyMDcxNiwiaWF0IjoxNzQzNjE3MTE2LCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.uItzB9UUgYv2CN212gmdYJ4JI16Qb5_mbSjsskvJ-Qo
+
+{
+     "FIRST_NAME": "Bensonny",
+    "LAST_NAME": "Dunwood",
+    "ROLE": "Manager"
+}
+###
+
+PATCH {{Plot_HostAddress}}/api/users/delete-user/2
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MjYwNDAsImV4cCI6MTc0MzYyOTY0MCwiaWF0IjoxNzQzNjI2MDQwLCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.NNpMrjbd9JxpchM-hZSkD_SnxrJCEdgGBAkaK1BEpto
+
+###
+
+POST {{Plot_HostAddress}}/api/users/store-registration
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MjYwNDAsImV4cCI6MTc0MzYyOTY0MCwiaWF0IjoxNzQzNjI2MDQwLCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.NNpMrjbd9JxpchM-hZSkD_SnxrJCEdgGBAkaK1BEpto
+
+{
+    "USER_TUID":2,
+    "STORE_TUID":2
+}
+
+###
+GET {{Plot_HostAddress}}/api/users/stores/2
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MjYwNDAsImV4cCI6MTc0MzYyOTY0MCwiaWF0IjoxNzQzNjI2MDQwLCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.NNpMrjbd9JxpchM-hZSkD_SnxrJCEdgGBAkaK1BEpto
+
+###
 POST {{Plot_HostAddress}}/api/auth/register
 Content-Type: application/json
 Accept: application/json
@@ -73,7 +108,7 @@ Accept: application/json
     "FirstName": "Bart",
     "LastName": "Simpson",
     "Email": "bartsimpson@gmail.com",
-    "Role": 1,
+    "Role": "Owner",
     "Store": 1
 }
 
@@ -154,3 +189,11 @@ Content-Type: application/json
 Accept: application/json
 
 ###
+GET {{Plot_HostAddress}}/api/stores
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MTE1NzksImV4cCI6MTc0MzYxNTE3OSwiaWF0IjoxNzQzNjExNTc5LCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.hlre2Rp9RWco5-J0Y-ZKl4CX3aYmfzD2MRXjwUtcoxo
+
+###
+GET {{Plot_HostAddress}}/api/stores/access/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MDk2MTYsImV4cCI6MTc0MzYxMzIxNiwiaWF0IjoxNzQzNjA5NjE2LCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.8glqYvEs_O_mWCUlEJeb38jJYOHq1b-zh4J-fmuVyts
+

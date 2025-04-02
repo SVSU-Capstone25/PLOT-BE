@@ -20,13 +20,11 @@ namespace Plot.Data.Models.Users;
 public record UpdatePublicInfoUser
 {
     [Required]
-    public int? TUID{ get; set; }
-    [Required]
     [StringLength(747, ErrorMessage = "First Name cannot exceed 747 characters.")]
     public string? FIRST_NAME { get; set; }
     [Required]
     [StringLength(747, ErrorMessage = "Last Name cannot exceed 747 characters.")]
     public string? LAST_NAME { get; set; }
-    [Range(1,int.MaxValue, ErrorMessage = "Role must be an integer")]
-    public int? ROLE { get; set; }
+    [StringLength(10, ErrorMessage = "Role cannot exceed 10 characters.")]
+    public string? ROLE { get; set; }
 }

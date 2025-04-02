@@ -34,8 +34,8 @@ public record UserDTO
     [StringLength(320, ErrorMessage = "First Name cannot exceed 320 characters.")]
     public string? EMAIL { get; set; }
     [Required]
-    [Range(1,int.MaxValue, ErrorMessage = "Role must be an integer")]
-    public int? ROLE { get; set; }
+    [StringLength(10, ErrorMessage = "Role cannot exceed 10 characters.")]
+    public string? ROLE { get; set; }
     [Required]
     public bool ACTIVE { get; set; }
 }

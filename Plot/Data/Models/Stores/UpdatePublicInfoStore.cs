@@ -14,15 +14,24 @@
 */
 
 using Plot.Data.Models.Users;
-
+using System.ComponentModel.DataAnnotations;
 namespace Plot.Data.Models.Stores;
 
 public record UpdatePublicInfoStore
 {
-    public string? NAME { get; set; }
-    public string? ADDRESS { get; set; }
-    public string? CITY { get; set; }
-    public string? STATE { get; set; }
-    public string? ZIP { get; set; }
+    [StringLength(100, ErrorMessage = "Store name cannot exceed 100 characters.")]
+    public required string NAME { get; set; }
+
+    [StringLength(100, ErrorMessage = "Address cannot exceed 100 characters.")]
+    public required string ADDRESS { get; set; }
+
+    [StringLength(100, ErrorMessage = "City cannot exceed 100 characters.")]
+    public required string CITY { get; set; }
+
+    [StringLength(25, ErrorMessage = "State cannot exceed 25 characters.")]
+    public required string STATE { get; set; }
+
+    [StringLength(10, ErrorMessage = "Zip code cannot exceed 10 characters.")]
+    public required string ZIP { get; set; }
     public IFormFile? BLUEPRINT_IMAGE { get; set; }
 }

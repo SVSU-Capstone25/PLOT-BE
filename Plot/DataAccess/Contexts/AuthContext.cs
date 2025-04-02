@@ -70,28 +70,13 @@ public class AuthContext : DbContext, IAuthContext
         {
             using SqlConnection connection = GetConnection();
 
-            var GetUserByEmailSQL = "SELECT * " +
+            var GetUserByEmailSQL = "SELECT TUID, FIRST_NAME, LAST_NAME, EMAIL, " + 
+                                    "PASSWORD, (SELECT NAME FROM Roles WHERE TUID = ROLE_TUID) AS 'ROLE', ACTIVE " +
                                     "FROM Users " +
                                     "WHERE EMAIL = @EMAIL";
             object GetUserByEmailParameters = new { EMAIL = email };
 
-            var user = await connection.QuerySingleOrDefaultAsync(GetUserByEmailSQL, GetUserByEmailParameters);
-
-            if (user != null)
-            {
-                return new User()
-                {
-                    UserId = user.TUID,
-                    FirstName = user.FIRST_NAME,
-                    LastName = user.LAST_NAME,
-                    Email = user.EMAIL,
-                    Password = user.PASSWORD,
-                    Role = user.ROLE_TUID,
-                    Active = user.ACTIVE
-                };
-            }
-
-            return null;
+            return await connection.QuerySingleOrDefaultAsync<User>(GetUserByEmailSQL, GetUserByEmailParameters);
         }
         catch (SqlException exception)
         {

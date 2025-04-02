@@ -20,6 +20,7 @@ using Plot.Data.Models.Users;
 using Plot.Data.Models.Stores;
 using Plot.DataAccess.Interfaces;
 using System.Data;
+using System.Data;
 
 namespace Plot.DataAccess.Contexts;
 
@@ -32,8 +33,8 @@ public class UserContext : DbContext, IUserContext
             using SqlConnection connection = GetConnection();
 
             var GetUsersSQL = "SELECT TUID, FIRST_NAME, LAST_NAME, " +
-                              "EMAIL, ACTIVE, ROLE_TUID " +
-                              "FROM Users " +
+                              "EMAIL, ACTIVE, (SELECT NAME FROM Roles WHERE TUID = ROLE_TUID) AS 'ROLE' " +
+                              "FROM Users " + 
                               "WHERE ACTIVE = 1;";
 
             return await connection.QueryAsync<UserDTO>(GetUsersSQL);
@@ -52,7 +53,7 @@ public class UserContext : DbContext, IUserContext
             using SqlConnection connection = GetConnection();
 
             var GetUserByIdSQL = "SELECT TUID, FIRST_NAME, LAST_NAME, " +
-                              "EMAIL, ACTIVE, ROLE_TUID " +
+                              "EMAIL, ACTIVE, (SELECT NAME FROM Roles WHERE TUID = ROLE_TUID) AS 'ROLE' " +
                               "FROM Users " +
                               "WHERE TUID = " + userId + ";";
 
@@ -80,10 +81,10 @@ public class UserContext : DbContext, IUserContext
             if (existingUser == null)
                 return -1; // User not found
 
-            // Validate Role ID
+            // Validate Role Name
             var roleExists = await connection.ExecuteScalarAsync<int>(
-                "SELECT COUNT(1) FROM Roles WHERE TUID = @RoleId",
-                new { RoleId = user.ROLE }
+                "SELECT COUNT(1) FROM Roles WHERE NAME = @RoleName",
+                new { RoleName = user.ROLE }
             );
 
             if (roleExists == 0)
@@ -94,13 +95,13 @@ public class UserContext : DbContext, IUserContext
             @"UPDATE Users
               SET FIRST_NAME = @FirstName, 
                   LAST_NAME = @LastName, 
-                  ROLE_TUID = @RoleId
+                  ROLE_TUID = (SELECT TUID FROM Roles WHERE NAME = @RoleName)
               WHERE TUID = @UserId;",
             new
             {
                 FirstName = user.FIRST_NAME,
                 LastName = user.LAST_NAME,
-                RoleId = user.ROLE,
+                RoleName = user.ROLE,
                 UserId = userId
             }
             );
@@ -161,7 +162,7 @@ public class UserContext : DbContext, IUserContext
 
             // Check if the store exists
             var storeExists = await connection.QueryFirstOrDefaultAsync<int>(
-                "SELECT COUNT(1) FROM Stores WHERE StoreID = @StoreId",
+                "SELECT COUNT(1) FROM Stores WHERE TUID = @StoreId",
                 new { StoreId = storeid });
 
             if (storeExists == 0)
@@ -173,12 +174,12 @@ public class UserContext : DbContext, IUserContext
                 new { UserId = userid, StoreId = storeid });
 
             if (accessExists > 0)
-                return -1; // User is already assigned
+                return -2; // User is already assigned
 
             // Assign user to store
             var rowsAffected = await connection.ExecuteAsync(
-                "INSERT INTO Access (USER_TUID, STORE_TUID)",
-                new { StoreId = storeid, UserId = userid });
+                "INSERT INTO Access (USER_TUID, STORE_TUID) VALUES (@UserId, @StoreId);",
+                new { UserId = userid ,StoreId = storeid});
 
             return rowsAffected;
         }
@@ -204,19 +205,19 @@ public class UserContext : DbContext, IUserContext
 
             // Check if the store exists
             var storeExists = await connection.QueryFirstOrDefaultAsync<int>(
-                "SELECT COUNT(1) FROM Stores WHERE StoreID = @StoreId",
+                "SELECT COUNT(1) FROM Stores WHERE TUID = @StoreId",
                 new { StoreId = storeid });
 
             if (storeExists == 0)
                 return -1; // Store not found
 
-            // Check if the user is already assigned to the store
+            // Check if the user is already removed
             var accessExists = await connection.QueryFirstOrDefaultAsync<int>(
                 "SELECT COUNT(1) FROM Access WHERE USER_TUID = @UserId AND STORE_TUID = @StoreId",
                 new { UserId = userid, StoreId = storeid });
 
-            if (accessExists > 0)
-                return -1; // User is already assigned
+            if (accessExists == 0)
+                return -2; // User is already removed
 
             // Assign user to store
             var rowsAffected = await connection.ExecuteAsync(

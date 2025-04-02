@@ -23,8 +23,8 @@ public record UserStoreRequest
 {
     [Required]
     [Range(1,int.MaxValue, ErrorMessage = "RoleId must be an integer")]
-    public int userid { get; set; }
+    public int USER_TUID { get; set; }
     [Required]
     [Range(1,int.MaxValue, ErrorMessage = "storeId must be an integer")]
-    public int storeid { get; set; }
+    public int STORE_TUID { get; set; }
 }

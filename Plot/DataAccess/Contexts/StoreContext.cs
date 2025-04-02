@@ -1,6 +1,6 @@
 /*
     Filename: StoreContext.cs
-    Part of Project: PLOT/PLOT-BE/Plot/DataAccess/Contexts
+    Part of Project: PLOT/PLOT-BE/DataAccess/Contexts
 
     File Purpose:
     This file contains the database context for database operations 
@@ -18,7 +18,6 @@ using Dapper;
 using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Stores;
 using Plot.Data.Models.Users;
-using Plot.Data.Models.Floorsets;
 using Plot.DataAccess.Interfaces;
 
 namespace Plot.DataAccess.Contexts;
@@ -31,15 +30,14 @@ public class StoreContext : DbContext, IStoreContext
         {
             using SqlConnection connection = GetConnection();
 
-            var GetStoresSQL = "SELECT * " +
-                               "FROM Stores " +
-                               "WHERE ACTIVE = 1;";
+            var GetStoresSQL = "SELECT TUID, NAME, ADDRESS, CITY, STATE, ZIP, WIDTH, HEIGHT " +
+                               "FROM Stores;";
             
             return await connection.QueryAsync<Store>(GetStoresSQL);
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine(("Database connection failed: ", exception.Message));
             return [];
         }
     }
@@ -58,7 +56,7 @@ public class StoreContext : DbContext, IStoreContext
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine(("Database connection failed: ", exception.Message));
             return [];
         }
     }
@@ -101,7 +99,7 @@ public class StoreContext : DbContext, IStoreContext
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine(("Database connection failed: ", exception.Message));
             return 0;
         }
     }
@@ -119,7 +117,7 @@ public class StoreContext : DbContext, IStoreContext
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine(("Database connection failed: ", exception.Message));
             return 0;
         }
     }
@@ -129,21 +127,18 @@ public class StoreContext : DbContext, IStoreContext
         {
             using SqlConnection connection = GetConnection();
 
-            var GetUserByIdSQL = "SELECT Users.TUID, Users.FIRST_NAME, Users.LAST_NAME, " +
-                                 "Users.EMAIL, Users.ACTIVE, Users.ROLE_TUID " +
-                              "FROM Users " +
-                              "INNER JOIN Access " +
-                              "ON Users.TUID = Access.USER_TUID " +
-                              "WHERE Access.STORE_TUID = " + storeid + ";";
-
-            return await connection.QueryAsync<UserDTO>(GetUserByIdSQL);
-        }
-        catch (SqlException exception)
+            var GetUsersByStore = "SELECT TUID, FIRST_NAME, LAST_NAME, EMAIL, ROLE, ACTIVE " +
+                                  "FROM Users " +
+                                  $"WHERE TUID IN (SELECT USER_TUID FROM Access WHERE STORE_TUID = {storeid});";
+            
+            return await connection.QueryAsync<UserDTO>(GetUsersByStore);
+        } catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine("Database connection failed: ", exception.Message);
             return [];
         }
     }
+
     public async Task<int> CreateStoreEntry(CreateStore store)
     {
         try
@@ -159,7 +154,7 @@ public class StoreContext : DbContext, IStoreContext
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine(("Database connection failed: ", exception.Message));
             return 0;
         }
     }

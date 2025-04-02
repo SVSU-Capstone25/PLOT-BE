@@ -17,6 +17,7 @@ using Plot.Data.Models.Stores;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
 namespace Plot.Controllers;
 
@@ -27,7 +28,7 @@ public class UsersController : ControllerBase
     private readonly IUserContext _userContext;
     private readonly ClaimParserService _claimParserService;
 
-    public UsersController(IUserContext userContext, ClaimParserService claimParserService)
+    public UsersController(IUserContext userContext, IAuthContext authContext, ClaimParserService claimParserService)
     {
         _userContext = userContext;
         _claimParserService = claimParserService;
@@ -72,7 +73,7 @@ public class UsersController : ControllerBase
     /// <param name="userId">The id of the user</param>
     /// <param name="user">The updated public information</param>
     /// <returns>The updated user</returns>
-    [Authorize]
+    [Authorize(Policy = "Manager")]
     [HttpPatch("public-info/{userId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -139,16 +140,19 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> AddUserToStore([FromBody] UserStoreRequest dufsr)
+    public async Task<ActionResult<int>> AddUserToStore([FromBody] UserStoreRequest dufsr)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
-
-        var added = await _userContext.AddUserToStore(dufsr.userid, dufsr.storeid);
+        //
+        var added = await _userContext.AddUserToStore(dufsr.USER_TUID, dufsr.STORE_TUID);
         if(added == -1){
             return NotFound();
+        }
+        if(added == -2){
+            return BadRequest();
         }
         return Ok(added);
     }
@@ -171,9 +175,12 @@ public class UsersController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var removed = await _userContext.DeleteUserFromStore(dufsr.userid, dufsr.storeid);
+        var removed = await _userContext.DeleteUserFromStore(dufsr.USER_TUID, dufsr.STORE_TUID);
         if(removed == -1){
             return NotFound();
+        }
+        if(removed == -2){
+            return BadRequest();
         }
         return NoContent();
     }
