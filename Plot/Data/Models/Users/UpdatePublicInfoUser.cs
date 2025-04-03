@@ -26,5 +26,10 @@ public record UpdatePublicInfoUser
     [Required]
     [StringLength(25, MinimumLength = 1, ErrorMessage = "{0} needs to be {2}-{1} characters long.")]
     public string? LAST_NAME { get; set; }
+
+    public string? EMAIL { get; set; }
+
     public string? ROLE { get; set; }
+    public bool? ACTIVE { get; set; }
+    public string? STORENAME { get; set;}
 }
