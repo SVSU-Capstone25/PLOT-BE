@@ -31,7 +31,7 @@ public class StoreContext : DbContext, IStoreContext
             using SqlConnection connection = GetConnection();
             DynamicParameters parameters = new DynamicParameters();
             
-            return await connection.QueryAsync<Select_Store>("Insert_Update_Floorset",parameters, commandType: System.Data.CommandType.StoredProcedure);
+            return await connection.QueryAsync<Select_Store>("Select_Store",parameters, commandType: System.Data.CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {
@@ -40,17 +40,16 @@ public class StoreContext : DbContext, IStoreContext
         }
     }
 
-    public async Task<IEnumerable<Store>> GetStoreById(int storeId)
+    public async Task<IEnumerable<Select_Store>> GetStoreById(int storeId)
     {
         try
         {
             using SqlConnection connection = GetConnection();
 
-            var GetStoresSQL = "SELECT * " +
-                               "FROM Stores " +
-                               "WHERE TUID = " + storeId + ";";
-            
-            return await connection.QueryAsync<Store>(GetStoresSQL);
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("StoreID",storeId);
+            return await connection.QueryAsync<Select_Store>("Select_Store",parameters, commandType: System.Data.CommandType.StoredProcedure);
+        
         }
         catch (SqlException exception)
         {
@@ -59,41 +58,40 @@ public class StoreContext : DbContext, IStoreContext
         }
     }
 
-    public async Task<int> UpdatePublicInfoStore(int storeId, UpdatePublicInfoStore store)
-    {
-        // try
-        // {
-        //     using SqlConnection connection = GetConnection();
-        //     DynamicParameters parameters = new DynamicParameters();
-        //     parameters.Add("ID", floorset.TUID);
-        //     parameters.Add("NAME", floorset.NAME);
-        //     parameters.Add("STORE_TUID", floorset.STORE_TUID);
-        //     parameters.Add("DATE_CREATED", floorset.DATE_CREATED);
-        //     parameters.Add("CREATED_BY", floorset.CREATED_BY);
-        //     parameters.Add("DATE_MODIFIED", floorset.DATE_MODIFIED);
-        //     parameters.Add("MODIFIED_BY", floorset.MODIFIED_BY);
-        //     return await connection.ExecuteAsync("Insert_Update_Floorset",parameters, commandType: CommandType.StoredProcedure);
-        
-        // }
-        // catch (SqlException exception)
-        // {
-        //     Console.WriteLine(("Database connection failed: ", exception));
-        //     return 0;
-        // }
-        throw new NotImplementedException();
-    }
-    public async Task<int> UpdateSizeStore(int storeId, UpdateSizeStore store)
+    public async Task<int> UpdatePublicInfoStore(Select_Store updatestore)
     {
          try
         {
             using SqlConnection connection = GetConnection();
-
-            var UpdateStoreSQL = "UPDATE Stores" +
-                                "SET WIDTH = " + store.WIDTH +
-                                ", HEIGHT = " + store.HEIGHT + 
-                                "WHERE TUID = " + storeId;
-
-            return await connection.ExecuteAsync(UpdateStoreSQL);
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("TUID",updatestore.TUID);
+            parameters.Add("NAME", updatestore.NAME);
+            parameters.Add("ADDRESS",updatestore.ADDRESS);
+            parameters.Add("CITY", updatestore.CITY);
+            parameters.Add("STATE", updatestore.STATE);
+            parameters.Add("ZIP", updatestore.ZIP);
+            parameters.Add("BLUEPRINT_IMAGE", updatestore.BLUEPRINT_IMAGE);
+            return await connection.ExecuteAsync("Insert_Update_Store",parameters, commandType: System.Data.CommandType.StoredProcedure);
+        
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception.Message));
+            return 0;
+        }
+    }
+    public async Task<int> UpdateSizeStore(Select_Store updatestore)
+    {
+        try
+        {
+            using SqlConnection connection = GetConnection();
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("TUID",updatestore.TUID);
+            parameters.Add("WIDTH", updatestore.WIDTH);
+            parameters.Add("HEIGHT",updatestore.HEIGHT);
+            
+            return await connection.ExecuteAsync("Insert_Update_Store",parameters, commandType: System.Data.CommandType.StoredProcedure);
+        
         }
         catch (SqlException exception)
         {
@@ -107,11 +105,9 @@ public class StoreContext : DbContext, IStoreContext
         try
         {
             using SqlConnection connection = GetConnection();
-
-            var DeleteStoreSQL = "DELETE FROM Store" +
-                                "WHERE TUID = " + storeId;
-
-            return await connection.ExecuteAsync(DeleteStoreSQL);
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("StoreID", storeId);
+            return await connection.ExecuteAsync("Delete_Store",parameters, commandType: System.Data.CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {
@@ -137,18 +133,23 @@ public class StoreContext : DbContext, IStoreContext
         }
     }
 
-    public async Task<int> CreateStoreEntry(CreateStore store)
+    public async Task<int> CreateStoreEntry(Select_Store store)
     {
         try
         {
-            using SqlConnection connection = GetConnection();
-
-            var CreateStoreSQL = "INSERT INTO Stores (NAME, ADDRESS, CITY, STATE, ZIP, WIDTH, HEIGHT, BLUEPRINT_IMAGE)" +
-                                "VALUES ('" + store.NAME + "','" + store.ADDRESS + "','" + 
-                                store.CITY + "','" + store.STATE + "','" + store.ZIP + "'," +
-                                store.WIDTH + "," + store.HEIGHT + ",'" + store.BLUEPRINT_IMAGE + "');";
-
-            return await connection.ExecuteAsync(CreateStoreSQL);
+             using SqlConnection connection = GetConnection();
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("TUID",store.TUID);
+            parameters.Add("NAME", store.NAME);
+            parameters.Add("ADDRESS", store.ADDRESS);
+            parameters.Add("CITY", store.CITY);
+            parameters.Add("STATE", store.STATE);
+            parameters.Add("ZIP", store.ZIP);
+            parameters.Add("WIDTH", store.WIDTH);
+            parameters.Add("HEIGHT", store.HEIGHT);
+            parameters.Add("BLUEPRINT_IMAGE", store.BLUEPRINT_IMAGE);
+            return await connection.ExecuteAsync("Insert_Update_Store",parameters, commandType: System.Data.CommandType.StoredProcedure);
+        
         }
         catch (SqlException exception)
         {

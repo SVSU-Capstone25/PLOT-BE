@@ -23,18 +23,15 @@ namespace Plot.DataAccess.Contexts;
 
 public class FloorsetContext : DbContext, IFloorsetContext
 {
-    public async Task<IEnumerable<Floorset>> GetFloorsetsByStoreId(int storeId)
+    public async Task<IEnumerable<Select_Floorset>> GetFloorsetsByStoreId(int storeId)
     {
         try
         {
             using SqlConnection connection = GetConnection();
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("FloorsetID", storeId);
 
-            var GetFloorsetsById = "SELECT * " +
-                                   "FROM Floorsets " +
-                                   "WHERE STORE_TUID = @StoreId;";
-            object UpdatePasswordParameters = new { StoreId = storeId };
-
-            return await connection.QueryAsync<Floorset>(GetFloorsetsById, UpdatePasswordParameters);
+            return await connection.QueryAsync<Select_Floorset>("Select_Floorset",parameters, commandType: CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {
@@ -44,15 +41,14 @@ public class FloorsetContext : DbContext, IFloorsetContext
 
         // throw new NotImplementedException();
     }
-    public async Task<int> CreateFloorset(CreateFloorset floorset)
+    public async Task<int> CreateFloorset(Select_Floorset floorset)
     {
         try
         {
             using SqlConnection connection = GetConnection();
-  
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("ID", null);
-            parameters.Add("NAME", floorset.NAME);
+            
+            parameters.Add("NAME",floorset.NAME);
             parameters.Add("STORE_TUID", floorset.STORE_TUID);
             parameters.Add("DATE_CREATED", floorset.DATE_CREATED);
             parameters.Add("CREATED_BY", floorset.CREATED_BY);
@@ -70,19 +66,19 @@ public class FloorsetContext : DbContext, IFloorsetContext
         //throw new NotImplementedException();
     }
 
-    public async Task<int> UpdateFloorsetById(int floorsetId, UpdatePublicInfoFloorset floorset)
+    public async Task<int> UpdateFloorsetById(Select_Floorset updatefloorset)
     {
         try
         {
             using SqlConnection connection = GetConnection();
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("ID", floorset.TUID);
-            parameters.Add("NAME", floorset.NAME);
-            parameters.Add("STORE_TUID", floorset.STORE_TUID);
-            parameters.Add("DATE_CREATED", floorset.DATE_CREATED);
-            parameters.Add("CREATED_BY", floorset.CREATED_BY);
-            parameters.Add("DATE_MODIFIED", floorset.DATE_MODIFIED);
-            parameters.Add("MODIFIED_BY", floorset.MODIFIED_BY);
+            parameters.Add("TUID", updatefloorset.TUID);
+            parameters.Add("NAME",updatefloorset.NAME);
+            parameters.Add("STORE_TUID", updatefloorset.STORE_TUID);
+            parameters.Add("DATE_CREATED", updatefloorset.DATE_CREATED);
+            parameters.Add("CREATED_BY", updatefloorset.CREATED_BY);
+            parameters.Add("DATE_MODIFIED", updatefloorset.DATE_MODIFIED);
+            parameters.Add("MODIFIED_BY", updatefloorset.MODIFIED_BY);
             return await connection.ExecuteAsync("Insert_Update_Floorset",parameters, commandType: CommandType.StoredProcedure);
         
         }
@@ -100,11 +96,10 @@ public class FloorsetContext : DbContext, IFloorsetContext
         try
         {
             using SqlConnection connection = GetConnection();
-
-            var DeleteFloorset = "DELETE FROM Floorsets" + 
-                                    "WHERE TUID = " + floorsetId;
-
-            return await connection.ExecuteAsync(DeleteFloorset);
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("FloorsetID", floorsetId);
+            return await connection.ExecuteAsync("Delete_Floorset",parameters, commandType: CommandType.StoredProcedure);
+        
         }
         catch (SqlException exception)
         {
