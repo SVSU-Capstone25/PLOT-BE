@@ -44,37 +44,10 @@ public class FixturesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<FloorsetFixtureInformation>> GetFixtureInformation(int floorsetId, int storeId)
+    public async Task<ActionResult<Select_Floorset_Fixtures>> GetFixtureInformation(int floorsetId)
     {
-        FloorsetFixtureInformation floorsetFixtureInformation = new FloorsetFixtureInformation();
-        var fixtureModels = await _fixtureContext.GetFixtureModels(storeId);
-
-        if (fixtureModels == null)
-        {
-            return NotFound(storeId);
-        }
-
-        floorsetFixtureInformation.FixtureModels = fixtureModels;
-
-        var fixtureInstances = await _fixtureContext.GetFixtureInstances(floorsetId);
-
-        if (fixtureInstances == null)
-        {
-            return NotFound(storeId);
-        }
-
-        floorsetFixtureInformation.FixtureInstances = fixtureInstances;
-
-        var salesAllocations = await _salesContext.GetFixtureAllocations(floorsetId);
-
-        if (salesAllocations == null)
-        {
-            return NotFound(storeId);
-        }
-
-        floorsetFixtureInformation.Allocations = salesAllocations;
         
-        return Ok(floorsetFixtureInformation);
+        return Ok(await _fixtureContext.GetFixtureInstances(floorsetId));
     }
 
     /// <summary>
@@ -90,16 +63,28 @@ public class FixturesController : ControllerBase
     [HttpPatch("update-fixture/{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> UpdateFixtureInformation(int floorsetId, int storeId, UpdateFloorsetFixtureInformation uffi)
+    public async Task<ActionResult> UpdateFixtureInformation(int floorsetId, [FromBody] Fixtures_State fixtures)
     {
+        var old = await _fixtureContext.GetFixtureInstances(floorsetId);
+        //Select_Floorset_Fixtures[] oldFixtures = query.Cast<Select_Floorset_Fixtures>().ToArray();
+        //Select_Floorset_Fixtures[] newFixtures = fixtures.CurrentFixtures.Cast<Select_Floorset_Fixtures>().ToArray();
         
-        for(int i = 0; i<uffi.FixtureInstances.Count(); i++)
+        IEnumerable<Select_Floorset_Fixtures> update = old.Intersect(fixtures.CurrentFixtures);
+        IEnumerable<Select_Floorset_Fixtures> create = fixtures.CurrentFixtures.Except(old);
+        IEnumerable<Select_Floorset_Fixtures> delete = old.Except(fixtures.CurrentFixtures);
+        foreach(Select_Floorset_Fixtures instance in update)
         {
-             await _fixtureContext.UpdateFixtureInstanceById(uffi.FixtureInstances[i]);
+            await _fixtureContext.UpdateFixtureInstanceById(instance);
         }
-        for(int i = 0; i<uffi.DeletedFixtureInstances.Count(); i++)
+
+        foreach(Select_Floorset_Fixtures instance in create)
         {
-             await _fixtureContext.DeleteFixtureInstanceById(uffi.DeletedFixtureInstances[i]);
+            await _fixtureContext.CreateFixtureInstance(instance);
+        }
+
+        foreach(Select_Floorset_Fixtures instance in delete)
+        {
+            await _fixtureContext.DeleteFixtureInstanceById(instance.TUID.Value);
         }
         
       
@@ -115,13 +100,13 @@ public class FixturesController : ControllerBase
     [HttpPatch("create-fixture/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<FixtureModel>> CreateModel(CreateFixtureModel fixtureModel)
+    public async Task<ActionResult<Select_Fixtures>> CreateModel([FromBody]Select_Fixtures fixtureModel)
     {
         return Ok(await _fixtureContext.CreateFixtureModel(fixtureModel));
     }
 
     [Authorize(Policy = "Manager")]
-    [HttpPatch("delete-store/{storeId:int}")]
+    [HttpPatch("delete-model/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> DeleteModel(int modelId)
@@ -129,5 +114,12 @@ public class FixturesController : ControllerBase
         return Ok(await _fixtureContext.DeleteFixtureModelById(modelId));
     }
     
-
+    [Authorize(Policy = "Manager")]
+    [HttpPatch("update-model/{storeId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> UpdateFixtureModel([FromBody] Select_Fixtures update)
+    {
+        return Ok(await _fixtureContext.UpdateFixtureModelById(update));
+    }
 }

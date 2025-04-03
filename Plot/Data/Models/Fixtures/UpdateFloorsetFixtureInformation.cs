@@ -21,5 +21,5 @@ public record UpdateFloorsetFixtureInformation
     public int[]? DeletedFixtureInstances { get; set; }
     //public int[]? DeletedFixtureModels { get; set; }
     //public UpdateFixtureModel[]? FixtureModels { get; set; }
-    public UpdateFixtureInstance[]? FixtureInstances { get; set; }
+    public Select_Floorset_Fixtures[]? FixtureInstances { get; set; }
 }

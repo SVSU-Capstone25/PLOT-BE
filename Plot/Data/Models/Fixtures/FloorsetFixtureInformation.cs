@@ -21,7 +21,7 @@ namespace Plot.Data.Models.Fixtures;
 
 public record FloorsetFixtureInformation
 {
-    public IEnumerable<FixtureModel>? FixtureModels { get; set; }
-    public IEnumerable<FixtureInstance>? FixtureInstances { get; set; }
-    public IEnumerable<FixtureAllocations>? Allocations { get; set; }
+    public IEnumerable<Select_Fixtures>? FixtureModels { get; set; }
+    public IEnumerable<Select_Floorset_Fixtures>? FixtureInstances { get; set; }
+    //public IEnumerable<FixtureAllocations>? Allocations { get; set; }
 }
