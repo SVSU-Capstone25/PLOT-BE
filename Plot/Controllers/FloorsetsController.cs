@@ -41,7 +41,7 @@ public class FloorsetsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<Floorset>>> GetFloorsetsByStore(int storeId)
+    public async Task<ActionResult<IEnumerable<Select_Floorset>>> GetFloorsetsByStore(int storeId)
     {
         return Ok(await _floorsetContext.GetFloorsetsByStoreId(storeId));
         // return NoContent();
@@ -56,7 +56,7 @@ public class FloorsetsController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Floorset>> Create(CreateFloorset floorset)
+    public async Task<ActionResult<Select_Floorset>> Create([FromBody] Select_Floorset floorset)
     {
         return Ok(await _floorsetContext.CreateFloorset(floorset));
     }
@@ -72,9 +72,9 @@ public class FloorsetsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Floorset>> UpdatePublicInfo(int floorsetId, UpdatePublicInfoFloorset floorset)
+    public async Task<ActionResult<Select_Floorset>> UpdatePublicInfo([FromBody] Select_Floorset floorset)
     {
-        return Ok(await _floorsetContext.UpdateFloorsetById(floorsetId, floorset));
+        return Ok(await _floorsetContext.UpdateFloorsetById(floorset));
     }
 
     /// <summary>

@@ -40,7 +40,7 @@ public class StoreContext : DbContext, IStoreContext
         }
     }
 
-    public async Task<IEnumerable<Select_Store>> GetStoreById(int storeId)
+    public async Task<IEnumerable<Select_Store>> GetStoreById(int? storeId)
     {
         try
         {

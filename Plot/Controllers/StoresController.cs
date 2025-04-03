@@ -94,19 +94,19 @@ public class StoresController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Store>> UpdatePublicInfo(int storeId,[FromBody] UpdatePublicInfoStore store)
+    public async Task<ActionResult<Select_Store>> UpdatePublicInfo([FromBody] Select_Store store)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        var existingStore = await _storeContext.GetStoreById(storeId);
+        var existingStore = await _storeContext.GetStoreById(store.TUID);
         //return 404 error if no store was found
         if (existingStore == null) return NotFound();
 
         //controller logic could get added from other branches
-        return Ok(await _storeContext.UpdatePublicInfoStore(storeId, store));
+        return Ok(await _storeContext.UpdatePublicInfoStore(store));
     }
 
     /// <summary>
@@ -119,19 +119,19 @@ public class StoresController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Store>> UpdateSize(int storeId, UpdateSizeStore store)
+    public async Task<ActionResult<Select_Store>> UpdateSize([FromBody] Select_Store store)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        var existingStore = await _storeContext.GetStoreById(storeId);
+        var existingStore = await _storeContext.GetStoreById(store.TUID);
         //return 404 error if no store was found
         if (existingStore == null) return NotFound();
 
         //controller logic could get added from other branches
-        return Ok(await _storeContext.UpdateSizeStore(storeId, store));
+        return Ok(await _storeContext.UpdateSizeStore(store));
     }
 
     /// <summary>
