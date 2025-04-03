@@ -25,7 +25,7 @@ namespace Plot.DataAccess.Contexts;
 
 public class UserContext : DbContext, IUserContext
 {
-    public async Task<IEnumerable<Select_User>?> GetUsers()
+    public async Task<IEnumerable<Select_User>> GetUsers()
     {
         try
         {
@@ -41,7 +41,7 @@ public class UserContext : DbContext, IUserContext
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception.Message));
-            return null;
+            return [];
         }
     }
 
@@ -78,7 +78,7 @@ public class UserContext : DbContext, IUserContext
             );
 
             if (existingUser == null)
-                return -1; // User not found
+                return 0; // User not found
 
             // Validate Role Name
             var roleExists = await connection.ExecuteScalarAsync<int>(
@@ -87,7 +87,7 @@ public class UserContext : DbContext, IUserContext
             );
 
             if (roleExists == 0)
-                return -1; // Role not found
+                return 0; // Role not found
 
             // Update User Info
 
@@ -110,7 +110,7 @@ public class UserContext : DbContext, IUserContext
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception.Message));
-            return -1;
+            return 0;
         }
     }
 
@@ -142,7 +142,7 @@ public class UserContext : DbContext, IUserContext
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception.Message));
-            return -1;
+            return 0;
         }
     }
 
@@ -160,7 +160,7 @@ public class UserContext : DbContext, IUserContext
             );
 
             if (existingUser == null)
-                return -1; // User not found
+                return 0; // User not found
 
 
             // Check if the store exists
@@ -169,7 +169,7 @@ public class UserContext : DbContext, IUserContext
                 new { StoreId = storeid });
 
             if (storeExists == 0)
-                return -1; // Store not found
+                return 0; // Store not found
 
             // Check if the user is already assigned to the store
             var accessExists = await connection.QueryFirstOrDefaultAsync<int>(
@@ -177,7 +177,7 @@ public class UserContext : DbContext, IUserContext
                 new { UserId = userid, StoreId = storeid });
 
             if (accessExists > 0)
-                return 0; // User is already assigned
+                return -1; // User is already assigned
 
             // Assign user to store
             var rowsAffected = await connection.ExecuteAsync(
@@ -189,7 +189,7 @@ public class UserContext : DbContext, IUserContext
         catch (SqlException exception)
         {
             Console.WriteLine("Database operation failed: " + exception.Message);
-            return -1;
+            return 0;
         }
     }
 
@@ -205,7 +205,7 @@ public class UserContext : DbContext, IUserContext
                 new { UserId = userid });
 
             if (userExists == 0)
-                return -1; // User not found
+                return 0; // User not found
 
             // Check if the store exists
             var storeExists = await connection.QueryFirstOrDefaultAsync<int>(
@@ -213,7 +213,7 @@ public class UserContext : DbContext, IUserContext
                 new { StoreId = storeid });
 
             if (storeExists == 0)
-                return -1; // Store not found
+                return 0; // Store not found
 
             // Check if the user is already removed
             var accessExists = await connection.QueryFirstOrDefaultAsync<int>(
@@ -233,7 +233,7 @@ public class UserContext : DbContext, IUserContext
         catch (SqlException exception)
         {
             Console.WriteLine("Database operation failed: " + exception.Message);
-            return -1;
+            return 0;
         }
     }
 

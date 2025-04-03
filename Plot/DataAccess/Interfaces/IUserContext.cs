@@ -20,7 +20,7 @@ namespace Plot.DataAccess.Interfaces;
 
 public interface IUserContext
 {
-    Task<IEnumerable<Select_User>?> GetUsers();
+    Task<IEnumerable<Select_User>> GetUsers();
     Task<Select_User?> GetUserById(int userId);
     Task<int> UpdateUserPublicInfo(int userId, Select_User user);
     Task<int> DeleteUserById(int userId);

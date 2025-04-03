@@ -9,15 +9,13 @@
 
     Written by: Jordan Houlihan
 */
-using Dapper;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Users;
 using Plot.Data.Models.Stores;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
 namespace Plot.Controllers;
 
@@ -41,7 +39,7 @@ public class UsersController : ControllerBase
     [Authorize]
     [HttpGet("get-all")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<UserDTO>>> GetAll()
+    public async Task<ActionResult<IEnumerable<Select_User>>> GetAll()
     {
         return Ok(await _userContext.GetUsers());
     }
@@ -57,12 +55,15 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<UserDTO>> GetById(int userId)
+    public async Task<ActionResult<Select_User>> GetById(int userId)
     {
         var user = await _userContext.GetUserById(userId);
-        if(user == null || !user.Any()){
+
+        if (user == null)
+        {
             return NotFound();
         }
+
         return Ok(user);
     }
 
@@ -78,18 +79,21 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<int>> UpdatePublicInfo(int userId, [FromBody] UpdatePublicInfoUser user)
+    public async Task<ActionResult<int>> UpdatePublicInfo(int userId, [FromBody] Select_User user)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
+
         var update = await _userContext.UpdateUserPublicInfo(userId, user);
-    
-        if(update == -1){
+
+        if (update == 0)
+        {
             return NotFound();
         }
-       return Ok(update);
+
+        return Ok(update);
     }
 
     /// <summary>
@@ -123,9 +127,12 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<int>> Delete(int userId)
     {
         var deleted = await _userContext.DeleteUserById(userId);
-        if(deleted == 0){
+
+        if (deleted == 0)
+        {
             return NotFound();
         }
+
         return NoContent();
     }
 
@@ -135,25 +142,30 @@ public class UsersController : ControllerBase
     /// <param name="userid">id of user being assigned</param>
     /// <param name="storeid">id of store being registered at</param>
     /// <returns></returns>
-    [Authorize (Policy = "Manager")]
+    [Authorize(Policy = "Manager")]
     [HttpPost("store-registration")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<int>> AddUserToStore([FromBody] UserStoreRequest dufsr)
+    public async Task<ActionResult<int>> AddUserToStore([FromBody] UserStoreRequest userStoreRequest)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
-        //
-        var added = await _userContext.AddUserToStore(dufsr.USER_TUID, dufsr.STORE_TUID);
-        if(added == -1){
+
+        var added = await _userContext.AddUserToStore(userStoreRequest.USER_TUID, userStoreRequest.STORE_TUID);
+
+        if (added == 0)
+        {
             return NotFound();
         }
-        if(added == -2){
+
+        if (added == -1)
+        {
             return BadRequest();
         }
+
         return Ok(added);
     }
 
@@ -168,20 +180,25 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> DeleteFromStore([FromBody] UserStoreRequest dufsr)
+    public async Task<ActionResult> DeleteFromStore([FromBody] UserStoreRequest userStoreRequest)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        var removed = await _userContext.DeleteUserFromStore(dufsr.USER_TUID, dufsr.STORE_TUID);
-        if(removed == -1){
+        var removed = await _userContext.DeleteUserFromStore(userStoreRequest.USER_TUID, userStoreRequest.STORE_TUID);
+
+        if (removed == 0)
+        {
             return NotFound();
         }
-        if(removed == -2){
+
+        if (removed == -1)
+        {
             return BadRequest();
         }
+
         return NoContent();
     }
 
@@ -198,7 +215,9 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<Store>?> GetStoresForUser(int userId)
     {
         var stores = await _userContext.GetStoresForUser(userId);
-        if(stores == null || !stores.Any()){
+
+        if (stores == null)
+        {
             return NotFound();
         }
 
