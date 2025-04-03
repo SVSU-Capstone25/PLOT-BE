@@ -24,16 +24,14 @@ namespace Plot.DataAccess.Contexts;
 
 public class StoreContext : DbContext, IStoreContext
 {
-    public async Task<IEnumerable<Store>> GetStores()
+    public async Task<IEnumerable<Select_Store>> GetStores()
     {
         try
         {
             using SqlConnection connection = GetConnection();
-
-            var GetStoresSQL = "SELECT TUID, NAME, ADDRESS, CITY, STATE, ZIP, WIDTH, HEIGHT " +
-                               "FROM Stores;";
+            DynamicParameters parameters = new DynamicParameters();
             
-            return await connection.QueryAsync<Store>(GetStoresSQL);
+            return await connection.QueryAsync<Select_Store>("Insert_Update_Floorset",parameters, commandType: System.Data.CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {

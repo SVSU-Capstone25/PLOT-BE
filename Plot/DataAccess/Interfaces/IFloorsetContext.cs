@@ -13,6 +13,7 @@
     Written by: Jordan Houlihan
 */
 
+using Plot.Data.Models.Fixtures;
 using Plot.Data.Models.Floorsets;
 
 namespace Plot.DataAccess.Interfaces;
@@ -20,7 +21,7 @@ namespace Plot.DataAccess.Interfaces;
 public interface IFloorsetContext
 {
     Task<IEnumerable<Floorset>> GetFloorsetsByStoreId(int storeId);
-    Task<int> CreateFloorset(CreateFloorset floorset);
-    Task<int> UpdateFloorsetById(int floorsetId, UpdatePublicInfoFloorset floorset);
+    Task<int> CreateFloorset(Select_Floorset floorset);
+    Task<int> UpdateFloorsetById(Select_Floorset updatefloorset);
     Task<int> DeleteFloorsetById(int floorsetId);
 }

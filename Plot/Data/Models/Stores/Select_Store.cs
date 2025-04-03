@@ -1,7 +1,7 @@
 using Plot.Data.Models.Users;
 using System.ComponentModel.DataAnnotations;
 namespace Plot.Data.Models.Stores;
-public record Select_Store
+public class Select_Store
 {
     public int? TUID { get; set; }
 

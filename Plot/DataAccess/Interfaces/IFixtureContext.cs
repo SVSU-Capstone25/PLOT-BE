@@ -21,10 +21,10 @@ public interface IFixtureContext
 {
     Task<IEnumerable<FixtureInstance>>? GetFixtureInstances(int floorsetId);
     Task<IEnumerable<FixtureModel>>? GetFixtureModels(int StoreId);
-    Task<int> CreateFixtureModel(CreateFixtureModel fixtureModel);
-    Task<int> CreateFixtureInstance(CreateFixtureInstance fixtureInstance);
-    Task<int> UpdateFixtureModelById(UpdateFixtureModel fixtureModel);
-    Task<int> UpdateFixtureInstanceById(UpdateFixtureInstance fixtureInstance);
+    Task<int> CreateFixtureModel(Select_Fixtures fixtureModel);
+    Task<int> CreateFixtureInstance(Select_Floorset_Fixtures fixtureInstance);
+    Task<int> UpdateFixtureModelById(Select_Fixtures fixtureModel);
+    Task<int> UpdateFixtureInstanceById(Select_Floorset_Fixtures fixtureInstance);
     Task<int> DeleteFixtureModelById(int fixtureModelId);
     Task<int> DeleteFixtureInstanceById(int fixtureInstanceId);
 }
