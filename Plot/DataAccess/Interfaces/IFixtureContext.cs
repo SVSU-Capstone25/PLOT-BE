@@ -19,8 +19,8 @@ namespace Plot.DataAccess.Interfaces;
 
 public interface IFixtureContext
 {
-    Task<IEnumerable<FixtureInstance>>? GetFixtureInstances(int floorsetId);
-    Task<IEnumerable<FixtureModel>>? GetFixtureModels(int StoreId);
+    Task<IEnumerable<Select_Floorset_Fixtures>>? GetFixtureInstances(int floorsetId);
+    Task<IEnumerable<Select_Fixtures>>? GetFixtureModels(int StoreId);
     Task<int> CreateFixtureModel(Select_Fixtures fixtureModel);
     Task<int> CreateFixtureInstance(Select_Floorset_Fixtures fixtureInstance);
     Task<int> UpdateFixtureModelById(Select_Fixtures fixtureModel);

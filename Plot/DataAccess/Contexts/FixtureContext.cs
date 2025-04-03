@@ -14,6 +14,7 @@
     Written by: Jordan Houlihan
 */
 using System.Data;
+using System.Reflection.Metadata.Ecma335;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Fixtures;
@@ -23,23 +24,24 @@ namespace Plot.DataAccess.Contexts;
 
 public class FixtureContext : DbContext, IFixtureContext
 {
-    public async Task<int> CreateFixtureInstance(CreateFixtureInstance fixtureInstance)
+    public async Task<int> CreateFixtureInstance(Select_Floorset_Fixtures fixtureInstance)
     {
          try
         {
             using SqlConnection connection = GetConnection();
+            DynamicParameters parameters = new DynamicParameters();
+            //parameters.Add("TUID", fixtureInstance.TUID);
+            parameters.Add("FLOORSET_TUID", fixtureInstance.FLOORSET_TUID);
+            parameters.Add("FIXTURE_TUID", fixtureInstance.FIXTURE_TUID);
+            parameters.Add("X_POS", fixtureInstance.X_POS);
+            parameters.Add("Y_POS", fixtureInstance.Y_POS);
+            parameters.Add("HANGER_STACK", fixtureInstance.HANGER_STACK);
+            parameters.Add("TOT_LF", fixtureInstance.TOT_LF);
+            parameters.Add("ALLOCATED_LF", fixtureInstance.ALLOCATED_LF);
+            parameters.Add("CATEGORY", fixtureInstance.CATEGORY);
+            parameters.Add("NOTE", fixtureInstance.NOTE);
 
-            var CreateFixtureInstance = "INSERT INTO Floorsets_Fixtures (FLOORSET_TUID, " + 
-                                    "FIXTURE_TUID, X_POS,Y_POS, HANGER_STACK, ALLOCATED_LF, TOT_LF,"+
-                                    " CATEGORY, NOTE )" +
-                                   "VALUES ('" + fixtureInstance.TUID +"','" + 
-                                   fixtureInstance.FIXTURE_TUID + "','" +
-                                   fixtureInstance.X_POS + "','"  + fixtureInstance.Y_POS + "','" +
-                                   fixtureInstance.HANGER_STACK + "','" + fixtureInstance.ALLOCATED_LF +
-                                   "','" + fixtureInstance.TOT_LF +
-                                    "','" + fixtureInstance.CATEGORY + "','" + fixtureInstance.NOTE +"');";
-
-            return await connection.ExecuteAsync(CreateFixtureInstance);
+            return await connection.ExecuteAsync("Insert_Update_Floorset_Fixtures", parameters, commandType: CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {
@@ -50,19 +52,19 @@ public class FixtureContext : DbContext, IFixtureContext
         //throw new NotImplementedException();
     }
 
-    public async Task<int> CreateFixtureModel(CreateFixtureModel fixtureModel)
+    public async Task<int> CreateFixtureModel(Select_Fixtures fixtureModel)
     {
          try
         {
             using SqlConnection connection = GetConnection();
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("ID", null);
+            //parameters.Add("TUID", null);
             parameters.Add("NAME", fixtureModel.NAME);
             parameters.Add("WIDTH", fixtureModel.WIDTH);
             parameters.Add("HEIGHT", fixtureModel.HEIGHT);
             parameters.Add("LF_CAP", fixtureModel.LF_CAP);
             parameters.Add("ICON", fixtureModel.ICON);
-            parameters.Add("STORE_ID", fixtureModel.STORE_TUID);
+            parameters.Add("STORE_TUID", fixtureModel.STORE_TUID);
             return await connection.ExecuteAsync("Insert_Update_Fixtures",parameters, commandType: CommandType.StoredProcedure);
         }
         catch (SqlException exception)
@@ -79,10 +81,10 @@ public class FixtureContext : DbContext, IFixtureContext
         {
             using SqlConnection connection = GetConnection();
 
-            var DeleteFixtureInstance = "DELETE FROM Floorsets_Fixtures "+
-                                            "WHERE TUID =" + fixtureInstanceId +";";
-
-            return await connection.ExecuteAsync(DeleteFixtureInstance);
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("FloorsetFixtureID", fixtureInstanceId);
+            return await connection.ExecuteAsync("Delete_Floorset_Fixture",parameters, commandType: CommandType.StoredProcedure);
+        
         }
         catch (SqlException exception)
         {
@@ -97,11 +99,11 @@ public class FixtureContext : DbContext, IFixtureContext
         try
         {
             using SqlConnection connection = GetConnection();
-
-            var DeleteFixtureInstance = "DELETE FROM Fixtures "+
-                                            "WHERE TUID =" + fixtureModelId +";";
-
-            return await connection.ExecuteAsync(DeleteFixtureInstance);
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("FixtureID", fixtureModelId);
+            
+            return await connection.ExecuteAsync("Delete_Fixture",parameters, commandType: CommandType.StoredProcedure);
+        
         }
         catch (SqlException exception)
         {
@@ -111,89 +113,86 @@ public class FixtureContext : DbContext, IFixtureContext
         //throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<FixtureInstance>>? GetFixtureInstances(int floorsetId)
-    {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-
-            var GetFixtureInstancesbyId = "SELECT * " +
-                                          "FROM Floorsets_Fixtures " +
-                                          "WHERE FLOORSET_TUID = @floorsetId;";
-            
-
-            return await connection.QueryAsync<FixtureInstance>(GetFixtureInstancesbyId);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception));
-            return null;
-        }
-        //throw new NotImplementedException();
-    }
-
-    public async Task<IEnumerable<FixtureModel>>? GetFixtureModels(int StoreId)
-    {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-
-            var GetFixtureModelsbyId = "SELECT * " +
-                                       "FROM Fixtures " +
-                                       "WHERE STORE_TUID = " + StoreId + ";";
-            
-
-            return await connection.QueryAsync<FixtureModel>(GetFixtureModelsbyId);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception));
-            return null;
-        }
-        //throw new NotImplementedException();
-    }
-
-    public async Task<int> UpdateFixtureInstanceById(UpdateFixtureInstance fixtureInstance)
-    {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-
-            var UpdateFloorset = "UPDATE Floorsets_Fixtures " + 
-                                    "SET X_POS = " + fixtureInstance.X_POS +
-                                    ", Y_POS = " + fixtureInstance.Y_POS +
-                                    ", ALLOCATED_LF = " + fixtureInstance.ALLOCATED_LF +
-                                    ", HANGER_STACK = " + fixtureInstance.HANGER_STACK + 
-                                    ", TOT_LF = " + fixtureInstance.TOT_LF +
-                                    ", CATEGORY = " + fixtureInstance.CATEGORY +
-                                    ", NOTE = " + fixtureInstance.NOTE +
-                                    " WHERE TUID = " + fixtureInstance.TUID;
-
-            return await connection.ExecuteAsync(UpdateFloorset);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception));
-            return 0;
-        }
-        //throw new NotImplementedException();
-    }
-
-    public async Task<int> UpdateFixtureModelById(UpdateFixtureModel fixtureModel)
+    public async Task<IEnumerable<Select_Floorset_Fixtures>>? GetFixtureInstances(int floorsetId)
     {
         try
         {
             using SqlConnection connection = GetConnection();
 
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("ID", fixtureModel.TUID);
+            parameters.Add("FloorsetID", floorsetId);
+            return await connection.QueryAsync<Select_Floorset_Fixtures>("Select_Floorset_Fixtures", parameters, commandType:CommandType.StoredProcedure);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return null;
+        }
+        //throw new NotImplementedException();
+    }
+
+    public async Task<IEnumerable<Select_Fixtures>>? GetFixtureModels(int StoreId)
+    {
+        try
+        {
+            using SqlConnection connection = GetConnection();
+
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("STORE_TUID", StoreId);
+            return await connection.QueryAsync<Select_Fixtures>("Select_Fixtures", parameters, commandType:CommandType.StoredProcedure);
+       }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return null;
+        }
+        //throw new NotImplementedException();
+    }
+
+    public async Task<int> UpdateFixtureInstanceById(Select_Floorset_Fixtures fixtureInstance)
+    {
+        try
+        {
+            using SqlConnection connection = GetConnection();
+
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("TUID", fixtureInstance.TUID);
+            parameters.Add("FLOORSET_TUID", fixtureInstance.FLOORSET_TUID);
+            parameters.Add("FIXTURE_TUID", fixtureInstance.FIXTURE_TUID);
+            parameters.Add("X_POS", fixtureInstance.X_POS);
+            parameters.Add("Y_POS", fixtureInstance.Y_POS);
+            parameters.Add("HANGER_STACK", fixtureInstance.HANGER_STACK);
+            parameters.Add("TOT_LF", fixtureInstance.TOT_LF);
+            parameters.Add("ALLOCATED_LF", fixtureInstance.ALLOCATED_LF);
+            parameters.Add("CATEGORY", fixtureInstance.CATEGORY);
+            parameters.Add("NOTE", fixtureInstance.NOTE);
+
+            return await connection.ExecuteAsync("Insert_Update_Floorset_Fixtures", parameters, commandType: CommandType.StoredProcedure);
+        
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return 0;
+        }
+        //throw new NotImplementedException();
+    }
+
+    public async Task<int> UpdateFixtureModelById(Select_Fixtures fixtureModel)
+    {
+        try
+        {
+            using SqlConnection connection = GetConnection();
+
+             DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("TUID", null);
             parameters.Add("NAME", fixtureModel.NAME);
             parameters.Add("WIDTH", fixtureModel.WIDTH);
             parameters.Add("HEIGHT", fixtureModel.HEIGHT);
             parameters.Add("LF_CAP", fixtureModel.LF_CAP);
             parameters.Add("ICON", fixtureModel.ICON);
+            parameters.Add("STORE_TUID", fixtureModel.STORE_TUID);
             return await connection.ExecuteAsync("Insert_Update_Fixtures",parameters, commandType: CommandType.StoredProcedure);
-        
         }
         catch (SqlException exception)
         {
