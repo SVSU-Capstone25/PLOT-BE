@@ -118,25 +118,27 @@ public class UserContext : DbContext, IUserContext
         }
     }
 
-    public async Task<int> DeleteUserById(int userId)
+    public async Task<int?> DeleteUserById(int userId)
     {
         try
         {
             using SqlConnection connection = GetConnection();
 
             // Check if user exists first
-            var existingUser = await connection.QueryFirstOrDefaultAsync<int>(
-                "SELECT COUNT(1) FROM Users WHERE TUID = @UserId",
-                new { UserId = userId }
+            var existingUser = await connection.QueryFirstOrDefaultAsync<User>(
+                "Select_Users",
+                new { UserID = userId },
+                commandType: CommandType.StoredProcedure
             );
 
-            if (existingUser == 0)
+            if (existingUser == null)
                 return 0; // User not found
             
-            //set Active to false
+            
             var rowsAffected = await connection.ExecuteAsync(
-                "UPDATE Users SET Active = 0 WHERE TUID = @UserId",
-                new { UserId = userId }
+                "Delete_User",
+                new { UserId = userId },
+                commandType: CommandType.StoredProcedure
             );
 
             return rowsAffected;
@@ -146,19 +148,22 @@ public class UserContext : DbContext, IUserContext
             return 0;
         }
     }
-    public async Task<int> AddUserToStore(int userid, int storeid)
+    public async Task<string> AddUserToStore(int userid, int storeid)
     {
         try
         {
             using SqlConnection connection = GetConnection();
 
-            // Check if the user exists
-            var userExists = await connection.QueryFirstOrDefaultAsync<int>(
-                "SELECT COUNT(1) FROM Users WHERE TUID = @UserId",
-                new { UserId = userid });
+            // Check if user exists first
+            var existingUser = await connection.QueryFirstOrDefaultAsync<User>(
+                "Select_Users",
+                new { UserID = userid },
+                commandType: CommandType.StoredProcedure
+            );
 
-            if (userExists == 0)
-                return -1; // User not found
+            if (existingUser == null)
+                return "404 NOT FOUND"; // User not found
+            
 
             // Check if the store exists
             var storeExists = await connection.QueryFirstOrDefaultAsync<int>(
