@@ -44,20 +44,20 @@ public class UserContext : DbContext, IUserContext
         }
     }
 
-    public async Task<IEnumerable<UserDTO>?> GetUserById(int userId)
+    public async Task<UserDTO?> GetUserById(int userId)
     {
         try
         {
             using SqlConnection connection = GetConnection();
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("UserID", userId);
-            return await connection.QueryAsync<UserDTO>("Select_Users", parameters, commandType: CommandType.StoredProcedure);
+            return await connection.QueryFirstOrDefaultAsync<UserDTO>("Select_Users", parameters, commandType: CommandType.StoredProcedure);
 
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
-            return [];
+            return null;
         }
     }
 

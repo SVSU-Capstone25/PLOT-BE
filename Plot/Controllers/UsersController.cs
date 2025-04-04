@@ -57,7 +57,14 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserDTO>> GetById(int userId)
     {
-        return Ok(await _userContext.GetUserById(userId));
+        var user = await _userContext.GetUserById(userId);
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(user);
     }
 
     /// <summary>

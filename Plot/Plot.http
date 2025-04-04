@@ -56,8 +56,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImFkbWluQ
 
 ###
 
-GET {{Plot_HostAddress}}/api/users/1
+GET {{Plot_HostAddress}}/api/users/get-users-by-id/10
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsIlJvbGUiOiJNYW5hZ2VyIiwiVXNlcklkIjoiNDAiLCJuYmYiOjE3NDM3OTYwOTQsImV4cCI6MTc0MzgzOTI5NCwiaWF0IjoxNzQzNzk2MDk0LCJpc3MiOiJodHRwOi8vYmFja2VuZDo4MDg1LyIsImF1ZCI6Imh0dHA6Ly9mcm9udGVuZDo4MDgwLyJ9.eb7NRKrzpmBCXSlx-G-XpQK8V7qAg1EoRKPWFHAttuo
 
 ###
 
