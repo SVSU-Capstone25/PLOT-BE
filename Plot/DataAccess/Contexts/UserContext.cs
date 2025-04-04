@@ -121,16 +121,9 @@ public class UserContext : DbContext, IUserContext
         try
         {
             using SqlConnection connection = GetConnection();
-
-            var GetStoresSQL = "SELECT Store.TUID, Store.NAME, Store.ADDRESS, " +
-                              "Store.CITY, Store.STATE, Store.ZIP, " +
-                              "Store.WIDTH, Store.HEIGHT, Store.BLUEPRINT_IMAGE, " +
-                              "FROM Store " +
-                              "INNER JOIN Access " +
-                              "ON Store.TUID = Access.STORE_TUID " +
-                              "WHERE Access.USER_TUID = " + userid + ";";
-
-            return await connection.QueryAsync<Store>(GetStoresSQL);
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("UserID",userid);
+            return await connection.QueryAsync<Store>("Select_Users_Store_Access",parameters,commandType:CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {

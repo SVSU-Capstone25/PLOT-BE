@@ -163,7 +163,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Store>> GetStoreById(int userId)
+    public async Task<ActionResult<Store>> GetStoreOfUserById(int userId)
     {
         return Ok(await _userContext.GetStoresForUser(userId));
     }
