@@ -29,9 +29,9 @@ public class FloorsetContext : DbContext, IFloorsetContext
         {
             using SqlConnection connection = GetConnection();
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("FloorsetID", storeId);
+            parameters.Add("StoreID", storeId);
 
-            return await connection.QueryAsync<Floorset>("Select_Floorset", parameters, commandType: CommandType.StoredProcedure);
+            return await connection.QueryAsync<Floorset>("Select_Stores_Fixtures", parameters, commandType: CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {
