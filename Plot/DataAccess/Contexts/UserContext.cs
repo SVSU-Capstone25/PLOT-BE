@@ -148,7 +148,7 @@ public class UserContext : DbContext, IUserContext
             return 0;
         }
     }
-    public async Task<string> AddUserToStore(int userid, int storeid)
+    public async Task<string?> AddUserToStore(int userid, int storeid)
     {
         try
         {
@@ -162,7 +162,7 @@ public class UserContext : DbContext, IUserContext
             );
 
             if (existingUser == null)
-                return "404 NOT FOUND"; // User not found
+                return "404"; // User not found
             
 
             // Check if the store exists
@@ -171,7 +171,7 @@ public class UserContext : DbContext, IUserContext
                 new { StoreId = storeid });
 
             if (storeExists == 0)
-                return -1; // Store not found
+                return "404"; // Store not found
 
             // Check if the user is already assigned to the store
             var accessExists = await connection.QueryFirstOrDefaultAsync<int>(
@@ -179,19 +179,21 @@ public class UserContext : DbContext, IUserContext
                 new { UserId = userid, StoreId = storeid });
 
             if (accessExists > 0)
-                return -2; // User is already assigned
+                return "400"; // User is already assigned
 
             // Assign user to store
-            var rowsAffected = await connection.ExecuteAsync(
-                "INSERT INTO Access (USER_TUID, STORE_TUID) VALUES (@UserId, @StoreId);",
-                new { UserId = userid ,StoreId = storeid});
+            var rowsAffected = await connection.QueryFirstOrDefaultAsync<string?>(
+                "Add_User_to_Store",
+                new { UserID = userid },
+                commandType: CommandType.StoredProcedure
+            );
 
             return rowsAffected;
         }
         catch (SqlException exception)
         {
             Console.WriteLine("Database operation failed: " + exception);
-            return 0;
+            return "ERROR 500";
         }
     }
     public async Task<int> DeleteUserFromStore(int userid, int storeid)

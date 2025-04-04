@@ -123,7 +123,7 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<int>> Delete(int userId)
     {
         var deleted = await _userContext.DeleteUserById(userId);
-        if(deleted == 0){
+        if(deleted == -1){
             return NotFound();
         }
         return NoContent();
@@ -148,10 +148,10 @@ public class UsersController : ControllerBase
         }
         //
         var added = await _userContext.AddUserToStore(dufsr.USER_TUID, dufsr.STORE_TUID);
-        if(added == -1){
+        if(added == "404"){
             return NotFound();
         }
-        if(added == -2){
+        if(added == "400"){
             return BadRequest();
         }
         return Ok(added);
