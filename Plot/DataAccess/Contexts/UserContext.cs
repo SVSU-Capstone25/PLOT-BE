@@ -31,11 +31,11 @@ public class UserContext : DbContext, IUserContext
         {
             using SqlConnection connection = GetConnection();
 
-          
-            DynamicParameters parameters = new DynamicParameters();
-            return await connection.QueryAsync<UserDTO>("Select_Users",parameters, commandType: CommandType.StoredProcedure);
 
-           
+            DynamicParameters parameters = new DynamicParameters();
+            return await connection.QueryAsync<UserDTO>("Select_Users", parameters, commandType: CommandType.StoredProcedure);
+
+
         }
         catch (SqlException exception)
         {
@@ -46,12 +46,12 @@ public class UserContext : DbContext, IUserContext
 
     public async Task<IEnumerable<UserDTO>?> GetUserById(int userId)
     {
-         try
+        try
         {
             using SqlConnection connection = GetConnection();
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("UserID", userId);
-            return await connection.QueryAsync<UserDTO>("Select_Users",parameters, commandType: CommandType.StoredProcedure);
+            return await connection.QueryAsync<UserDTO>("Select_Users", parameters, commandType: CommandType.StoredProcedure);
 
         }
         catch (SqlException exception)
@@ -63,15 +63,14 @@ public class UserContext : DbContext, IUserContext
 
     public async Task<int> UpdateUserPublicInfo(int userId, UpdatePublicInfoUser user)
     {
-         try
+        try
         {
             using SqlConnection connection = GetConnection();
 
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("FIRSTNAME", user.FIRST_NAME);
-            parameters.Add("LASTNAME",user.LAST_NAME);
-            parameters.Add("ROLENAME", user.ROLE);
-            return await connection.ExecuteAsync("Insert_Update_User",parameters, commandType: CommandType.StoredProcedure);
+            parameters.Add("FIRST_NAME", user.FIRST_NAME);
+            parameters.Add("LAST_NAME", user.LAST_NAME);
+            return await connection.ExecuteAsync("Insert_Update_User", parameters, commandType: CommandType.StoredProcedure);
 
         }
         catch (SqlException exception)
@@ -87,9 +86,10 @@ public class UserContext : DbContext, IUserContext
         {
             using SqlConnection connection = GetConnection();
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("UserId",userId);
-            return await connection.ExecuteAsync("Delete_User",parameters, commandType: CommandType.StoredProcedure);
-        } catch (SqlException exception)
+            parameters.Add("UserId", userId);
+            return await connection.ExecuteAsync("Delete_User", parameters, commandType: CommandType.StoredProcedure);
+        }
+        catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
             return 0;
@@ -102,12 +102,12 @@ public class UserContext : DbContext, IUserContext
         {
             using SqlConnection connection = GetConnection();
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("User_tuid",userid);
-            parameters.Add("Store_tuid",storeid);
+            parameters.Add("User_tuid", userid);
+            parameters.Add("Store_tuid", storeid);
             // var DeleteRelation = "DELETE FROM Access " +
             //                        "WHERE USER_TUID = " +userid + " AND STORE_TUID = " + storeid;
 
-            return await connection.ExecuteAsync("Delete_Access",parameters, commandType: CommandType.StoredProcedure);
+            return await connection.ExecuteAsync("Delete_Access", parameters, commandType: CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {
@@ -116,7 +116,7 @@ public class UserContext : DbContext, IUserContext
         }
     }
 
-     public async Task<IEnumerable<Store>?> GetStoresForUser(int userid)
+    public async Task<IEnumerable<Store>?> GetStoresForUser(int userid)
     {
         try
         {
@@ -128,8 +128,8 @@ public class UserContext : DbContext, IUserContext
                               "FROM Store " +
                               "INNER JOIN Access " +
                               "ON Store.TUID = Access.STORE_TUID " +
-                              "WHERE Access.USER_TUID = "+ userid +";";
-            
+                              "WHERE Access.USER_TUID = " + userid + ";";
+
             return await connection.QueryAsync<Store>(GetStoresSQL);
         }
         catch (SqlException exception)

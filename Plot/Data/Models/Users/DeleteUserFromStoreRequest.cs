@@ -15,10 +15,14 @@
 
 
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Plot.Data.Models.Users;
 
 public record DeleteUserFromStoreRequest
 {
-    public required int userid { get; set; }
-    public required int storeid { get; set; }
+    [Required]
+    public required int USER_TUID { get; set; }
+    [Required]
+    public required int STORE_TUID { get; set; }
 }

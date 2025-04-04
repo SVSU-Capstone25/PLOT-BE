@@ -9,7 +9,7 @@
     
     Written by: Jordan Houlihan
 */
-using Dapper;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Stores;
@@ -36,7 +36,7 @@ public class StoresController : ControllerBase
     /// </summary>
     /// <returns>Array of stores</returns>
     [Authorize(Policy = "Owner")]
-    [HttpGet]
+    [HttpGet("get-all")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<Store>>> GetAll()
     {
@@ -53,9 +53,9 @@ public class StoresController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<Select_Store>>> GetByAccess(int userId)
+    public async Task<ActionResult<IEnumerable<Store>>> GetByAccess(int userId)
     {
-        
+
         //controller logic should get added from other branches
         var storeList = await _storeContext.GetStoreById(userId);
         //return 404 error if no store was found
@@ -72,7 +72,7 @@ public class StoresController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Select_Store>> Create([FromBody] Select_Store store)
+    public async Task<ActionResult<Store>> Create([FromBody] CreateStore store)
     {
         if (!ModelState.IsValid)
         {
@@ -94,19 +94,22 @@ public class StoresController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Select_Store>> UpdatePublicInfo([FromBody] Select_Store store)
+    public async Task<ActionResult<Store>> UpdatePublicInfo(int storeId, [FromBody] UpdatePublicInfoStore store)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        var existingStore = await _storeContext.GetStoreById(store.TUID);
+        var existingStore = await _storeContext.GetStoreById(storeId);
         //return 404 error if no store was found
-        if (existingStore == null) return NotFound();
+        if (existingStore == null)
+        {
+            return NotFound();
+        }
 
         //controller logic could get added from other branches
-        return Ok(await _storeContext.UpdatePublicInfoStore(store));
+        return Ok(await _storeContext.UpdatePublicInfoStore(storeId, store));
     }
 
     /// <summary>
@@ -119,19 +122,22 @@ public class StoresController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Select_Store>> UpdateSize([FromBody] Select_Store store)
+    public async Task<ActionResult<Store>> UpdateSizeStore(int storeId, [FromBody] UpdateSizeStore store)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        var existingStore = await _storeContext.GetStoreById(store.TUID);
+        var existingStore = await _storeContext.GetStoreById(storeId);
         //return 404 error if no store was found
-        if (existingStore == null) return NotFound();
+        if (existingStore == null)
+        {
+            return NotFound();
+        }
 
         //controller logic could get added from other branches
-        return Ok(await _storeContext.UpdateSizeStore(store));
+        return Ok(await _storeContext.UpdateSizeStore(storeId, store));
     }
 
     /// <summary>
@@ -146,8 +152,12 @@ public class StoresController : ControllerBase
     public async Task<ActionResult> Delete(int storeId)
     {
         var existingStore = await _storeContext.GetStoreById(storeId);
+
         //return 404 error if no store was found
-        if (existingStore == null) return NotFound();
+        if (existingStore == null)
+        {
+            return NotFound();
+        }
 
         //controller logic should get overridden by other branches
         return Ok(await _storeContext.DeleteStoreById(storeId));

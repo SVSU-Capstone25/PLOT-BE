@@ -20,16 +20,13 @@ namespace Plot.Data.Models.Users;
 public record UpdatePublicInfoUser
 {
     [Required]
-    [StringLength(25, MinimumLength = 1, ErrorMessage = "{0} needs to be {2}-{1} characters long.")]
+    [StringLength(747, ErrorMessage = "First Name cannot exceed 747 characters.")]
     public string? FIRST_NAME { get; set; }
-
     [Required]
-    [StringLength(25, MinimumLength = 1, ErrorMessage = "{0} needs to be {2}-{1} characters long.")]
+    [StringLength(747, ErrorMessage = "First Name cannot exceed 747 characters.")]
     public string? LAST_NAME { get; set; }
 
+    [Required, EmailAddress]
+    [StringLength(320, ErrorMessage = "First Name cannot exceed 320 characters.")]
     public string? EMAIL { get; set; }
-
-    public string? ROLE { get; set; }
-    public bool? ACTIVE { get; set; }
-    public string? STORENAME { get; set;}
 }

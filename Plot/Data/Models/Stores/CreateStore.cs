@@ -13,7 +13,6 @@
     Written by: Jordan Houlihan
 */
 
-using Plot.Data.Models.Users;
 using System.ComponentModel.DataAnnotations;
 
 namespace Plot.Data.Models.Stores;

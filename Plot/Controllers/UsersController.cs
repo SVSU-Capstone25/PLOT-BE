@@ -9,7 +9,7 @@
 
     Written by: Jordan Houlihan
 */
-using Dapper;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Users;
@@ -79,7 +79,7 @@ public class UsersController : ControllerBase
             return BadRequest(ModelState);
         }
 
-       return Ok(await _userContext.UpdateUserPublicInfo(userId, user));
+        return Ok(await _userContext.UpdateUserPublicInfo(userId, user));
     }
 
     /// <summary>
@@ -141,9 +141,9 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> DeleteFromStore(int userId, [FromBody] int storeId)
+    public async Task<ActionResult> DeleteFromStore(DeleteUserFromStoreRequest deleteUserFromStoreRequest)
     {
-        return Ok(await _userContext.DeleteUserFromStore(userId, storeId));
+        return Ok(await _userContext.DeleteUserFromStore(deleteUserFromStoreRequest.USER_TUID, deleteUserFromStoreRequest.STORE_TUID));
     }
 
     /// <summary>
@@ -160,5 +160,4 @@ public class UsersController : ControllerBase
     {
         return Ok(await _userContext.GetStoresForUser(userId));
     }
-    
 }

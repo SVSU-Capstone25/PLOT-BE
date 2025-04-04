@@ -50,8 +50,9 @@
 // ###
 //
 
-GET {{Plot_HostAddress}}/api/users/
+GET {{Plot_HostAddress}}/api/users/get-all
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsIlJvbGUiOiJNYW5hZ2VyIiwiVXNlcklkIjoiNDAiLCJuYmYiOjE3NDM3OTYwOTQsImV4cCI6MTc0MzgzOTI5NCwiaWF0IjoxNzQzNzk2MDk0LCJpc3MiOiJodHRwOi8vYmFja2VuZDo4MDg1LyIsImF1ZCI6Imh0dHA6Ly9mcm9udGVuZDo4MDgwLyJ9.eb7NRKrzpmBCXSlx-G-XpQK8V7qAg1EoRKPWFHAttuo
 
 ###
 
@@ -79,8 +80,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-    "Email": "NickLeja@email.com",
-    "Password": "admin"
+    "Email": "admin@email.com",
+    "Password": "admin25!"
 }
 
 ###
@@ -149,13 +150,13 @@ Content-Type: application/json
 Accept: application/json
 
 ###
-GET {{Plot_HostAddress}}/api/stores
+GET {{Plot_HostAddress}}/api/stores/get-all
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MTc2MDUsImV4cCI6MTc0MzYyMTIwNSwiaWF0IjoxNzQzNjE3NjA1LCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.nWl2ujpm5uc59E4ncKxUsuKqI3pfEMOkvMUBUjY2Uis
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsIlJvbGUiOiJNYW5hZ2VyIiwiVXNlcklkIjoiNDAiLCJuYmYiOjE3NDM3OTc4NzYsImV4cCI6MTc0Mzg0MTA3NiwiaWF0IjoxNzQzNzk3ODc2LCJpc3MiOiJodHRwOi8vYmFja2VuZDo4MDg1LyIsImF1ZCI6Imh0dHA6Ly9mcm9udGVuZDo4MDgwLyJ9.xSmDZZXFndnyU4QRpIh45zJixiJOfA6nuFRJ9sJLpts
 
 ###
 GET {{Plot_HostAddress}}/api/stores/access/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MDk2MTYsImV4cCI6MTc0MzYxMzIxNiwiaWF0IjoxNzQzNjA5NjE2LCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.8glqYvEs_O_mWCUlEJeb38jJYOHq1b-zh4J-fmuVyts
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsIlJvbGUiOiJNYW5hZ2VyIiwiVXNlcklkIjoiNDAiLCJuYmYiOjE3NDM3OTc4NzYsImV4cCI6MTc0Mzg0MTA3NiwiaWF0IjoxNzQzNzk3ODc2LCJpc3MiOiJodHRwOi8vYmFja2VuZDo4MDg1LyIsImF1ZCI6Imh0dHA6Ly9mcm9udGVuZDo4MDgwLyJ9.xSmDZZXFndnyU4QRpIh45zJixiJOfA6nuFRJ9sJLpts
 
 ###
 POST {{Plot_HostAddress}}/api/stores
