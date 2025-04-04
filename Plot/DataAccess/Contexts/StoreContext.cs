@@ -31,7 +31,7 @@ public class StoreContext : DbContext, IStoreContext
             using SqlConnection connection = GetConnection();
             DynamicParameters parameters = new DynamicParameters();
             
-            return await connection.QueryAsync<Select_Store>("Select_Store",parameters, commandType: System.Data.CommandType.StoredProcedure);
+            return await connection.QueryAsync<Select_Store>("Select_Stores",parameters, commandType: System.Data.CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {
@@ -48,7 +48,7 @@ public class StoreContext : DbContext, IStoreContext
 
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("StoreID",storeId);
-            return await connection.QueryAsync<Select_Store>("Select_Store",parameters, commandType: System.Data.CommandType.StoredProcedure);
+            return await connection.QueryAsync<Select_Store>("Select_Stores",parameters, commandType: System.Data.CommandType.StoredProcedure);
         
         }
         catch (SqlException exception)
@@ -71,7 +71,7 @@ public class StoreContext : DbContext, IStoreContext
             parameters.Add("STATE", updatestore.STATE);
             parameters.Add("ZIP", updatestore.ZIP);
             parameters.Add("BLUEPRINT_IMAGE", updatestore.BLUEPRINT_IMAGE);
-            return await connection.ExecuteAsync("Insert_Update_Store",parameters, commandType: System.Data.CommandType.StoredProcedure);
+            return await connection.ExecuteAsync("Insert_Update_Stores",parameters, commandType: System.Data.CommandType.StoredProcedure);
         
         }
         catch (SqlException exception)
@@ -88,9 +88,9 @@ public class StoreContext : DbContext, IStoreContext
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("TUID",updatestore.TUID);
             parameters.Add("WIDTH", updatestore.WIDTH);
-            parameters.Add("HEIGHT",updatestore.HEIGHT);
+            parameters.Add("HEIGHT",updatestore.LENGTH);
             
-            return await connection.ExecuteAsync("Insert_Update_Store",parameters, commandType: System.Data.CommandType.StoredProcedure);
+            return await connection.ExecuteAsync("Insert_Update_Stores",parameters, commandType: System.Data.CommandType.StoredProcedure);
         
         }
         catch (SqlException exception)
@@ -146,9 +146,9 @@ public class StoreContext : DbContext, IStoreContext
             parameters.Add("STATE", store.STATE);
             parameters.Add("ZIP", store.ZIP);
             parameters.Add("WIDTH", store.WIDTH);
-            parameters.Add("HEIGHT", store.HEIGHT);
+            parameters.Add("LENGTH", store.LENGTH);
             parameters.Add("BLUEPRINT_IMAGE", store.BLUEPRINT_IMAGE);
-            return await connection.ExecuteAsync("Insert_Update_Store",parameters, commandType: System.Data.CommandType.StoredProcedure);
+            return await connection.ExecuteAsync("Insert_Update_Stores",parameters, commandType: System.Data.CommandType.StoredProcedure);
         
         }
         catch (SqlException exception)

@@ -60,7 +60,7 @@ public class StoresController : ControllerBase
         var storeList = await _storeContext.GetStoreById(userId);
         //return 404 error if no store was found
         if (storeList == null) return NotFound();
-        return NoContent();
+        return Ok(storeList);
     }
 
     /// <summary>

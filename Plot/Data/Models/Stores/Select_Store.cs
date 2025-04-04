@@ -23,7 +23,7 @@ public class Select_Store
     [Range(int.MinValue, int.MaxValue, ErrorMessage = "Width must be an integer.")]
     public int WIDTH { get; set; }
 
-    [Range(int.MinValue, int.MaxValue, ErrorMessage = "Height must be an integer.")]
-    public int HEIGHT { get; set; }
+    [Range(int.MinValue, int.MaxValue, ErrorMessage = "Length must be an integer.")]
+    public int LENGTH { get; set; }
     public byte[]? BLUEPRINT_IMAGE { get; set; }
 }
