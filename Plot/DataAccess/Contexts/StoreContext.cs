@@ -38,7 +38,23 @@ public class StoreContext : DbContext, IStoreContext
             return [];
         }
     }
+    public async Task<IEnumerable<Store>> GetByAccess(int? userId)
+    {
+        try
+        {
+            using SqlConnection connection = GetConnection();
 
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("UserID", userId);
+            return await connection.QueryAsync<Store>("Select_Users_Store_Access", parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception.Message));
+            return [];
+        }
+    }
     public async Task<IEnumerable<Store>> GetStoreById(int? storeId)
     {
         try

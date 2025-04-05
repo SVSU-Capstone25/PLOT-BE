@@ -12,6 +12,7 @@
     to send data to the database server from the frontend and vice versa.
 
     Written by: Jordan Houlihan
+    Modified by: Josh Rodack
 */
 using System.Data;
 using Dapper;

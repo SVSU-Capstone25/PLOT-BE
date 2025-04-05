@@ -57,7 +57,7 @@ public class StoresController : ControllerBase
     {
 
         //controller logic should get added from other branches
-        var storeList = await _storeContext.GetStoreById(userId);
+        var storeList = await _storeContext.GetByAccess(userId);
         //return 404 error if no store was found
         if (storeList == null) return NotFound();
         return Ok(storeList);
