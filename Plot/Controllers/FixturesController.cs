@@ -53,7 +53,7 @@ public class FixturesController : ControllerBase
 
 
 
-        return Ok(await _fixtureContext.GetFixtureInstances(floorsetId) ?? []);
+        return Ok(await _fixtureContext.GetFixtureInstances(floorsetId));
     }
 
     /// <summary>

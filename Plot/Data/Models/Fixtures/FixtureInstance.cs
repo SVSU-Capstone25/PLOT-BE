@@ -39,4 +39,7 @@ public class FixtureInstance : IEquatable<FixtureInstance>
         return this.TUID == other.TUID;
     }
 
+    public override bool Equals(object? obj) => Equals(obj as FixtureInstance);
+    public override int GetHashCode() => (TUID).GetHashCode();
+
 }

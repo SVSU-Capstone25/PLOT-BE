@@ -113,7 +113,7 @@ public class FixtureContext : DbContext, IFixtureContext
         //throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<FixtureInstance>>? GetFixtureInstances(int floorsetId)
+    public async Task<IEnumerable<FixtureInstance>?> GetFixtureInstances(int floorsetId)
     {
         try
         {
@@ -131,7 +131,7 @@ public class FixtureContext : DbContext, IFixtureContext
         //throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<FixtureModel>>? GetFixtureModels(int StoreId)
+    public async Task<IEnumerable<FixtureModel>?> GetFixtureModels(int StoreId)
     {
         try
         {
