@@ -138,8 +138,8 @@ public class FixtureContext : DbContext, IFixtureContext
             using SqlConnection connection = GetConnection();
 
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("STORE_TUID", StoreId);
-            return await connection.QueryAsync<Select_Fixtures>("Select_Fixtures", parameters, commandType:CommandType.StoredProcedure);
+            parameters.Add("STORE_ID", StoreId);
+            return await connection.QueryAsync<Select_Fixtures>("Select_Stores_Fixtures", parameters, commandType:CommandType.StoredProcedure);
        }
         catch (SqlException exception)
         {

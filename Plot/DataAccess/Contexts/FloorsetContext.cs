@@ -31,7 +31,7 @@ public class FloorsetContext : DbContext, IFloorsetContext
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("StoreID", storeId);
 
-            return await connection.QueryAsync<Floorset>("Select_Stores_Fixtures", parameters, commandType: CommandType.StoredProcedure);
+            return await connection.QueryAsync<Floorset>("Select_Store_Floorsets", parameters, commandType: CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {
