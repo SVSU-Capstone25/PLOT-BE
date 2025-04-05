@@ -51,8 +51,6 @@ public class FixturesController : ControllerBase
             return BadRequest(ModelState);
         }
 
-
-
         return Ok(await _fixtureContext.GetFixtureInstances(floorsetId));
     }
 
@@ -69,7 +67,7 @@ public class FixturesController : ControllerBase
     [HttpPatch("update-fixture/{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> UpdateFixtureInformation(int floorsetId, [FromBody] Fixtures_State fixtures)
+    public async Task<ActionResult> UpdateFixtureInformation(int floorsetId, [FromBody] FixturesState fixtures)
     {
         var old = await _fixtureContext.GetFixtureInstances(floorsetId) ?? new List<FixtureInstance>();
         var current = fixtures.CurrentFixtures ?? new List<FixtureInstance>();
