@@ -16,7 +16,7 @@
 
 namespace Plot.Data.Models.Fixtures;
 
-public class FixtureInstance: IEquatable<FixtureInstance>
+public class FixtureInstance : IEquatable<FixtureInstance>
 {
     public int? TUID { get; set; }
     public int? FIXTURE_TUID { get; set; }
@@ -30,9 +30,9 @@ public class FixtureInstance: IEquatable<FixtureInstance>
     public string? NOTE { get; set; }
 
 
-    public bool Equals(FixtureInstance other)
+    public bool Equals(FixtureInstance? other)
     {
-        if(other is null)
+        if (other is null)
         {
             return false;
         }
