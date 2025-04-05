@@ -1,0 +1,14 @@
+# Stage 1: Build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build-env
+
+# Set the working directory
+WORKDIR /app
+
+# Copy everything to the working directory
+COPY ./Plot ./
+
+# Expose the port on which the app will run
+EXPOSE 8085
+
+# Set the entrypoint to run with dotnet watch for hot reload
+ENTRYPOINT ["dotnet", "watch", "run", "--non-interactive", "--use-polling-file-watcher"]
