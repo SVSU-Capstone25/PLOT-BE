@@ -13,6 +13,7 @@
     Written by: Michael Polhill, Jordan Houlihan
 */
 
+using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,8 +22,10 @@ using Plot.Data.Models.Auth.Registration;
 using Plot.Data.Models.Auth.ResetPassword;
 using Plot.Data.Models.Env;
 using Plot.Data.Models.Users;
+using Microsoft.AspNetCore.Authentication;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
+using System.Security.Claims;
 
 namespace Plot.Controllers;
 
@@ -226,9 +229,13 @@ public class AuthController : ControllerBase
 
         var token = _tokenService.GenerateToken(user);
 
+        // Set the token in the response cookies for authentication.
         Response.Cookies.Append("Auth", token, new CookieOptions
         {
-            Expires = DateTimeOffset.UtcNow.AddMinutes(30)
+            HttpOnly = true, 
+            Secure = true,   
+            SameSite = SameSiteMode.None,
+            Expires = DateTimeOffset.UtcNow.AddMinutes(double.Parse(_envSettings.expiration_time)),
         });
 
         return Ok();
@@ -244,15 +251,17 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult Logout()
     {
-        return Ok();
-    }
-    // Small test for endpoints----------------------------------------------------------------------------
-    [Authorize(Policy = "Owner")]
-    [HttpPost("auth-test")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult TestPass()
-    {
-        Console.WriteLine("Pass");
+        //Reset the token in the response cookies for authentication.
+        // This will delete the token from the user.
+        var token = "";
+        Response.Cookies.Append("Auth", token, new CookieOptions
+        {
+            HttpOnly = true, 
+            Secure = true,   
+            SameSite = SameSiteMode.None,
+            Expires = DateTimeOffset.UtcNow.AddMinutes(-5),//Browser will delete the cookie due to old experation
+        });
+
         return Ok();
     }
 
