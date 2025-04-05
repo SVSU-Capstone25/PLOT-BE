@@ -26,9 +26,10 @@ public class FixtureInstance : IEquatable<FixtureInstance>
     public double? ALLOCATED_LF { get; set; }
     public float? TOT_LF { get; set; }
     public int? HANGER_STACK { get; set; }
-    public string? CATEGORY { get; set; }
+    public int? SUPERCATEGORY_TUID { get; set; }
+    public string? SUBCATEGORY { get; set; }
     public string? NOTE { get; set; }
-
+    public int? EDITOR_ID { get; set; }
 
     public bool Equals(FixtureInstance? other)
     {
