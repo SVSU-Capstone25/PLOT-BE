@@ -17,6 +17,6 @@ namespace Plot.Data.Models.Auth.Login;
 
 public record LoginRequest
 {
-    public required string? Email { get; set; }
-    public required string? Password { get; set; }
+    public required string? EMAIL { get; set; }
+    public required string? PASSWORD { get; set; }
 }

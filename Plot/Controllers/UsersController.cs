@@ -13,6 +13,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Users;
+using Plot.Data.Models.Stores;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
 
@@ -25,7 +26,7 @@ public class UsersController : ControllerBase
     private readonly IUserContext _userContext;
     private readonly ClaimParserService _claimParserService;
 
-    public UsersController(IUserContext userContext, ClaimParserService claimParserService)
+    public UsersController(IUserContext userContext, IAuthContext authContext, ClaimParserService claimParserService)
     {
         _userContext = userContext;
         _claimParserService = claimParserService;
@@ -36,7 +37,7 @@ public class UsersController : ControllerBase
     /// </summary>
     /// <returns>Array of userDTO objects</returns>
     [Authorize]
-    [HttpGet]
+    [HttpGet("get-all")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<UserDTO>>> GetAll()
     {
@@ -50,13 +51,20 @@ public class UsersController : ControllerBase
     /// <param name="userId">The id of the user</param>
     /// <returns>UserDTO object</returns>
     [Authorize]
-    [HttpGet("{userId:int}")]
+    [HttpGet("get-users-by-id/{userId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<UserDTO> GetById(int userId)
+    public async Task<ActionResult<UserDTO>> GetById(int userId)
     {
-        return Ok();
+        var user = await _userContext.GetUserById(userId);
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(user);
     }
 
     /// <summary>
@@ -71,14 +79,14 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<UserDTO> UpdatePublicInfo(int userId, UpdatePublicInfoUser user)
+    public async Task<ActionResult<int>> UpdatePublicInfo(int userId, [FromBody] UpdatePublicInfoUser user)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        return NoContent();
+        return Ok(await _userContext.UpdateUserPublicInfo(userId, user));
     }
 
     /// <summary>
@@ -88,15 +96,15 @@ public class UsersController : ControllerBase
     /// <param name="userId">The id of the user</param>
     /// <param name="role">The new role for the user</param>
     /// <returns>The updated user</returns>
-    [Authorize(Policy = "Owner")]
-    [HttpPatch("role/{userId:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<UserDTO> UpdateRole(int userId, [FromBody] int role)
-    {
-        return Ok();
-    }
+    // [Authorize(Policy = "Owner")]
+    // [HttpPatch("role/{userId:int}")]
+    // [ProducesResponseType(StatusCodes.Status200OK)]
+    // [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    // [ProducesResponseType(StatusCodes.Status404NotFound)]
+    // public ActionResult<UserDTO> UpdateRole(int userId, [FromBody] int role)
+    // {
+    //     return Ok();
+    // }
 
     /// <summary>
     /// This endpoint deals with deleting a specific user
@@ -105,12 +113,58 @@ public class UsersController : ControllerBase
     /// <param name="userId">The id of the user</param>
     /// <returns>UserDTO object</returns>
     [Authorize(Policy = "Manager")]
-    [HttpDelete("{userId:int}")]
+    [HttpDelete("delete-user/{userId:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult Delete(int userId)
+    public async Task<ActionResult> Delete(int userId)
     {
-        return NoContent();
+        return Ok(await _userContext.DeleteUserById(userId));
+    }
+
+    /// <summary>
+    /// Adds a user as an employee to a store 
+    /// </summary>
+    /// <param name="userid">id of user being assigned</param>
+    /// <param name="storeid">id of store being registered at</param>
+    /// <returns></returns>
+    // [Authorize (Policy = "Manager")]
+    // [HttpPost("store-registration")]
+    // [ProducesResponseType(StatusCodes.Status200OK)]
+    // [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    // public async Task<ActionResult> AddUserToStore([FromBody] DeleteUserFromStoreRequest dufsr)
+    // {
+    //     return Ok(await _userContext.AddUserToStore(DeleteUserFromStoreRequest dufsr));
+    // }
+
+    /// <summary>
+    /// remove association between an employee and astore
+    /// </summary>
+    /// <param name="userId">id of user being assigned</param>
+    /// <param name="storeId">id of store being registered at</param>
+    /// <returns></returns>
+    [Authorize(Policy = "Manager")]
+    [HttpPost("delete-user-from-store")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DeleteFromStore(DeleteUserFromStoreRequest deleteUserFromStoreRequest)
+    {
+        return Ok(await _userContext.DeleteUserFromStore(deleteUserFromStoreRequest.USER_TUID, deleteUserFromStoreRequest.STORE_TUID));
+    }
+
+    /// <summary>
+    /// returns all the stores a user works at
+    /// </summary>
+    /// <param name="userId">The id of the user</param>
+    /// <returns>UserDTO object</returns>
+    [Authorize]
+    [HttpGet("stores/{userId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Store>> GetStoreOfUserById(int userId)
+    {
+        return Ok(await _userContext.GetStoresForUser(userId));
     }
 }

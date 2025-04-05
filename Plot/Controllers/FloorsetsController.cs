@@ -9,7 +9,7 @@
     
     Written by: Jordan Houlihan
 */
-
+using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Floorsets;
@@ -37,14 +37,13 @@ public class FloorsetsController : ControllerBase
     /// <param name="storeId">The id of the store as a route parameter in the url.</param>
     /// <returns>A list of floorset objects.</returns>
     // [Authorize]
-    [HttpGet("{storeId:int}")]
+    [HttpGet("get-floorsets/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<Floorset>>> GetFloorsetsByStore(int storeId)
     {
         return Ok(await _floorsetContext.GetFloorsetsByStoreId(storeId));
-        // return NoContent();
     }
 
     /// <summary>
@@ -56,9 +55,9 @@ public class FloorsetsController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<Floorset> Create(CreateFloorset floorset)
+    public async Task<ActionResult<int>> Create([FromBody] CreateFloorset floorset)
     {
-        return NoContent();
+        return Ok(await _floorsetContext.CreateFloorset(floorset));
     }
 
     /// <summary>
@@ -72,9 +71,9 @@ public class FloorsetsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<Floorset> UpdatePublicInfo(int floorsetId, UpdatePublicInfoFloorset floorset)
+    public async Task<ActionResult<int>> UpdatePublicInfo(int floorsetId, [FromBody] UpdatePublicInfoFloorset floorset)
     {
-        return NoContent();
+        return Ok(await _floorsetContext.UpdateFloorsetById(floorsetId, floorset));
     }
 
     /// <summary>
@@ -87,8 +86,11 @@ public class FloorsetsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult Delete(int floorsetId)
+    public async Task<ActionResult> Delete(int floorsetId)
     {
-        return NoContent();
+        return Ok(await _floorsetContext.DeleteFloorsetById(floorsetId));
     }
+
+
+    
 }

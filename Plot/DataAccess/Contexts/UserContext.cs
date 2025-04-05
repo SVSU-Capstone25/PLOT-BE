@@ -17,7 +17,9 @@
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Users;
+using Plot.Data.Models.Stores;
 using Plot.DataAccess.Interfaces;
+using System.Data;
 
 namespace Plot.DataAccess.Contexts;
 
@@ -29,12 +31,11 @@ public class UserContext : DbContext, IUserContext
         {
             using SqlConnection connection = GetConnection();
 
-            var GetUsersSQL = "SELECT TUID As 'UserId', FIRST_NAME As 'FirstName', LAST_NAME As " +
-                              "'LastName', EMAIL As 'Email', ACTIVE As 'Active', ROLE_TUID As 'Role' " +
-                              "FROM Users " +
-                              "WHERE ACTIVE = 1;";
 
-            return await connection.QueryAsync<UserDTO>(GetUsersSQL);
+            DynamicParameters parameters = new DynamicParameters();
+            return await connection.QueryAsync<UserDTO>("Select_Users", parameters, commandType: CommandType.StoredProcedure);
+
+
         }
         catch (SqlException exception)
         {
@@ -43,18 +44,91 @@ public class UserContext : DbContext, IUserContext
         }
     }
 
-    public Task<UserDTO?> GetUserById(int userId)
+    public async Task<UserDTO?> GetUserById(int userId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            using SqlConnection connection = GetConnection();
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("UserID", userId);
+            return await connection.QueryFirstOrDefaultAsync<UserDTO>("Select_Users", parameters, commandType: CommandType.StoredProcedure);
+
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return null;
+        }
     }
 
-    public Task<UserDTO?> UpdateUserPublicInfo(int userId, UpdatePublicInfoUser user)
+    public async Task<int> UpdateUserPublicInfo(int userId, UpdatePublicInfoUser user)
     {
-        throw new NotImplementedException();
+        try
+        {
+            using SqlConnection connection = GetConnection();
+
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("FIRST_NAME", user.FIRST_NAME);
+            parameters.Add("LAST_NAME", user.LAST_NAME);
+            return await connection.ExecuteAsync("Insert_Update_User", parameters, commandType: CommandType.StoredProcedure);
+
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return 0;
+        }
     }
 
-    public Task<int> DeleteUserById(int userId)
+    public async Task<int> DeleteUserById(int userId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            using SqlConnection connection = GetConnection();
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("UserId", userId);
+            return await connection.ExecuteAsync("Delete_User", parameters, commandType: CommandType.StoredProcedure);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return 0;
+        }
+    }
+
+    public async Task<int> DeleteUserFromStore(int userid, int storeid)
+    {
+        try
+        {
+            using SqlConnection connection = GetConnection();
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("User_tuid", userid);
+            parameters.Add("Store_tuid", storeid);
+            // var DeleteRelation = "DELETE FROM Access " +
+            //                        "WHERE USER_TUID = " +userid + " AND STORE_TUID = " + storeid;
+
+            return await connection.ExecuteAsync("Delete_Access", parameters, commandType: CommandType.StoredProcedure);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return 0;
+        }
+    }
+
+    public async Task<IEnumerable<Store>?> GetStoresForUser(int userid)
+    {
+        try
+        {
+            using SqlConnection connection = GetConnection();
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("UserID",userid);
+            return await connection.QueryAsync<Store>("Select_Users_Store_Access",parameters,commandType:CommandType.StoredProcedure);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return [];
+        }
     }
 }

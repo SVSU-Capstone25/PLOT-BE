@@ -50,18 +50,15 @@
 // ###
 //
 
-GET {{Plot_HostAddress}}/api/floorsets/1
+GET {{Plot_HostAddress}}/api/users/get-all
 Accept: application/json
-
-### 
-
-GET {{Plot_HostAddress}}/api/users/
-Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsIlJvbGUiOiJNYW5hZ2VyIiwiVXNlcklkIjoiNDAiLCJuYmYiOjE3NDM3OTYwOTQsImV4cCI6MTc0MzgzOTI5NCwiaWF0IjoxNzQzNzk2MDk0LCJpc3MiOiJodHRwOi8vYmFja2VuZDo4MDg1LyIsImF1ZCI6Imh0dHA6Ly9mcm9udGVuZDo4MDgwLyJ9.eb7NRKrzpmBCXSlx-G-XpQK8V7qAg1EoRKPWFHAttuo
 
 ###
 
-GET {{Plot_HostAddress}}/api/users/1
+GET {{Plot_HostAddress}}/api/users/get-users-by-id/10
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsIlJvbGUiOiJNYW5hZ2VyIiwiVXNlcklkIjoiNDAiLCJuYmYiOjE3NDM3OTYwOTQsImV4cCI6MTc0MzgzOTI5NCwiaWF0IjoxNzQzNzk2MDk0LCJpc3MiOiJodHRwOi8vYmFja2VuZDo4MDg1LyIsImF1ZCI6Imh0dHA6Ly9mcm9udGVuZDo4MDgwLyJ9.eb7NRKrzpmBCXSlx-G-XpQK8V7qAg1EoRKPWFHAttuo
 
 ###
 
@@ -84,8 +81,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-    "Email": "NickLeja@email.com",
-    "Password": "admin"
+    "Email": "admin@email.com",
+    "Password": "admin25!"
 }
 
 ###
@@ -154,13 +151,26 @@ Content-Type: application/json
 Accept: application/json
 
 ###
-
-POST {{Plot_HostAddress}}/api/auth/test-get-token
-Content-Type: application/json
+GET {{Plot_HostAddress}}/api/stores/get-all
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsIlJvbGUiOiJNYW5hZ2VyIiwiVXNlcklkIjoiNDAiLCJuYmYiOjE3NDM3OTc4NzYsImV4cCI6MTc0Mzg0MTA3NiwiaWF0IjoxNzQzNzk3ODc2LCJpc3MiOiJodHRwOi8vYmFja2VuZDo4MDg1LyIsImF1ZCI6Imh0dHA6Ly9mcm9udGVuZDo4MDgwLyJ9.xSmDZZXFndnyU4QRpIh45zJixiJOfA6nuFRJ9sJLpts
 
 ###
+GET {{Plot_HostAddress}}/api/stores/access/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImFkbWluQGVtYWlsLmNvbSIsIlJvbGUiOiJNYW5hZ2VyIiwiVXNlcklkIjoiNDAiLCJuYmYiOjE3NDM3OTc4NzYsImV4cCI6MTc0Mzg0MTA3NiwiaWF0IjoxNzQzNzk3ODc2LCJpc3MiOiJodHRwOi8vYmFja2VuZDo4MDg1LyIsImF1ZCI6Imh0dHA6Ly9mcm9udGVuZDo4MDgwLyJ9.xSmDZZXFndnyU4QRpIh45zJixiJOfA6nuFRJ9sJLpts
 
-GET {{Plot_HostAddress}}/api/auth/test-validate
+###
+POST {{Plot_HostAddress}}/api/stores
+Content-Type: application/json
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6ImVtYWlsQGVtYWlsLmNvbSIsIlJvbGUiOiIxIiwiVXNlcklkIjoiMSIsIm5iZiI6MTc0MzE5OTE2MCwiZXhwIjoxNzQzMjAyNzYwLCJpYXQiOjE3NDMxOTkxNjAsImlzcyI6Imh0dHA6Ly9iYWNrZW5kOjgwODUiLCJhdWQiOiJodHRwOi8vZnJvbnRlbmQ6ODA4MCJ9.c2RWQr3KaY4jEo_hZy37RMxCWp191mpn1jSg-irlKz4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6Ik5pY2tMZWphQGVtYWlsLmNvbSIsIlJvbGUiOiJPd25lciIsIlVzZXJJZCI6IjEiLCJuYmYiOjE3NDM2MTc2MDUsImV4cCI6MTc0MzYyMTIwNSwiaWF0IjoxNzQzNjE3NjA1LCJpc3MiOiJodHRwOi8vMC4wLjAuMDo4MDg1IiwiYXVkIjoiaHR0cDovLzAuMC4wLjA6ODA4MCJ9.nWl2ujpm5uc59E4ncKxUsuKqI3pfEMOkvMUBUjY2Uis
+
+{
+    "NAME":"Detroit Plato",
+    "ADDRESS":"123 Main St.",
+    "CITY": "Detroit",
+    "STATE":"Michigan",
+    "ZIP":"12345",
+    "WIDTH":50,
+    "HEIGHT":50,
+}

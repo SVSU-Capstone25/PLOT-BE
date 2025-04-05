@@ -70,9 +70,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 
 builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("Employee", policy => policy.RequireClaim("Role", "3", "2", "1"))
-    .AddPolicy("Manager", policy => policy.RequireClaim("Role", "1", "2"))
-    .AddPolicy("Owner", policy => policy.RequireClaim("Role", "1"));
+    .AddPolicy("Employee", policy => policy.RequireClaim("Role", "Owner", "Manager", "Employee"))
+    .AddPolicy("Manager", policy => policy.RequireClaim("Role", "Owner", "Manager"))
+    .AddPolicy("Owner", policy => policy.RequireClaim("Role", "Owner"));
 
 // Add contexts and services as scoped services throughout
 // the backend project for dependency injection.
@@ -86,7 +86,11 @@ builder.Services.AddScoped<ClaimParserService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<TokenService>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    });
 
 var app = builder.Build();
 

@@ -24,4 +24,5 @@ public interface IAuthContext
     Task<int> CreateUser(UserRegistration user);
     Task<User?> GetUserByEmail(string email);
     Task<int> UpdatePassword(LoginRequest user);
+    Task<int> DeleteUserById(int userId);
 }

@@ -17,10 +17,14 @@ namespace Plot.Data.Models.Fixtures;
 
 public record UpdateFixtureInstance
 {
-    public FixtureModel? Fixture { get; set; }
-    public double? XPosition { get; set; }
-    public double? YPosition { get; set; }
-    public double? LFAllocated { get; set; }
-    public string? Category { get; set; }
-    public string? Note { get; set; }
+    public int? TUID { get; set; }
+    public int? FIXTURE_TUID { get; set; }
+    public int? FLOORSET_TUID { get; set; }
+    public double? X_POS { get; set; }
+    public double? Y_POS { get; set; }
+    public double? ALLOCATED_LF { get; set; }
+    public int? HANGER_STACK { get; set; }
+    public float? TOT_LF { get; set; }
+    public string? CATEGORY { get; set; }
+    public string? NOTE { get; set; }
 }

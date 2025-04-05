@@ -17,7 +17,8 @@ namespace Plot.Data.Models.Allocations;
 
 public record FixtureAllocations
 {
-    public string? Category { get; set; }
-    public int? LFAllocated { get; set; }
-    public int? LFTarget { get; set; }
+    public int? TUID {get; set;}
+    public string? CATEGORY { get; set; }
+    public int? TOTAL_SALES { get; set; }
+    public int? SALES_TUID { get; set; }
 }

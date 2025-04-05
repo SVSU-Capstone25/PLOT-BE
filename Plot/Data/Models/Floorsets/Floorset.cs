@@ -13,15 +13,25 @@
     Written by: Jordan Houlihan
 */
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Plot.Data.Models.Floorsets;
 
 public class Floorset
 {
-    public int? FloorsetId { get; set; }
-    public string? Name { get; set; }
-    public int? StoreId { get; set; }
-    public DateTime? DateCreated { get; set; }
-    public int? CreatedBy { get; set; }
-    public DateTime? DateModified { get; set; }
-    public int? ModifiedBy { get; set; }
+    [Required]
+    public int? TUID { get; set; }
+    [Required]
+    [StringLength(100, ErrorMessage = "Floorset name cannot exceed 100 characters.")]
+    public string? NAME { get; set; }
+    [Required]
+    public int? STORE_TUID { get; set; }
+    [Required]
+    public DateTime? DATE_CREATED { get; set; }
+    [Required]
+    public int? CREATED_BY { get; set; }
+    [Required]
+    public DateTime? DATE_MODIFIED { get; set; }
+    [Required]
+    public int? MODIFIED_BY { get; set; }
 }

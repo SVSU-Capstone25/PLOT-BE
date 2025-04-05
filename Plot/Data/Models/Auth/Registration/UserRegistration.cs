@@ -17,8 +17,8 @@ namespace Plot.Data.Models.Auth.Registration;
 
 public record UserRegistration
 {
-    public required string? Email { get; set; }
-    public required string? FirstName { get; set; }
-    public required string? LastName { get; set; }
-    public required int? Role { get; set; }
+    public required string? EMAIL { get; set; }
+    public required string? FIRST_NAME { get; set; }
+    public required string? LAST_NAME { get; set; }
+    public required string? ROLE { get; set; }
 }

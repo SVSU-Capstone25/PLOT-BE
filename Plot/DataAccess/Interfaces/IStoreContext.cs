@@ -12,15 +12,18 @@
 
     Written by: Jordan Houlihan
 */
-
+using Plot.Data.Models.Users;
 using Plot.Data.Models.Stores;
 
 namespace Plot.DataAccess.Interfaces;
 
 public interface IStoreContext
 {
-    Task<IEnumerable<Store[]>?> GetStores();
-    Task<Store?> GetStoreById(int storeId);
-    Task<Store?> UpdateStoreById(int storeId, Store store);
+    Task<IEnumerable<Store>> GetStores();
+    Task<IEnumerable<Store>> GetStoreById(int? storeId);
+    Task<int> UpdatePublicInfoStore(int storeId, UpdatePublicInfoStore updatestore);
+    Task<int> UpdateSizeStore(int storeId, UpdateSizeStore sizestore);
     Task<int> DeleteStoreById(int storeId);
+    Task<IEnumerable<UserDTO>?> GetUsersAtStore(int storeid);
+    Task<int> CreateStoreEntry(CreateStore createstore);
 }

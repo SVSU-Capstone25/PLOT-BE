@@ -79,12 +79,12 @@ public class AuthTestController : ControllerBase
     {
         var user = new User
         {
-            Email="email@email.com",
-            Role=3,
-            UserId=1
+            EMAIL = "email@email.com",
+            ROLE = "Employee",
+            TUID = 1
         };
 
-        var testToken=_tokenService.GenerateToken(user);
+        var testToken = _tokenService.GenerateToken(user);
 
         return Ok(testToken);
     }
@@ -118,7 +118,7 @@ public class AuthTestController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<ResetPasswordRequest> TestFail([FromBody] ResetPasswordRequest email)
     {
-        email.EmailAddress = "new@email.com";
+        email.EMAIL = "new@email.com";
         return Ok(email);
     }
 
@@ -126,12 +126,12 @@ public class AuthTestController : ControllerBase
     public async Task<ActionResult<string>> TestPassword()
     {
         PasswordHasher<User> hasher = new();
-        User user = new() { FirstName = "admin", LastName = "admin", Email = "NickLeja@email.com", Password = "admin", Role = 1, Active = true };
+        User user = new() { FIRST_NAME = "admin", LAST_NAME = "admin", EMAIL = "NickLeja@email.com", PASSWORD = "admin", ROLE = "Owner", ACTIVE = true };
 
         LoginRequest newUserInfo = new()
         {
-            Email = user.Email,
-            Password = hasher.HashPassword(user, "admin")
+            EMAIL = user.EMAIL,
+            PASSWORD = hasher.HashPassword(user, "admin")
         };
 
         int rowsAffected = await _authContext.UpdatePassword(newUserInfo);

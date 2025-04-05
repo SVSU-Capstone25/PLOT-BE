@@ -13,19 +13,38 @@
     Written by: Jordan Houlihan
 */
 
-using Plot.Data.Models.Users;
+using System.ComponentModel.DataAnnotations;
 
 namespace Plot.Data.Models.Stores;
 
 public record CreateStore
 {
-    public string? Name { get; set; }
-    public string? Address { get; set; }
-    public string? City { get; set; }
-    public string? State { get; set; }
-    public string? ZipCode { get; set; }
-    public int? Width { get; set; }
-    public int? Height { get; set; }
-    public UserDTO[]? Employees { get; set; }
-    public IFormFile? BlueprintImage { get; set; }
+    [Required]
+    [StringLength(100, ErrorMessage = "Store name cannot exceed 100 characters.")]
+    public required string NAME { get; set; }
+
+    [Required]
+    [StringLength(100, ErrorMessage = "Address cannot exceed 100 characters.")]
+    public required string ADDRESS { get; set; }
+
+    [Required]
+    [StringLength(100, ErrorMessage = "City cannot exceed 100 characters.")]
+    public required string CITY { get; set; }
+
+    [Required]
+    [StringLength(25, ErrorMessage = "State cannot exceed 25 characters.")]
+    public required string STATE { get; set; }
+
+    [Required]
+    [StringLength(10, ErrorMessage = "Zip code cannot exceed 10 characters.")]
+    public required string ZIP { get; set; }
+
+    [Required]
+    [Range(int.MinValue, int.MaxValue, ErrorMessage = "Width must be an integer.")]
+    public int WIDTH { get; set; }
+
+    [Required]
+    [Range(int.MinValue, int.MaxValue, ErrorMessage = "Length must be an integer.")]
+    public int LENGTH { get; set; }
+    public IFormFile? BLUEPRINT_IMAGE { get; set; }
 }

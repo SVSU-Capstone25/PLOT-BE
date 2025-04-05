@@ -13,7 +13,8 @@
 
     Written by: Jordan Houlihan
 */
-
+using Dapper;
+using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Allocations;
 using Plot.DataAccess.Interfaces;
 
@@ -21,13 +22,14 @@ namespace Plot.DataAccess.Contexts;
 
 public class SalesContext : DbContext, ISalesContext
 {
-    public Task<IEnumerable<FixtureAllocations[]>?> GetFixtureAllocations(int floorsetId)
+    public async Task<IEnumerable<FixtureAllocations>> GetFixtureAllocations(int floorsetId)
     {
-        throw new NotImplementedException();
+         throw new NotImplementedException();
     }
 
     public Task<int> UploadSales(int floorsetId, IFormFile excelFile)
     {
+        //Need to come back to this with more eyes
         throw new NotImplementedException();
     }
 }
