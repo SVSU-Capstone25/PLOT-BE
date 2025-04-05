@@ -16,7 +16,7 @@
 
 namespace Plot.Data.Models.Fixtures;
 
-public class FixtureInstance
+public class FixtureInstance: IEquatable<FixtureInstance>
 {
     public int? TUID { get; set; }
     public int? FIXTURE_TUID { get; set; }
@@ -24,7 +24,19 @@ public class FixtureInstance
     public double? X_POS { get; set; }
     public double? Y_POS { get; set; }
     public double? ALLOCATED_LF { get; set; }
+    public float? TOT_LF { get; set; }
     public int? HANGER_STACK { get; set; }
     public string? CATEGORY { get; set; }
     public string? NOTE { get; set; }
+
+
+    public bool Equals(FixtureInstance other)
+    {
+        if(other is null)
+        {
+            return false;
+        }
+        return this.TUID == other.TUID;
+    }
+
 }

@@ -69,20 +69,21 @@ public class FixturesController : ControllerBase
         //Select_Floorset_Fixtures[] oldFixtures = query.Cast<Select_Floorset_Fixtures>().ToArray();
         //Select_Floorset_Fixtures[] newFixtures = fixtures.CurrentFixtures.Cast<Select_Floorset_Fixtures>().ToArray();
         
-        IEnumerable<Select_Floorset_Fixtures> update = old.Intersect(fixtures.CurrentFixtures);
-        IEnumerable<Select_Floorset_Fixtures> create = fixtures.CurrentFixtures.Except(old);
-        IEnumerable<Select_Floorset_Fixtures> delete = old.Except(fixtures.CurrentFixtures);
-        foreach(Select_Floorset_Fixtures instance in update)
+        IEnumerable<FixtureInstance> update = old.Intersect(fixtures.CurrentFixtures);
+        IEnumerable<FixtureInstance> create = fixtures.CurrentFixtures.Except(old);
+        IEnumerable<FixtureInstance> delete = old.Except(fixtures.CurrentFixtures);
+
+        foreach(FixtureInstance instance in update)
         {
             await _fixtureContext.UpdateFixtureInstanceById(instance);
         }
 
-        foreach(Select_Floorset_Fixtures instance in create)
+        foreach(FixtureInstance instance in create)
         {
             await _fixtureContext.CreateFixtureInstance(instance);
         }
 
-        foreach(Select_Floorset_Fixtures instance in delete)
+        foreach(FixtureInstance instance in delete)
         {
             await _fixtureContext.DeleteFixtureInstanceById(instance.TUID.Value);
         }
@@ -100,7 +101,7 @@ public class FixturesController : ControllerBase
     [HttpPatch("create-fixture/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Select_Fixtures>> CreateModel([FromBody]Select_Fixtures fixtureModel)
+    public async Task<ActionResult<Select_Fixtures>> CreateModel([FromBody]FixtureModel fixtureModel)
     {
         return Ok(await _fixtureContext.CreateFixtureModel(fixtureModel));
     }
@@ -118,7 +119,7 @@ public class FixturesController : ControllerBase
     [HttpPatch("update-model/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> UpdateFixtureModel([FromBody] Select_Fixtures update)
+    public async Task<ActionResult> UpdateFixtureModel([FromBody] FixtureModel update)
     {
         return Ok(await _fixtureContext.UpdateFixtureModelById(update));
     }

@@ -19,12 +19,12 @@ namespace Plot.DataAccess.Interfaces;
 
 public interface IFixtureContext
 {
-    Task<IEnumerable<Select_Floorset_Fixtures>>? GetFixtureInstances(int floorsetId);
-    Task<IEnumerable<Select_Fixtures>>? GetFixtureModels(int StoreId);
-    Task<int> CreateFixtureModel(Select_Fixtures fixtureModel);
-    Task<int> CreateFixtureInstance(Select_Floorset_Fixtures fixtureInstance);
-    Task<int> UpdateFixtureModelById(Select_Fixtures fixtureModel);
-    Task<int> UpdateFixtureInstanceById(Select_Floorset_Fixtures fixtureInstance);
+    Task<IEnumerable<FixtureInstance>>? GetFixtureInstances(int floorsetId);
+    Task<IEnumerable<FixtureModel>>? GetFixtureModels(int StoreId);
+    Task<int> CreateFixtureModel(FixtureModel fixtureModel);
+    Task<int> CreateFixtureInstance(FixtureInstance fixtureInstance);
+    Task<int> UpdateFixtureModelById(FixtureModel fixtureModel);
+    Task<int> UpdateFixtureInstanceById(FixtureInstance fixtureInstance);
     Task<int> DeleteFixtureModelById(int fixtureModelId);
     Task<int> DeleteFixtureInstanceById(int fixtureInstanceId);
 }

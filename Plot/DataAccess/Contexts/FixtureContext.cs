@@ -24,7 +24,7 @@ namespace Plot.DataAccess.Contexts;
 
 public class FixtureContext : DbContext, IFixtureContext
 {
-    public async Task<int> CreateFixtureInstance(Select_Floorset_Fixtures fixtureInstance)
+    public async Task<int> CreateFixtureInstance(FixtureInstance fixtureInstance)
     {
          try
         {
@@ -52,7 +52,7 @@ public class FixtureContext : DbContext, IFixtureContext
         //throw new NotImplementedException();
     }
 
-    public async Task<int> CreateFixtureModel(Select_Fixtures fixtureModel)
+    public async Task<int> CreateFixtureModel(FixtureModel fixtureModel)
     {
          try
         {
@@ -113,7 +113,7 @@ public class FixtureContext : DbContext, IFixtureContext
         //throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<Select_Floorset_Fixtures>>? GetFixtureInstances(int floorsetId)
+    public async Task<IEnumerable<FixtureInstance>>? GetFixtureInstances(int floorsetId)
     {
         try
         {
@@ -121,7 +121,7 @@ public class FixtureContext : DbContext, IFixtureContext
 
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("FloorsetID", floorsetId);
-            return await connection.QueryAsync<Select_Floorset_Fixtures>("Select_Floorset_Fixtures", parameters, commandType:CommandType.StoredProcedure);
+            return await connection.QueryAsync<FixtureInstance>("Select_Floorset_Fixtures", parameters, commandType:CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {
@@ -131,7 +131,7 @@ public class FixtureContext : DbContext, IFixtureContext
         //throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<Select_Fixtures>>? GetFixtureModels(int StoreId)
+    public async Task<IEnumerable<FixtureModel>>? GetFixtureModels(int StoreId)
     {
         try
         {
@@ -139,7 +139,7 @@ public class FixtureContext : DbContext, IFixtureContext
 
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("STORE_ID", StoreId);
-            return await connection.QueryAsync<Select_Fixtures>("Select_Stores_Fixtures", parameters, commandType:CommandType.StoredProcedure);
+            return await connection.QueryAsync<FixtureModel>("Select_Stores_Fixtures", parameters, commandType:CommandType.StoredProcedure);
        }
         catch (SqlException exception)
         {
@@ -149,7 +149,7 @@ public class FixtureContext : DbContext, IFixtureContext
         //throw new NotImplementedException();
     }
 
-    public async Task<int> UpdateFixtureInstanceById(Select_Floorset_Fixtures fixtureInstance)
+    public async Task<int> UpdateFixtureInstanceById(FixtureInstance fixtureInstance)
     {
         try
         {
@@ -178,7 +178,7 @@ public class FixtureContext : DbContext, IFixtureContext
         //throw new NotImplementedException();
     }
 
-    public async Task<int> UpdateFixtureModelById(Select_Fixtures fixtureModel)
+    public async Task<int> UpdateFixtureModelById(FixtureModel fixtureModel)
     {
         try
         {
