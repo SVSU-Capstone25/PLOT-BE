@@ -122,13 +122,32 @@ public class UserContext : DbContext, IUserContext
         {
             using SqlConnection connection = GetConnection();
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("UserID",userid);
-            return await connection.QueryAsync<Store>("Select_Users_Store_Access",parameters,commandType:CommandType.StoredProcedure);
+            parameters.Add("UserID", userid);
+            return await connection.QueryAsync<Store>("Select_Users_Store_Access", parameters, commandType: CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {
             Console.WriteLine(("Database connection failed: ", exception));
             return [];
+        }
+    }
+    public async Task<int> AddUserToStore(AccessModel addUser)
+    {
+        try
+        {
+            using SqlConnection connection = GetConnection();
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("User_tuid", addUser.USER_TUID);
+            parameters.Add("Store_tuid", addUser.STORE_TUID);
+            // var DeleteRelation = "DELETE FROM Access " +
+            //                        "WHERE USER_TUID = " +userid + " AND STORE_TUID = " + storeid;
+
+            return await connection.ExecuteAsync("Insert_Access", parameters, commandType: CommandType.StoredProcedure);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception));
+            return 0;
         }
     }
 }

@@ -51,8 +51,6 @@ public class FixturesController : ControllerBase
             return BadRequest(ModelState);
         }
 
-
-
         return Ok(await _fixtureContext.GetFixtureInstances(floorsetId));
     }
 
@@ -69,15 +67,16 @@ public class FixturesController : ControllerBase
     [HttpPatch("update-fixture/{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> UpdateFixtureInformation(int floorsetId, [FromBody] Fixtures_State fixtures)
+    public async Task<ActionResult> UpdateFixtureInformation(int floorsetId, [FromBody] FixturesState fixtures)
     {
-        var old = await _fixtureContext.GetFixtureInstances(floorsetId);
+        var old = await _fixtureContext.GetFixtureInstances(floorsetId) ?? new List<FixtureInstance>();
+        var current = fixtures.CurrentFixtures ?? new List<FixtureInstance>();
         //Select_Floorset_Fixtures[] oldFixtures = query.Cast<Select_Floorset_Fixtures>().ToArray();
         //Select_Floorset_Fixtures[] newFixtures = fixtures.CurrentFixtures.Cast<Select_Floorset_Fixtures>().ToArray();
 
-        IEnumerable<FixtureInstance> update = old.Intersect(fixtures.CurrentFixtures);
-        IEnumerable<FixtureInstance> create = fixtures.CurrentFixtures.Except(old);
-        IEnumerable<FixtureInstance> delete = old.Except(fixtures.CurrentFixtures);
+        IEnumerable<FixtureInstance> update = old.Intersect(current);
+        IEnumerable<FixtureInstance> create = current.Except(old);
+        IEnumerable<FixtureInstance> delete = old.Except(current);
 
         foreach (FixtureInstance instance in update)
         {
@@ -91,7 +90,11 @@ public class FixturesController : ControllerBase
 
         foreach (FixtureInstance instance in delete)
         {
-            await _fixtureContext.DeleteFixtureInstanceById(instance.TUID.Value);
+            int tuid = instance.TUID ?? -1;
+            if (tuid != -1)
+            {
+                await _fixtureContext.DeleteFixtureInstanceById(tuid);
+            }
         }
 
 

@@ -26,5 +26,6 @@ public interface IUserContext
     Task<int> DeleteUserById(int userId);
     Task<int> DeleteUserFromStore(int userid, int storeid);
     Task<IEnumerable<Store>?> GetStoresForUser(int userid);
+    Task<int> AddUserToStore(AccessModel addUser);
 
 }

@@ -12,6 +12,7 @@
     to send data to the database server from the frontend and vice versa.
 
     Written by: Jordan Houlihan
+    Modified by: Josh Rodack
 */
 using System.Data;
 using Dapper;
@@ -31,7 +32,7 @@ public class FloorsetContext : DbContext, IFloorsetContext
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("StoreID", storeId);
 
-            return await connection.QueryAsync<Floorset>("Select_Store_Floorsets", parameters, commandType: CommandType.StoredProcedure);
+            return await connection.QueryAsync<Floorset>("Select_Stores_Floorsets", parameters, commandType: CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {

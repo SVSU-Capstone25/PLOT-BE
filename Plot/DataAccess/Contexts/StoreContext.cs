@@ -38,7 +38,23 @@ public class StoreContext : DbContext, IStoreContext
             return [];
         }
     }
+    public async Task<IEnumerable<Store>> GetByAccess(int? userId)
+    {//grab stores a user works at
+        try
+        {
+            using SqlConnection connection = GetConnection();
 
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("UserID", userId);
+            return await connection.QueryAsync<Store>("Select_Users_Store_Access", parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine(("Database connection failed: ", exception.Message));
+            return [];
+        }
+    }
     public async Task<IEnumerable<Store>> GetStoreById(int? storeId)
     {
         try
@@ -114,17 +130,15 @@ public class StoreContext : DbContext, IStoreContext
             return 0;
         }
     }
-    public async Task<IEnumerable<UserDTO>?> GetUsersAtStore(int storeid)
+    public async Task<IEnumerable<UserDTO>?> GetUsersAtStore(int storeId)
     {
         try
         {
             using SqlConnection connection = GetConnection();
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("StoreID", storeId);
 
-            var GetUsersByStore = "SELECT TUID, FIRST_NAME, LAST_NAME, EMAIL, ROLE, ACTIVE " +
-                                  "FROM Users " +
-                                  $"WHERE TUID IN (SELECT USER_TUID FROM Access WHERE STORE_TUID = {storeid});";
-
-            return await connection.QueryAsync<UserDTO>(GetUsersByStore);
+            return await connection.QueryAsync<UserDTO>("Select_Store_Users", parameters, commandType: System.Data.CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {
@@ -156,4 +170,21 @@ public class StoreContext : DbContext, IStoreContext
             return 0;
         }
     }
+    public async Task<IEnumerable<UserDTO>?> GetUsersNotInStore(int storeId)
+    {
+        try
+        {
+            using SqlConnection connection = GetConnection();
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("StoreID", storeId);
+
+            return await connection.QueryAsync<UserDTO>("Select_Users_NotAssigned_To_Store", parameters, commandType: System.Data.CommandType.StoredProcedure);
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine("Database connection failed: ", exception.Message);
+            return [];
+        }
+    }
+
 }
