@@ -26,6 +26,8 @@ using Microsoft.AspNetCore.Authentication;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
 using System.Security.Claims;
+using System.Net.Mime;
+using System.Text.Json;
 
 namespace Plot.Controllers;
 
@@ -208,6 +210,7 @@ public class AuthController : ControllerBase
     /// <param name="userLoginAttempt">The login attempt</param>
     /// <returns>The token used for authorization</returns>
     [HttpPost("login")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Login(LoginRequest userLoginAttempt)
@@ -230,15 +233,18 @@ public class AuthController : ControllerBase
         var token = _tokenService.GenerateToken(user);
 
         // Set the token in the response cookies for authentication.
-        Response.Cookies.Append("Auth", token, new CookieOptions
-        {
-            HttpOnly = true, 
-            Secure = true,   
-            SameSite = SameSiteMode.None,
-            Expires = DateTimeOffset.UtcNow.AddMinutes(double.Parse(_envSettings.expiration_time)),
-        });
+        // Response.Cookies.Append("Auth", token, new CookieOptions
+        // {
+        //     HttpOnly = true,
+        //     Secure = true,
+        //     SameSite = SameSiteMode.None,
+        //     Expires = DateTimeOffset.UtcNow.AddMinutes(double.Parse(_envSettings.expiration_time)),
+        // });
 
-        return Ok();
+        return Ok(new LoginToken()
+        {
+            Token = token
+        });
     }
 
     /// <summary>
@@ -256,8 +262,8 @@ public class AuthController : ControllerBase
         var token = "";
         Response.Cookies.Append("Auth", token, new CookieOptions
         {
-            HttpOnly = true, 
-            Secure = true,   
+            HttpOnly = true,
+            Secure = true,
             SameSite = SameSiteMode.None,
             Expires = DateTimeOffset.UtcNow.AddMinutes(-5),//Browser will delete the cookie due to old experation
         });
