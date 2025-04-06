@@ -22,9 +22,9 @@ namespace Plot.DataAccess.Contexts;
 
 public class SalesContext : DbContext, ISalesContext
 {
-    public async Task<IEnumerable<FixtureAllocations>> GetFixtureAllocations(int floorsetId)
+    public Task<IEnumerable<FixtureAllocations>> GetFixtureAllocations(int floorsetId)
     {
-         throw new NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public Task<int> UploadSales(int floorsetId, IFormFile excelFile)
