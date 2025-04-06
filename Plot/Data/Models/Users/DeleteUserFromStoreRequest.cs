@@ -19,7 +19,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Plot.Data.Models.Users;
 
-public record DeleteUserFromStoreRequest
+public record AccessModel
 {
     [Required]
     public required int USER_TUID { get; set; }

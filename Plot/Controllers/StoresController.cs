@@ -13,6 +13,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Stores;
+using Plot.Data.Models.Users;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
 
@@ -61,6 +62,26 @@ public class StoresController : ControllerBase
         //return 404 error if no store was found
         if (storeList == null) return NotFound();
         return Ok(storeList);
+    }
+
+    [Authorize]
+    [HttpGet("get-users-by-store/{storeId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<UserDTO>> GetUsersAtStore(int storeId)
+    {
+        return Ok(await _storeContext.GetUsersAtStore(storeId));
+    }
+
+    [Authorize]
+    [HttpGet("get-users-not-in-store/{storeId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<UserDTO>> GetUsersNotInStore(int storeId)
+    {
+        return Ok(await _storeContext.GetUsersNotInStore(storeId));
     }
 
     /// <summary>

@@ -128,14 +128,14 @@ public class UsersController : ControllerBase
     /// <param name="userid">id of user being assigned</param>
     /// <param name="storeid">id of store being registered at</param>
     /// <returns></returns>
-    // [Authorize (Policy = "Manager")]
-    // [HttpPost("store-registration")]
-    // [ProducesResponseType(StatusCodes.Status200OK)]
-    // [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    // public async Task<ActionResult> AddUserToStore([FromBody] DeleteUserFromStoreRequest dufsr)
-    // {
-    //     return Ok(await _userContext.AddUserToStore(DeleteUserFromStoreRequest dufsr));
-    // }
+    [Authorize(Policy = "Manager")]
+    [HttpPost("store-registration")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> AddUserToStore([FromBody] AccessModel dufsr)
+    {
+        return Ok(await _userContext.AddUserToStore(dufsr));
+    }
 
     /// <summary>
     /// remove association between an employee and astore
@@ -148,7 +148,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> DeleteFromStore(DeleteUserFromStoreRequest deleteUserFromStoreRequest)
+    public async Task<ActionResult> DeleteFromStore(AccessModel deleteUserFromStoreRequest)
     {
         return Ok(await _userContext.DeleteUserFromStore(deleteUserFromStoreRequest.USER_TUID, deleteUserFromStoreRequest.STORE_TUID));
     }
