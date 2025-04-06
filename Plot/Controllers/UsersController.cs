@@ -129,7 +129,7 @@ public class UsersController : ControllerBase
     /// <param name="storeid">id of store being registered at</param>
     /// <returns></returns>
     [Authorize(Policy = "Manager")]
-    [HttpPost("store-registration")]
+    [HttpPost("add-user-to-store")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> AddUserToStore([FromBody] AccessModel dufsr)
