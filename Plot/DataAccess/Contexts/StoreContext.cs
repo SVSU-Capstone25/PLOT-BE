@@ -161,6 +161,7 @@ public class StoreContext : DbContext, IStoreContext
         //     return 0;
         // }
     }
+    
     public async Task<IEnumerable<UserDTO>?> GetUsersAtStore(int storeId)
     {
         DynamicParameters parameters = new DynamicParameters();

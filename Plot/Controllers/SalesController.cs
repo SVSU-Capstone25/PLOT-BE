@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
+using Plot.Data.Models.Allocations;
+using ClosedXML;
 
 namespace Plot.Controllers;
 
@@ -37,11 +39,42 @@ public class SalesController : ControllerBase
     /// <param name="excelFile">The excel file</param>
     /// <returns></returns>
     [Authorize(Policy = "Manager")]
-    [HttpPost]
+    [HttpPost("upload-sales/{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> UploadSales(int floorsetId, [FromBody] IFormFile excelFile)
+    public ActionResult UploadSales(int floorsetId, [FromBody] IFormFile excelFile)
     {
-        return Ok(await _salesContext.UploadSales(floorsetId, excelFile));
+        // if (excelFile == null)
+        // {
+        //     return BadRequest();
+        // }
+
+        // using var memoryStream = new MemoryStream();
+        // await excelFile.CopyToAsync(memoryStream);
+
+        // using var workbook = new XLWorkbook(memoryStream);
+        // var worksheet = workbook.Worksheet(1);
+        // var rows = worksheet.RowsUsed().Skip(6);
+
+        // List<CreateFixtureAllocations> allocations = [];
+
+        // foreach (var row in rows)
+        // {   
+        //     if (string.IsNullOrEmpty(row.Cell(1).Value.ToString()) && string.IsNullOrEmpty(row.Cell(2).Value.ToString()))
+        //     {
+        //         var categorySubCategoryNames = row.Cell(3).Value.ToString().Split(' ', 2);
+
+        //         var allocation = new CreateFixtureAllocations
+        //         {
+        //             SUPERCATEGORY = categorySubCategoryNames[0],
+        //             SUBCATEGORY = categorySubCategoryNames[1],
+        //             UNITS = string.IsNullOrEmpty(row.Cell(6).Value.ToString()) ? 0 : int.Parse(row.Cell(6).Value.ToString())
+        //         };
+
+        //         allocations.Add(allocation);
+        //     }
+        // }
+
+        return Ok();
     }
 }

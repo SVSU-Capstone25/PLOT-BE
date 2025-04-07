@@ -1,14 +1,10 @@
 /*
-    Filename: DeleteUserFromStoreRequest.cs
+    Filename: AccessModel.cs
     Part of Project: PLOT/PLOT-BE/Plot/Data/Models/Users
 
     File Purpose:
-    This file contains the object to hold the Access attributes.
-    
-    Class Purpose:
-    This record is used as the file 
-    to pass back the values to remove
-    a user from a store.
+    This file contains the request input for adding
+    or deleting a user to a store.
     
     Written by: Josh Rodack
 */

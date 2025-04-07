@@ -24,8 +24,9 @@ public interface IUserContext
     Task<UserDTO?> GetUserById(int userId);
     Task<int> UpdateUserPublicInfo(int userId, UpdatePublicInfoUser user);
     Task<int> DeleteUserById(int userId);
-    Task<int> DeleteUserFromStore(int userid, int storeid);
+    Task<int> DeleteUserFromStore(AccessModel accessModel);
     Task<IEnumerable<Store>?> GetStoresForUser(int userid);
-    Task<int> AddUserToStore(AccessModel addUser);
+    Task<int> AddUserToStore(AccessModel accessModel);
+    Task<int> UpdateAccessList(UpdateAccessList updateAccessList);
 
 }

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Fixtures;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
+using Plot.Data.Models.Allocations;
 
 namespace Plot.Controllers;
 
@@ -28,7 +29,7 @@ public class FixturesController : ControllerBase
 
     public FixturesController(IFixtureContext fixtureContext, ISalesContext salesContext, ClaimParserService claimParserService)
     {
-        _fixtureContext = fixtureContext ?? throw new ArgumentNullException(nameof(fixtureContext));
+        _fixtureContext = fixtureContext;
         _salesContext = salesContext;
         _claimParserService = claimParserService;
         

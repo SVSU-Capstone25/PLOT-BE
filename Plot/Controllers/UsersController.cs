@@ -90,6 +90,11 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserDTO>> UpdatePublicInfo(int userId, [FromBody] UpdatePublicInfoUser user)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         int rowsAffected = await _userContext.UpdateUserPublicInfo(userId, user);
 
         if (rowsAffected == 0) 
@@ -153,6 +158,7 @@ public class UsersController : ControllerBase
     /// <param name="userid">id of user being assigned</param>
     /// <param name="storeid">id of store being registered at</param>
     /// <returns></returns>
+    /// TODO: Turn to put
     // [Authorize (Policy = "Manager")]
     // [HttpPost("store-registration")]
     // [ProducesResponseType(StatusCodes.Status200OK)]
@@ -163,20 +169,49 @@ public class UsersController : ControllerBase
     // }
 
     [Authorize(Policy = "Manager")]
-    [HttpPost("add-user-to-store")]
+    [HttpPost("update-access-list")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> AddUserToStore([FromBody] AccessModel accessModel)
+    public async Task<ActionResult> UpdateUserAccessList([FromBody] UpdateAccessList updateAccessList)
     {
-        int rowsAffected = await _userContext.AddUserToStore(accessModel);
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
 
-        if (rowsAffected == 0)
+        int rowsAffected = 0;
+
+        await _userContext.UpdateAccessList(updateAccessList);
+
+        if (rowsAffected != updateAccessList.STORE_TUIDS.Count<int>())
         {
             return NotFound();
         }
 
         return Ok();
     }
+
+    [Authorize(Policy = "Manager")]
+    [HttpPost("add-user-to-store")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> AddUserToStore([FromBody] AccessModel accessModel)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        int rowsAffected = await _userContext.AddUserToStore(accessModel);
+
+        if (rowsAffected == 0)
+        {
+            return BadRequest();
+        }
+
+        return Ok();
+    }
+
     /// <summary>
     /// remove association between an employee and astore
     /// </summary>
@@ -188,13 +223,18 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> DeleteFromStore(AccessModel accessModel)
+    public async Task<ActionResult> DeleteUserFromStore([FromBody] AccessModel accessModel)
     {
-        int rowsAffected = await _userContext.DeleteUserFromStore(accessModel.USER_TUID, accessModel.STORE_TUID);
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        
+        int rowsAffected = await _userContext.DeleteUserFromStore(accessModel);
 
         if (rowsAffected == 0)
         {
-            return NotFound();
+            return BadRequest();
         }
 
         return Ok();

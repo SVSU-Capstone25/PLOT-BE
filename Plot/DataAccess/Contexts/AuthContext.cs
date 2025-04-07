@@ -49,6 +49,7 @@ public class AuthContext : DbContext, IAuthContext
             parameters.Add("FIRST_NAME", user.FIRST_NAME);
             parameters.Add("LAST_NAME", user.LAST_NAME);
             parameters.Add("EMAIL", user.EMAIL);
+            parameters.Add("PASSWORD", oneTimePasswordHash);
             parameters.Add("ROLE_NAME", user.ROLE_NAME);
 
             return await connection.ExecuteAsync("Insert_Update_User", parameters, commandType: System.Data.CommandType.StoredProcedure);

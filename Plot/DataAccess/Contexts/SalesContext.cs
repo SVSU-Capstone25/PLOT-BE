@@ -17,7 +17,7 @@ using Dapper;
 using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Allocations;
 using Plot.DataAccess.Interfaces;
-using ClosedXML.Excel;
+using ClosedXML;
 
 namespace Plot.DataAccess.Contexts;
 

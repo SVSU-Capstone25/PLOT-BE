@@ -23,24 +23,28 @@ namespace Plot.DataAccess.Contexts;
 
 public class FloorsetContext : DbContext, IFloorsetContext
 {
-    public async Task<IEnumerable<Floorset>> GetFloorsetsByStoreId(int storeId)
+    public async Task<IEnumerable<Floorset>?> GetFloorsetsByStoreId(int storeId)
     {
-        try
-        {
-            var connection = GetConnection();
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("STORE_TUID", storeId);
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("STORE_TUID", storeId);
 
-            return await connection.QueryAsync<Floorset>("Select_Stores_Floorsets", parameters, commandType: CommandType.StoredProcedure);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception.Message));
-            return [];
-        }
+        return await GetStoredProcedureQuery<Floorset>("Select_Stores_Floorsets", parameters);
+        // try
+        // {
+        //     var connection = GetConnection();
+        //     DynamicParameters parameters = new DynamicParameters();
+        //     parameters.Add("STORE_TUID", storeId);
 
+        //     return await connection.QueryAsync<Floorset>("Select_Stores_Floorsets", parameters, commandType: CommandType.StoredProcedure);
+        // }
+        // catch (SqlException exception)
+        // {
+        //     Console.WriteLine(("Database connection failed: ", exception.Message));
+        //     return [];
+        // }
         // throw new NotImplementedException();
     }
+    
     public async Task<int> CreateFloorset(CreateFloorset floorset)
     {
         try
@@ -54,7 +58,10 @@ public class FloorsetContext : DbContext, IFloorsetContext
             parameters.Add("CREATED_BY", floorset.CREATED_BY);
             parameters.Add("DATE_MODIFIED", floorset.DATE_MODIFIED);
             parameters.Add("MODIFIED_BY", floorset.MODIFIED_BY);
-            return await connection.ExecuteAsync("Insert_Update_Floorset", parameters, commandType: CommandType.StoredProcedure);
+            return await connection.ExecuteAsync("INSERT INTO Floorsets " +
+                                                 "(NAME, STORE_TUID, DATE_CREATED, CREATED_BY, DATE_MODIFIED, MODIFIED_BY, FLOORSET_IMAGE) " +
+                                                 "VALUES " +
+                                                 "(@NAME, @STORE_TUID, @DATE_CREATED, @CREATED_BY, @DATE_MODIFIED, @MODIFIED_BY, 0);", parameters);
         }
         catch (SqlException exception)
         {
@@ -89,8 +96,11 @@ public class FloorsetContext : DbContext, IFloorsetContext
         //Update Statement
         //throw new NotImplementedException();
     }
+
     public async Task<int> DeleteFloorsetById(int floorsetId)
     {
+
+        
         try
         {
             var connection = GetConnection();
