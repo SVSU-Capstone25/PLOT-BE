@@ -27,15 +27,15 @@ public class FloorsetContext : DbContext, IFloorsetContext
     {
         try
         {
-            using SqlConnection connection = GetConnection();
+            var connection = GetConnection();
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("StoreID", storeId);
+            parameters.Add("STORE_TUID", storeId);
 
-            return await connection.QueryAsync<Floorset>("Select_Store_Floorsets", parameters, commandType: CommandType.StoredProcedure);
+            return await connection.QueryAsync<Floorset>("Select_Stores_Floorsets", parameters, commandType: CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine(("Database connection failed: ", exception.Message));
             return [];
         }
 
@@ -45,7 +45,7 @@ public class FloorsetContext : DbContext, IFloorsetContext
     {
         try
         {
-            using SqlConnection connection = GetConnection();
+            var connection = GetConnection();
             DynamicParameters parameters = new DynamicParameters();
 
             parameters.Add("NAME", floorset.NAME);
@@ -58,7 +58,7 @@ public class FloorsetContext : DbContext, IFloorsetContext
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine(("Database connection failed: ", exception.Message));
             return 0;
         }
         //insert into Floorset Table
@@ -69,7 +69,7 @@ public class FloorsetContext : DbContext, IFloorsetContext
     {
         try
         {
-            using SqlConnection connection = GetConnection();
+            var connection = GetConnection();
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("TUID", floorsetId);
             parameters.Add("NAME", updatefloorset.NAME);
@@ -83,7 +83,7 @@ public class FloorsetContext : DbContext, IFloorsetContext
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine(("Database connection failed: ", exception.Message));
             return 0;
         }
         //Update Statement
@@ -91,18 +91,17 @@ public class FloorsetContext : DbContext, IFloorsetContext
     }
     public async Task<int> DeleteFloorsetById(int floorsetId)
     {
-
         try
         {
-            using SqlConnection connection = GetConnection();
+            var connection = GetConnection();
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("FloorsetID", floorsetId);
+            parameters.Add("FLOORSET_TUID", floorsetId);
             return await connection.ExecuteAsync("Delete_Floorset", parameters, commandType: CommandType.StoredProcedure);
 
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine(("Database connection failed: ", exception.Message));
             return 0;
         }
         //Delete Statement

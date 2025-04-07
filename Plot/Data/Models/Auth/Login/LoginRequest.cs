@@ -13,10 +13,14 @@
     Written by: Jordan Houlihan
 */
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Plot.Data.Models.Auth.Login;
 
 public record LoginRequest
 {
-    public required string? EMAIL { get; set; }
-    public required string? PASSWORD { get; set; }
+    [Required]
+    public required string EMAIL { get; set; }
+    [Required]
+    public required string PASSWORD { get; set; }
 }

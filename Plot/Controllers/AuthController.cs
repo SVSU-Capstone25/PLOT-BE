@@ -28,6 +28,7 @@ using Plot.Services;
 using System.Security.Claims;
 using System.Net.Mime;
 using System.Text.Json;
+using Plot.Data.Models.Error;
 
 namespace Plot.Controllers;
 
@@ -67,7 +68,7 @@ public class AuthController : ControllerBase
         _authContext = authContext;
         _envSettings = envSettings;
 
-        RESET_LINK_TEMPLATE = $"{_envSettings.audience}/reset-password?token=";
+        RESET_LINK_TEMPLATE = $"{_envSettings.audience}/password-reset?token=";
     }
 
     /// <summary>
@@ -92,7 +93,8 @@ public class AuthController : ControllerBase
         }
 
         // Generate a new token for the user.
-        string resetToken = _tokenService.GenerateToken(user);
+        //string resetToken = _tokenService.GenerateToken(user);
+        string resetToken = _tokenService.GeneratePasswordResetToken(user);
 
         // Add the token to the end of the reset link template to create
         // a unique reset link.
@@ -131,7 +133,9 @@ public class AuthController : ControllerBase
 
         // Validate the token, sends back the email address if valid.
         // Otherwise returns null.
-        var email = _tokenService.ValidateToken(token);
+        //var email = _tokenService.ValidateToken(token);
+
+        var email = _tokenService.ValidatePasswordResetToken(token);
 
 
         // If the email is null, return bad request.
@@ -193,7 +197,8 @@ public class AuthController : ControllerBase
             return BadRequest();
         }
 
-        string resetToken = _tokenService.GenerateToken(registeredUser!);
+        //string resetToken = _tokenService.GenerateToken(registeredUser!);
+        string resetToken = _tokenService.GeneratePasswordResetToken(registeredUser!);
         string resetLink = RESET_LINK_TEMPLATE + resetToken;
 
         await _emailService.SendRegistrationEmailAsync(registeredUser.EMAIL!, registeredUser.FIRST_NAME!, resetLink);
@@ -215,22 +220,31 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Login(LoginRequest userLoginAttempt)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        
+        //Console.WriteLine(userLoginAttempt);
         var user = await _authContext.GetUserByEmail(userLoginAttempt.EMAIL!);
 
+        Console.WriteLine(user);
         if (user == null || userLoginAttempt.PASSWORD == null)
         {
-            return BadRequest();
+            ErrorMessage errorMessage = new ErrorMessage() { Message = "Invalid login."};
+            return BadRequest(errorMessage);
         }
 
         PasswordHasher<User> passwordHasher = new();
 
-
         if (passwordHasher.VerifyHashedPassword(user, user.PASSWORD!, userLoginAttempt.PASSWORD) == PasswordVerificationResult.Failed)
         {
-            return BadRequest();
+            ErrorMessage errorMessage = new ErrorMessage() { Message = "Invalid login."};
+            return BadRequest(errorMessage);
         }
 
-        var token = _tokenService.GenerateToken(user);
+        //var token = _tokenService.GenerateToken(user);
+        var token = _tokenService.GenerateAuthToken(user);
 
         // Set the token in the response cookies for authentication.
         // Response.Cookies.Append("Auth", token, new CookieOptions

@@ -15,13 +15,13 @@
 */
 
 using System.Security.Cryptography;
-using Dapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Auth.Login;
 using Plot.Data.Models.Auth.Registration;
 using Plot.Data.Models.Users;
 using Plot.DataAccess.Interfaces;
+using Dapper;
+using Microsoft.Data.SqlClient;
 
 namespace Plot.DataAccess.Contexts;
 
@@ -36,30 +36,26 @@ public class AuthContext : DbContext, IAuthContext
     {
         try
         {
-            using SqlConnection connection = GetConnection();
+            var connection = GetConnection();
 
             int oneTimePassword = RandomNumberGenerator.GetInt32(oneTimePasswordSizeLowerBound, oneTimePasswordSizeUpperBound);
             PasswordHasher<UserRegistration> hasher = new();
 
-            var CreateUserSQL = "INSERT INTO Users " +
-                             "(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, ROLE_TUID, ACTIVE) " +
-                             "VALUES " +
-                             "(@FIRST_NAME, @LAST_NAME, @Email, @Password, @ROLE_TUID, @ACTIVE)";
-            object CreateUserParameters = new
-            {
-                FIRST_NAME = user.FIRST_NAME,
-                LAST_NAME = user.LAST_NAME,
-                EMAIL = user.EMAIL,
-                PASSWORD = hasher.HashPassword(user, oneTimePassword.ToString()),
-                ROLE_TUID = user.ROLE,
-                ACTIVE = true
-            };
+            string oneTimePasswordHash = hasher.HashPassword(user, oneTimePassword.ToString());
 
-            return await connection.ExecuteAsync(CreateUserSQL, CreateUserParameters);
+
+            DynamicParameters parameters = new DynamicParameters();
+
+            parameters.Add("FIRST_NAME", user.FIRST_NAME);
+            parameters.Add("LAST_NAME", user.LAST_NAME);
+            parameters.Add("EMAIL", user.EMAIL);
+            parameters.Add("ROLE_NAME", user.ROLE_NAME);
+
+            return await connection.ExecuteAsync("Insert_Update_User", parameters, commandType: System.Data.CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {
-            Console.WriteLine("Database connection failed: ", exception);
+            Console.WriteLine("Database connection failed: ", exception.Message);
             return 0;
         }
     }
@@ -69,7 +65,7 @@ public class AuthContext : DbContext, IAuthContext
         try
         {
             using SqlConnection connection = GetConnection();
-
+            
             var GetUserByEmailSQL = "SELECT TUID, FIRST_NAME, LAST_NAME, EMAIL, " + 
                                     "PASSWORD, (SELECT NAME FROM Roles WHERE TUID = ROLE_TUID) AS 'ROLE', ACTIVE " +
                                     "FROM Users " +
@@ -80,7 +76,7 @@ public class AuthContext : DbContext, IAuthContext
         }
         catch (SqlException exception)
         {
-            Console.WriteLine("Database connection failed: ", exception);
+            Console.WriteLine("Database connection failed: ", exception.Message);
             return null;
         }
     }
@@ -89,36 +85,37 @@ public class AuthContext : DbContext, IAuthContext
     {
         try
         {
-            using SqlConnection connection = GetConnection();
+            var connection = GetConnection();
 
-            var UpdatePasswordSQL = "UPDATE Users " +
-                                    "SET PASSWORD = @Password " +
-                                    "WHERE EMAIL = @Email";
-            object UpdatePasswordParameters = new { EMAIL = user.EMAIL, PASSWORD = user.PASSWORD };
+            DynamicParameters parameters = new DynamicParameters();
 
-            return await connection.ExecuteAsync(UpdatePasswordSQL, UpdatePasswordParameters);
+            parameters.Add("EMAIL", user.EMAIL);
+            parameters.Add("NewPassword", user.PASSWORD);
+
+            return await connection.ExecuteAsync("Update_User_Password", parameters, commandType: System.Data.CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {
-            Console.WriteLine("Database connection failed: ", exception);
+            Console.WriteLine("Database connection failed: ", exception.Message);
             return 0;
         }
     }
-        public async Task<int> DeleteUserById(int userId)
+    public async Task<int> DeleteUserById(int userId)
     {
-         try
+        try
         {
-            using SqlConnection connection = GetConnection();
+            var connection = GetConnection();
 
-            var DeleteUserSQL = "UPDATE Users " + 
-                                "SET ACTIVE = 0 "+
-                                "WHERE TUID = " + userId;
+            DynamicParameters parameters = new DynamicParameters();
 
-            return await connection.ExecuteAsync(DeleteUserSQL);
+            parameters.Add("USER_TUID", userId);
+            
+
+            return await connection.ExecuteAsync("Delete_User", parameters, commandType: System.Data.CommandType.StoredProcedure);
         }
         catch (SqlException exception)
         {
-            Console.WriteLine(("Database connection failed: ", exception));
+            Console.WriteLine(("Database connection failed: ", exception.Message));
             return 0;
         }
     }

@@ -49,10 +49,14 @@ public class TokenService
     private readonly string _audience;
 
     // Stores secret key for signing tokens.(change this when I put key somewhere secure)
-    private readonly string _secretKey;
+   // private readonly string _secretKey;
+    private readonly string _authSecretKey;
+    private readonly string _passwordResetSecretKey;
+    private readonly double _authExpirationTime;
+    private readonly double _passwordResetExpirationTime;
 
     // Stores expiration time (in hours).
-    private readonly double _expirationTime;
+    //private readonly double _expirationTime;
     private readonly ClaimParserService _claimParserService;
     private readonly EnvironmentSettings _envSettings;
 
@@ -62,17 +66,87 @@ public class TokenService
         _claimParserService = claimParserService;
         _audience = _envSettings.audience;
         _issuer = _envSettings.issuer;
-        _secretKey = _envSettings.secret_key;
-
-        if (double.TryParse(_envSettings.expiration_time, out double expirationTime))
+        //_secretKey = _envSettings.secret_key;
+        _authSecretKey = _envSettings.auth_secret_key;
+        _passwordResetSecretKey = _envSettings.password_reset_secret_key;
+        
+        
+        if (double.TryParse(_envSettings.auth_expiration_time, out double auth_expiration_time))
         {
-            _expirationTime = expirationTime;
+            _authExpirationTime = auth_expiration_time;
         }
         else
         {
-            _expirationTime = _DEFAULT_EXPIRATION_TIME;
+            _authExpirationTime = _DEFAULT_EXPIRATION_TIME;
+        }
+        if (double.TryParse(_envSettings.password_reset_expiration_time, out double password_reset_expiration_time))
+        {
+            _passwordResetExpirationTime = password_reset_expiration_time;
+        }
+        else
+        {
+            _passwordResetExpirationTime = _DEFAULT_EXPIRATION_TIME;
         }
     }
+
+    public string GenerateAuthToken(User user)
+    {
+        ClaimsIdentity authClaimsIdentity = new ClaimsIdentity(
+                [
+                    new("Email", user.EMAIL!),
+                    new("Role", user.ROLE!),
+                    new("UserId", user.TUID.ToString()!)
+                ]);
+
+        return GenerateToken(user, authClaimsIdentity, _authSecretKey, _authExpirationTime);
+    }   
+
+    public string GeneratePasswordResetToken(User user)
+    {
+        ClaimsIdentity passwordResetClaimsIdentity = new ClaimsIdentity(
+                [
+                    new("Email", user.EMAIL!),
+                ]);
+
+        return GenerateToken(user, passwordResetClaimsIdentity, _passwordResetSecretKey, _passwordResetExpirationTime);
+    }   
+
+    public string? ValidateAuthToken(string token)
+    {
+       return ValidateToken(token, _authSecretKey);}
+
+    public string? ValidatePasswordResetToken(string token)
+    {
+       return ValidateToken(token, _passwordResetSecretKey);}
+
+    
+    // public string GenerateToken(User user)
+    // {
+    //     // Building the token based on the user input and token settings (appsettings.json)
+
+    //     var tokenHandler = new JwtSecurityTokenHandler();
+    //     var key = Encoding.UTF8.GetBytes(_secretKey!);
+
+    //     var tokenDescriptor = new SecurityTokenDescriptor
+    //     {
+    //         Subject = new ClaimsIdentity(
+    //             [
+    //                 new("Email", user.EMAIL!),
+    //                 new("Role", user.ROLE!),
+    //                 new("UserId", user.TUID.ToString()!)
+    //             ]),
+    //         Issuer = _issuer,
+    //         Audience = _audience,
+    //         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+    //         Expires = DateTime.UtcNow.AddMinutes(_expirationTime)
+    //     };
+
+    //     var token = tokenHandler.CreateToken(tokenDescriptor);
+
+    //     // Convert the token into a compact format as a string
+    //     // to be used in the password reset url.
+    //     return tokenHandler.WriteToken(token);
+    // }
 
     /// <summary>
     /// Generates a JWT token with the user's email as a claim for 
@@ -80,33 +154,75 @@ public class TokenService
     /// </summary>
     /// <param name="userEmail">Email to be used in the token</param>
     /// <returns>JWT token as a string</returns>
-    public string GenerateToken(User user)
+    private string GenerateToken(User user, ClaimsIdentity claimsIdentity, string secretKey, double expirationTime)
     {
         // Building the token based on the user input and token settings (appsettings.json)
-
+    
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(_secretKey!);
-        
+        var key = Encoding.UTF8.GetBytes(secretKey!);
+    
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(
-                [
-                    new("Email", user.EMAIL!),
-                    new("Role", user.ROLE!),
-                    new("UserId", user.TUID.ToString()!)
-                ]),
+            Subject = claimsIdentity,
             Issuer = _issuer,
             Audience = _audience,
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-            Expires = DateTime.UtcNow.AddMinutes(_expirationTime)
+            Expires = DateTime.UtcNow.AddMinutes(expirationTime)
         };
-
+    
         var token = tokenHandler.CreateToken(tokenDescriptor);
-
+    
         // Convert the token into a compact format as a string
         // to be used in the password reset url.
         return tokenHandler.WriteToken(token);
     }
+    
+    
+
+    //     public string? ValidateToken(string token)
+    // {
+    //     // Token handler to validate the token.
+    //     var tokenHandler = new JwtSecurityTokenHandler();
+
+    //     // Convert applications secret key into a byte array
+    //     // to create a new symmetric security key to match
+    //     // against the incoming token.
+    //     var key = new SymmetricSecurityKey(
+    //         Encoding.UTF8.GetBytes(_secretKey));
+
+    //     // Create validation parameters to match the
+    //     // incoming token.
+    //     var validationParameters = new TokenValidationParameters
+    //     {
+    //         // Ensure the incoming tokens signing key is valid.
+    //         ValidateIssuerSigningKey = true,
+    //         // Match the incoming tokens signing key to the applications
+    //         // secret key.
+    //         IssuerSigningKey = key,
+    //         // Check the tokens issuer and audience.
+    //         ValidateIssuer = true,
+    //         ValidIssuer = _issuer,
+    //         ValidateAudience = true,
+    //         ValidAudience = _audience,
+    //         // Make sure the token is not expired.
+    //         ValidateLifetime = true
+    //     };
+
+    //     try
+    //     {
+    //         // Validate the token based on the validation parameters. out_ 
+    //         // is used to ignore the security token as it is not needed.
+    //         var principal = tokenHandler.ValidateToken(
+    //             token, validationParameters, out _);
+
+    //         return _claimParserService.GetEmail(principal);
+    //     }
+    //     catch
+    //     {
+    //         // Return null if the token is invalid.
+    //         return null;
+    //     }
+    // }
 
     /// <summary>
     /// This method validates a JWT token and returns the user's email if
@@ -114,7 +230,7 @@ public class TokenService
     /// </summary>
     /// <param name="token">Jwt token to validate</param>
     /// <returns>Valid Token: Users email. Else: null</returns>
-    public string? ValidateToken(string token)
+    private string? ValidateToken(string token, string secretKey)
     {
         // Token handler to validate the token.
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -123,7 +239,7 @@ public class TokenService
         // to create a new symmetric security key to match
         // against the incoming token.
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_secretKey));
+            Encoding.UTF8.GetBytes(secretKey));
 
         // Create validation parameters to match the
         // incoming token.

@@ -9,7 +9,7 @@
     
     Written by: Jordan Houlihan
 */
-using Dapper;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Floorsets;
@@ -38,6 +38,7 @@ public class FloorsetsController : ControllerBase
     /// <returns>A list of floorset objects.</returns>
     // [Authorize]
     [HttpGet("get-floorsets/{storeId:int}")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -90,7 +91,4 @@ public class FloorsetsController : ControllerBase
     {
         return Ok(await _floorsetContext.DeleteFloorsetById(floorsetId));
     }
-
-
-
 }

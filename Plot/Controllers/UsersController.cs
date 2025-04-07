@@ -38,10 +38,18 @@ public class UsersController : ControllerBase
     /// <returns>Array of userDTO objects</returns>
     [Authorize]
     [HttpGet("get-all")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<UserDTO>>> GetAll()
     {
-        return Ok(await _userContext.GetUsers());
+        var users = await _userContext.GetUsers();
+
+        if (users == null) 
+        {
+            BadRequest();
+        }
+
+        return Ok(users);
     }
 
     /// <summary>
@@ -52,6 +60,7 @@ public class UsersController : ControllerBase
     /// <returns>UserDTO object</returns>
     [Authorize]
     [HttpGet("get-users-by-id/{userId:int}")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -79,14 +88,23 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<int>> UpdatePublicInfo(int userId, [FromBody] UpdatePublicInfoUser user)
+    public async Task<ActionResult<UserDTO>> UpdatePublicInfo(int userId, [FromBody] UpdatePublicInfoUser user)
     {
-        if (!ModelState.IsValid)
+        int rowsAffected = await _userContext.UpdateUserPublicInfo(userId, user);
+
+        if (rowsAffected == 0) 
         {
-            return BadRequest(ModelState);
+            return NotFound();
         }
 
-        return Ok(await _userContext.UpdateUserPublicInfo(userId, user));
+        var updatedUser = await _userContext.GetUserById(userId);
+
+        if (updatedUser == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(updatedUser);
     }
 
     /// <summary>
@@ -119,7 +137,14 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Delete(int userId)
     {
-        return Ok(await _userContext.DeleteUserById(userId));
+        int rowsAffected = await _userContext.DeleteUserById(userId);
+
+        if (rowsAffected == 0)
+        {
+            return NotFound();
+        }
+
+        return Ok();
     }
 
     /// <summary>
@@ -137,6 +162,21 @@ public class UsersController : ControllerBase
     //     return Ok(await _userContext.AddUserToStore(DeleteUserFromStoreRequest dufsr));
     // }
 
+    [Authorize(Policy = "Manager")]
+    [HttpPost("add-user-to-store")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> AddUserToStore([FromBody] AccessModel accessModel)
+    {
+        int rowsAffected = await _userContext.AddUserToStore(accessModel);
+
+        if (rowsAffected == 0)
+        {
+            return NotFound();
+        }
+
+        return Ok();
+    }
     /// <summary>
     /// remove association between an employee and astore
     /// </summary>
@@ -148,9 +188,16 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> DeleteFromStore(DeleteUserFromStoreRequest deleteUserFromStoreRequest)
+    public async Task<ActionResult> DeleteFromStore(AccessModel accessModel)
     {
-        return Ok(await _userContext.DeleteUserFromStore(deleteUserFromStoreRequest.USER_TUID, deleteUserFromStoreRequest.STORE_TUID));
+        int rowsAffected = await _userContext.DeleteUserFromStore(accessModel.USER_TUID, accessModel.STORE_TUID);
+
+        if (rowsAffected == 0)
+        {
+            return NotFound();
+        }
+
+        return Ok();
     }
 
     /// <summary>
@@ -160,11 +207,19 @@ public class UsersController : ControllerBase
     /// <returns>UserDTO object</returns>
     [Authorize]
     [HttpGet("stores/{userId:int}")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Store>> GetStoreOfUserById(int userId)
+    public async Task<ActionResult<IEnumerable<Store>>> GetStoreOfUserById(int userId)
     {
-        return Ok(await _userContext.GetStoresForUser(userId));
+        var stores = await _userContext.GetStoresForUser(userId);
+
+        if (stores == null)
+        {
+            NotFound();
+        }
+
+        return Ok();
     }
 }

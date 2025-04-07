@@ -9,7 +9,7 @@
 
     Written by: Jordan Houlihan
 */
-using Dapper;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Fixtures;
@@ -31,6 +31,7 @@ public class FixturesController : ControllerBase
         _fixtureContext = fixtureContext ?? throw new ArgumentNullException(nameof(fixtureContext));
         _salesContext = salesContext;
         _claimParserService = claimParserService;
+        
     }
 
     /// <summary>
@@ -41,6 +42,7 @@ public class FixturesController : ControllerBase
     /// <returns>A floorset's fixture information</returns>
     [Authorize]
     [HttpGet("get-fixtures/{floorsetId:int}")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -71,13 +73,14 @@ public class FixturesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> UpdateFixtureInformation(int floorsetId, [FromBody] Fixtures_State fixtures)
     {
-        var old = await _fixtureContext.GetFixtureInstances(floorsetId);
+        var old = await _fixtureContext.GetFixtureInstances(floorsetId) ?? new List<FixtureInstance>();
+        var current = fixtures.CurrentFixtures ?? new List<FixtureInstance>();
         //Select_Floorset_Fixtures[] oldFixtures = query.Cast<Select_Floorset_Fixtures>().ToArray();
         //Select_Floorset_Fixtures[] newFixtures = fixtures.CurrentFixtures.Cast<Select_Floorset_Fixtures>().ToArray();
 
-        IEnumerable<FixtureInstance> update = old.Intersect(fixtures.CurrentFixtures);
-        IEnumerable<FixtureInstance> create = fixtures.CurrentFixtures.Except(old);
-        IEnumerable<FixtureInstance> delete = old.Except(fixtures.CurrentFixtures);
+        IEnumerable<FixtureInstance> update = old.Intersect(current);
+        IEnumerable<FixtureInstance> create = current.Except(old);
+        IEnumerable<FixtureInstance> delete = old.Except(current);
 
         foreach (FixtureInstance instance in update)
         {
@@ -91,9 +94,12 @@ public class FixturesController : ControllerBase
 
         foreach (FixtureInstance instance in delete)
         {
-            await _fixtureContext.DeleteFixtureInstanceById(instance.TUID.Value);
+            int tuid = instance.TUID ?? -1;
+            if (tuid != -1)
+            {
+                await _fixtureContext.DeleteFixtureInstanceById(tuid);
+            }
         }
-
 
         return Ok();
     }
@@ -104,7 +110,7 @@ public class FixturesController : ControllerBase
     /// <param name="fixtureModel"></param>
     /// <returns></returns>
     [Authorize(Policy = "Manager")]
-    [HttpPatch("create-fixture/{storeId:int}")]
+    [HttpPost("create-fixture/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<FixtureModel>> CreateModel([FromBody] FixtureModel fixtureModel)
@@ -113,7 +119,7 @@ public class FixturesController : ControllerBase
     }
 
     [Authorize(Policy = "Manager")]
-    [HttpPatch("delete-model/{storeId:int}")]
+    [HttpDelete("delete-model/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> DeleteModel(int modelId)

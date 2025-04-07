@@ -21,7 +21,7 @@ public class FixtureModel
     public int? TUID { get; set; }
     public string? NAME { get; set; }
     public int? WIDTH { get; set; }
-    public int? HEIGHT { get; set; }
+    public int? LENGTH { get; set; }
     public float? LF_CAP { get; set; }
     public int? STORE_TUID { get; set; }
     public IFormFile? ICON { get; set; }

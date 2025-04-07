@@ -13,6 +13,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Stores;
+using Plot.Data.Models.Users;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
 
@@ -37,10 +38,18 @@ public class StoresController : ControllerBase
     /// <returns>Array of stores</returns>
     [Authorize(Policy = "Owner")]
     [HttpGet("get-all")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<Store>>> GetAll()
     {
-        return Ok(await _storeContext.GetStores());
+        var stores = await _storeContext.GetStores();
+
+        if (stores == null)
+        {
+            return BadRequest();
+        }
+
+        return Ok(stores);
     }
 
     /// <summary>
@@ -50,26 +59,63 @@ public class StoresController : ControllerBase
     /// <returns>Array of stores</returns>
     [Authorize]
     [HttpGet("access/{userId:int}")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<Store>>> GetByAccess(int userId)
     {
+        var stores = await _storeContext.GetByAccess(userId);
 
-        //controller logic should get added from other branches
-        var storeList = await _storeContext.GetStoreById(userId);
-        //return 404 error if no store was found
-        if (storeList == null) return NotFound();
-        return Ok(storeList);
+        if (stores == null)
+        {
+            return BadRequest();
+        }
+
+        return Ok(stores);
     }
 
+    [Authorize]
+    [HttpGet("get-users-by-store/{storeId:int}")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsersAtStore(int storeId)
+    {
+        var users = await _storeContext.GetUsersAtStore(storeId);
+
+        if (users == null)
+        {
+            return BadRequest();
+        }
+
+        return Ok(users);
+    }
+
+    [Authorize]
+    [HttpGet("get-users-not-in-store/{storeId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<UserDTO>> GetUsersNotInStore(int storeId)
+    {
+        var users = await _storeContext.GetUsersNotInStore(storeId);
+
+        if (users == null)
+        {
+            return BadRequest();
+        }
+
+        return Ok(users);
+    }
     /// <summary>
     /// This endpoint deals with creating a store.
     /// </summary>
     /// <param name="store">The new store</param>
     /// <returns>The newly created store</returns>
     [Authorize(Policy = "Owner")]
-    [HttpPost]
+    [HttpPost("create-store")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Store>> Create([FromBody] CreateStore store)
@@ -78,7 +124,7 @@ public class StoresController : ControllerBase
         {
             return BadRequest(ModelState);
         }
-
+    
         //controller logic could get added from other branches
         return Ok(await _storeContext.CreateStoreEntry(store));
     }
