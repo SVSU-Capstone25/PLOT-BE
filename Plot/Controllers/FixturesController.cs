@@ -32,7 +32,7 @@ public class FixturesController : ControllerBase
         _fixtureContext = fixtureContext;
         _salesContext = salesContext;
         _claimParserService = claimParserService;
-        
+
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ public class FixturesController : ControllerBase
     {
         var fixtureModels = await _fixtureContext.GetFixtureModels(storeId);
 
-        if (fixtureModels == null) 
+        if (fixtureModels == null)
         {
             BadRequest();
         }
@@ -91,33 +91,100 @@ public class FixturesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> UpdateFixtureInformation(int floorsetId, [FromBody] Fixtures_State fixtures)
     {
+        Console.WriteLine("Update Fixture Information called.");
         var old = await _fixtureContext.GetFixtureInstances(floorsetId) ?? new List<FixtureInstance>();
         var current = fixtures.CurrentFixtures ?? new List<FixtureInstance>();
         //Select_Floorset_Fixtures[] oldFixtures = query.Cast<Select_Floorset_Fixtures>().ToArray();
         //Select_Floorset_Fixtures[] newFixtures = fixtures.CurrentFixtures.Cast<Select_Floorset_Fixtures>().ToArray();
 
-        // IEnumerable<FixtureInstance> update = old.Intersect(current);
-        // IEnumerable<CreateFixtureInstance> create = current.Except(old);
-        // IEnumerable<FixtureInstance> delete = old.Except(current);
+        Console.WriteLine("Old contains: " + old.Count() + " entries...");
+        Console.WriteLine("Current contains: " + current.Count() + " entries...");
+        IEnumerable<FixtureInstance> update = old.Intersect(current);
+        IEnumerable<FixtureInstance> create = current.Except(old);
+        IEnumerable<FixtureInstance> delete = old.Except(current);
 
-        // foreach (FixtureInstance instance in update)
-        // {
-        //     await _fixtureContext.UpdateFixtureInstanceById(instance);
-        // }
+        Console.WriteLine("Update contains " + update.Count() + " entries...");
+        Console.WriteLine("Create contains " + create.Count() + " entries...");
+        Console.WriteLine("Delete contains " + delete.Count() + " entries...");
+        /* FixtureInstance
+            public int? TUID { get; set; }
+            public int? FLOORSET_TUID { get; set; }
+            public string? NAME { get; set; }
+            public int? WIDTH { get; set; }
+            public int? LENGTH { get; set; }
+            public double? X_POS { get; set; }
+            public double? Y_POS { get; set; }
+            public int? HANGER_STACK { get; set; }
+            public double? ALLOCATED_LF { get; set; }
+            public float? TOT_LF { get; set; }
+            public string? NOTE { get; set; }
+            public string? SUPERCATEGORY_NAME { get; set; }
+            public string? SUBCATEGORY { get; set; }
+            public int? TOTAL_SALES { get; set; }
+            public string? COLOR { get; set; }
+            public int EDITOR_ID { get; set; } */
 
-        // foreach (CreateFixtureInstance instance in create)
-        // {
-        //     await _fixtureContext.CreateFixtureInstance(instance);
-        // }
+        /* UpdateFixtureInstance 
+            public int? TUID { get; set; }
+            public int? FIXTURE_TUID { get; set; }
+            public int? FLOORSET_TUID { get; set; }
+            public double? X_POS { get; set; }
+            public double? Y_POS { get; set; }
+            public double? ALLOCATED_LF { get; set; }
+            public int? HANGER_STACK { get; set; }
+            public float? TOT_LF { get; set; }
+            public string? SUBCATEGORY { get; set; }
+            public string? NOTE { get; set; }
+            public int? SUPERCATEGORY_TUID {get; set;}
+            public int? EDITOR_ID {get; set;}*/
 
-        // foreach (FixtureInstance instance in delete)
-        // {
-        //     int tuid = instance.TUID ?? -1;
-        //     if (tuid != -1)
-        //     {
-        //         await _fixtureContext.DeleteFixtureInstanceById(tuid);
-        //     }
-        // }
+        /* CreateFixtureInstance
+            public int? TUID { get; set; }
+            public int? FIXTURE_TUID {get; set;}
+            public int? FLOORSET_TUID { get; set; }
+            public double? X_POS { get; set; }
+            public double? Y_POS { get; set; }
+            public double? ALLOCATED_LF { get; set; }
+            public int? HANGER_STACK { get; set; }
+            public float? TOT_LF { get; set; }
+            public string? CATEGORY { get; set; }
+            public string? NOTE { get; set; }
+            public int? SUPERCATEGORY_TUID {get; set;}
+            public string? SUBCATEGORY {get; set;}
+            public int? EDITOR_ID {get; set;}*/
+
+
+        foreach (FixtureInstance instance in update)
+        {
+            //Expects Plot.Data.Models.Fixtures.UpdateFixUpdateFixtureInstancetureInstance
+            //Cast relevant fields here
+            Data.Models.Fixtures.UpdateFixtureInstance updateInstance = new Data.Models.Fixtures.UpdateFixtureInstance();
+            updateInstance.X_POS = instance.X_POS;
+            updateInstance.Y_POS = instance.Y_POS;
+            //updateInstance.SUBCATEGORY = instance.SUBCATEGORY;
+            //updateInstance.SUPERCATEGORY_TUID = instance.SUPERCATEGORY_NAME;
+
+            await _fixtureContext.UpdateFixtureInstanceById(updateInstance);
+        }
+
+        foreach (FixtureInstance instance in create)
+        {
+            //Expects Plot.Data.Models.Fixtures.CreateFixtureInstance
+            //Cast relevant fields here
+            Data.Models.Fixtures.CreateFixtureInstance createInstance = new Data.Models.Fixtures.CreateFixtureInstance();
+            createInstance.X_POS = instance.X_POS;
+            createInstance.Y_POS = instance.Y_POS;
+            await _fixtureContext.CreateFixtureInstance(createInstance);
+        }
+
+        foreach (FixtureInstance instance in delete)
+        {
+            int tuid = instance.TUID ?? -1;
+            if (tuid != -1)
+            {
+                await _fixtureContext.DeleteFixtureInstanceById(tuid);
+            }
+        }
 
         return Ok();
     }
