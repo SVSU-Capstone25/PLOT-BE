@@ -137,15 +137,22 @@ public class StoresController : ControllerBase
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Store>> CreateStore([FromBody] CreateStore store)
+    public async Task<ActionResult> CreateStore([FromBody] CreateStore store)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
+
+        int rowsAffected = await _storeContext.CreateStoreEntry(store);
+
+        if (rowsAffected == 0)
+        {
+            return BadRequest();
+        }
     
         //controller logic could get added from other branches
-        return Ok(await _storeContext.CreateStoreEntry(store));
+        return Ok();
     }
 
     /// <summary>
@@ -168,6 +175,9 @@ public class StoresController : ControllerBase
         }
 
         var existingStore = await _storeContext.GetStoreById(storeId);
+
+        Console.WriteLine(existingStore);
+
         //return 404 error if no store was found
         if (existingStore == null)
         {
