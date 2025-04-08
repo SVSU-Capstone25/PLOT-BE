@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
 using Plot.Data.Models.Allocations;
-using ClosedXML;
+using ClosedXML.Excel;
 
 namespace Plot.Controllers;
 
@@ -42,38 +42,38 @@ public class SalesController : ControllerBase
     [HttpPost("upload-sales/{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult UploadSales(int floorsetId, [FromBody] IFormFile excelFile)
+    public async Task<ActionResult<IEnumerable<CreateFixtureAllocations>>> UploadSales(int floorsetId, [FromBody] UploadFile excelFile)
     {
-        // if (excelFile == null)
-        // {
-        //     return BadRequest();
-        // }
+        if (excelFile.EXCEL_FILE == null)
+        {
+            return BadRequest();
+        }
 
-        // using var memoryStream = new MemoryStream();
-        // await excelFile.CopyToAsync(memoryStream);
+        using var memoryStream = new MemoryStream();
+        await excelFile.EXCEL_FILE.CopyToAsync(memoryStream);
 
-        // using var workbook = new XLWorkbook(memoryStream);
-        // var worksheet = workbook.Worksheet(1);
-        // var rows = worksheet.RowsUsed().Skip(6);
+        using var workbook = new XLWorkbook(memoryStream);
+        var worksheet = workbook.Worksheet(1);
+        var rows = worksheet.RowsUsed().Skip(6);
 
-        // List<CreateFixtureAllocations> allocations = [];
+        List<CreateFixtureAllocations> allocations = [];
 
-        // foreach (var row in rows)
-        // {   
-        //     if (string.IsNullOrEmpty(row.Cell(1).Value.ToString()) && string.IsNullOrEmpty(row.Cell(2).Value.ToString()))
-        //     {
-        //         var categorySubCategoryNames = row.Cell(3).Value.ToString().Split(' ', 2);
+        foreach (var row in rows)
+        {   
+            if (string.IsNullOrEmpty(row.Cell(1).Value.ToString()) && string.IsNullOrEmpty(row.Cell(2).Value.ToString()))
+            {
+                var categorySubCategoryNames = row.Cell(3).Value.ToString().Split(' ', 2);
 
-        //         var allocation = new CreateFixtureAllocations
-        //         {
-        //             SUPERCATEGORY = categorySubCategoryNames[0],
-        //             SUBCATEGORY = categorySubCategoryNames[1],
-        //             UNITS = string.IsNullOrEmpty(row.Cell(6).Value.ToString()) ? 0 : int.Parse(row.Cell(6).Value.ToString())
-        //         };
+                var allocation = new CreateFixtureAllocations
+                {
+                    SUPERCATEGORY = categorySubCategoryNames[0],
+                    SUBCATEGORY = categorySubCategoryNames[1],
+                    UNITS = string.IsNullOrEmpty(row.Cell(6).Value.ToString()) ? 0 : int.Parse(row.Cell(6).Value.ToString())
+                };
 
-        //         allocations.Add(allocation);
-        //     }
-        // }
+                allocations.Add(allocation);
+            }
+        }
 
         return Ok();
     }

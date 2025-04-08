@@ -84,16 +84,16 @@ public class StoreContext : DbContext, IStoreContext
         // }
     }
 
-    public async Task<int> UpdatePublicInfoStore(int storeId, UpdatePublicInfoStore updatestore)
+    public async Task<int> UpdatePublicInfoStore(int storeId, UpdatePublicInfoStore updateStore)
     {
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("TUID", storeId);
-        parameters.Add("NAME", updatestore.NAME);
-        parameters.Add("ADDRESS", updatestore.ADDRESS);
-        parameters.Add("CITY", updatestore.CITY);
-        parameters.Add("STATE", updatestore.STATE);
-        parameters.Add("ZIP", updatestore.ZIP);
-        parameters.Add("BLUEPRINT_IMAGE", updatestore.BLUEPRINT_IMAGE);
+        parameters.Add("NAME", updateStore.NAME);
+        parameters.Add("ADDRESS", updateStore.ADDRESS);
+        parameters.Add("CITY", updateStore.CITY);
+        parameters.Add("STATE", updateStore.STATE);
+        parameters.Add("ZIP", updateStore.ZIP);
+        parameters.Add("BLUEPRINT_IMAGE", updateStore.BLUEPRINT_IMAGE);
 
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Store", parameters);
         // try

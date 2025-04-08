@@ -48,5 +48,5 @@ public record CreateStore
     public int LENGTH { get; set; }
     
     public required string USER_TUIDS {get; set;}
-    public IFormFile? BLUEPRINT_IMAGE { get; set; }
+    public byte[]? BLUEPRINT_IMAGE { get; set; }
 }

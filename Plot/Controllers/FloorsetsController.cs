@@ -86,6 +86,11 @@ public class FloorsetsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> UpdatePublicInfo(int floorsetId, [FromBody] UpdatePublicInfoFloorset floorset)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+        
         int rowsAffected = await _floorsetContext.UpdateFloorsetById(floorsetId, floorset);
 
         if (rowsAffected == 0)

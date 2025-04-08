@@ -27,4 +27,7 @@ public record CreateFixtureInstance
     public float? TOT_LF { get; set; }
     public string? CATEGORY { get; set; }
     public string? NOTE { get; set; }
+    public int? SUPERCATEGORY_TUID {get; set;}
+    public string? SUBCATEGORY {get; set;}
+    public int? EDITOR_ID {get; set;}
 }

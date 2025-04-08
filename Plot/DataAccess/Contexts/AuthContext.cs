@@ -34,31 +34,43 @@ public class AuthContext : DbContext, IAuthContext
 
     public async Task<int> CreateUser(UserRegistration user)
     {
-        try
-        {
-            var connection = GetConnection();
+        int oneTimePassword = RandomNumberGenerator.GetInt32(oneTimePasswordSizeLowerBound, oneTimePasswordSizeUpperBound);
+        PasswordHasher<UserRegistration> hasher = new();
+        string oneTimePasswordHash = hasher.HashPassword(user, oneTimePassword.ToString());
 
-            int oneTimePassword = RandomNumberGenerator.GetInt32(oneTimePasswordSizeLowerBound, oneTimePasswordSizeUpperBound);
-            PasswordHasher<UserRegistration> hasher = new();
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("FIRST_NAME", user.FIRST_NAME);
+        parameters.Add("LAST_NAME", user.LAST_NAME);
+        parameters.Add("EMAIL", user.EMAIL);
+        parameters.Add("PASSWORD", oneTimePasswordHash);
+        parameters.Add("ROLE_NAME", user.ROLE_NAME);
 
-            string oneTimePasswordHash = hasher.HashPassword(user, oneTimePassword.ToString());
+        return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_User", parameters);
+        // try
+        // {
+        //     var connection = GetConnection();
+
+        //     int oneTimePassword = RandomNumberGenerator.GetInt32(oneTimePasswordSizeLowerBound, oneTimePasswordSizeUpperBound);
+        //     PasswordHasher<UserRegistration> hasher = new();
+
+        //     string oneTimePasswordHash = hasher.HashPassword(user, oneTimePassword.ToString());
 
 
-            DynamicParameters parameters = new DynamicParameters();
+        //     DynamicParameters parameters = new DynamicParameters();
 
-            parameters.Add("FIRST_NAME", user.FIRST_NAME);
-            parameters.Add("LAST_NAME", user.LAST_NAME);
-            parameters.Add("EMAIL", user.EMAIL);
-            parameters.Add("PASSWORD", oneTimePasswordHash);
-            parameters.Add("ROLE_NAME", user.ROLE_NAME);
+        //     parameters.Add("FIRST_NAME", user.FIRST_NAME);
+        //     parameters.Add("LAST_NAME", user.LAST_NAME);
+        //     parameters.Add("EMAIL", user.EMAIL);
+        //     parameters.Add("PASSWORD", oneTimePasswordHash);
+        //     parameters.Add("ROLE_NAME", user.ROLE_NAME);
 
-            return await connection.ExecuteAsync("Insert_Update_User", parameters, commandType: System.Data.CommandType.StoredProcedure);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine("Database connection failed: ", exception.Message);
-            return 0;
-        }
+        //     return await connection.ExecuteAsync("Insert_Update_User", parameters, commandType: System.Data.CommandType.StoredProcedure);
+        // }
+        // catch (SqlException exception)
+        // {
+        //     Console.WriteLine("Database connection failed: ", exception.Message);
+        //     return 0;
+        // }
     }
 
     public async Task<User?> GetUserByEmail(string email)
@@ -84,40 +96,47 @@ public class AuthContext : DbContext, IAuthContext
 
     public async Task<int> UpdatePassword(LoginRequest user)
     {
-        try
-        {
-            var connection = GetConnection();
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("EMAIL", user.EMAIL);
+        parameters.Add("NewPassword", user.PASSWORD);
 
-            DynamicParameters parameters = new DynamicParameters();
+        return await CreateUpdateDeleteStoredProcedureQuery("Update_User_Password", parameters);
+        // try
+        // {
+        //     var connection = GetConnection();
 
-            parameters.Add("EMAIL", user.EMAIL);
-            parameters.Add("NewPassword", user.PASSWORD);
+        //     DynamicParameters parameters = new DynamicParameters();
+        //     parameters.Add("EMAIL", user.EMAIL);
+        //     parameters.Add("NewPassword", user.PASSWORD);
 
-            return await connection.ExecuteAsync("Update_User_Password", parameters, commandType: System.Data.CommandType.StoredProcedure);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine("Database connection failed: ", exception.Message);
-            return 0;
-        }
+        //     return await connection.ExecuteAsync("Update_User_Password", parameters, commandType: System.Data.CommandType.StoredProcedure);
+        // }
+        // catch (SqlException exception)
+        // {
+        //     Console.WriteLine("Database connection failed: ", exception.Message);
+        //     return 0;
+        // }
     }
     public async Task<int> DeleteUserById(int userId)
     {
-        try
-        {
-            var connection = GetConnection();
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("USER_TUID", userId);
 
-            DynamicParameters parameters = new DynamicParameters();
+        return await CreateUpdateDeleteStoredProcedureQuery("Delete_User", parameters);
+        // try
+        // {
+        //     var connection = GetConnection();
 
-            parameters.Add("USER_TUID", userId);
+        //     DynamicParameters parameters = new DynamicParameters();
+        //     parameters.Add("USER_TUID", userId);
             
 
-            return await connection.ExecuteAsync("Delete_User", parameters, commandType: System.Data.CommandType.StoredProcedure);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception.Message));
-            return 0;
-        }
+        //     return await connection.ExecuteAsync("Delete_User", parameters, commandType: System.Data.CommandType.StoredProcedure);
+        // }
+        // catch (SqlException exception)
+        // {
+        //     Console.WriteLine(("Database connection failed: ", exception.Message));
+        //     return 0;
+        // }
     }
 }

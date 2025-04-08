@@ -24,5 +24,5 @@ public class FixtureModel
     public int? LENGTH { get; set; }
     public float? LF_CAP { get; set; }
     public int? STORE_TUID { get; set; }
-    public IFormFile? ICON { get; set; }
+    public byte[]? ICON { get; set; }
 }

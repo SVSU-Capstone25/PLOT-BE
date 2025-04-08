@@ -286,6 +286,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("data-test")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<ResetPasswordRequest> TestFail([FromBody] ResetPasswordRequest email)
     {
@@ -294,6 +295,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("test-password")]
+    [Produces("application/json")]
     public async Task<ActionResult<string>> TestPassword()
     {
         PasswordHasher<User> hasher = new();

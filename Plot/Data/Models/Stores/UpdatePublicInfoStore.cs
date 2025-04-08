@@ -33,5 +33,5 @@ public record UpdatePublicInfoStore
 
     [StringLength(10, ErrorMessage = "Zip code cannot exceed 10 characters.")]
     public required string ZIP { get; set; }
-    public IFormFile? BLUEPRINT_IMAGE { get; set; }
+    public byte[]? BLUEPRINT_IMAGE { get; set; }
 }

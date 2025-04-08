@@ -1,5 +1,7 @@
-namespace Plot.Data.Models.Allocations;
 using System.ComponentModel.DataAnnotations;
+
+namespace Plot.Data.Models.Allocations;
+
 public class CreateExcelFileModel
 {
     [Required]

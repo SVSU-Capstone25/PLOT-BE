@@ -85,6 +85,7 @@ public class UsersController : ControllerBase
     /// <returns>The updated user</returns>
     [Authorize]
     [HttpPatch("public-info/{userId:int}")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
