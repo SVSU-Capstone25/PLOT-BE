@@ -63,42 +63,72 @@ public class FixturesController : ControllerBase
     /// <param name="floorsetId">The id of the floorset</param>
     /// <param name="floorsetFixtureInformation">A floorset's fixture information</param>
     /// <returns></returns>
+    // [Authorize(Policy = "Manager")]
+    // [HttpPatch("update-fixture/{floorsetId:int}")]
+    // [ProducesResponseType(StatusCodes.Status200OK)]
+    // [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    // public async Task<ActionResult> UpdateFixtureInformation(int floorsetId, [FromBody] FixturesState fixtures)
+    // {
+    //     var old = await _fixtureContext.GetFixtureInstances(floorsetId) ?? new List<FixtureInstance>();
+    //     var current = fixtures.CurrentFixtures ?? new List<FixtureInstance>();
+    //     //Select_Floorset_Fixtures[] oldFixtures = query.Cast<Select_Floorset_Fixtures>().ToArray();
+    //     //Select_Floorset_Fixtures[] newFixtures = fixtures.CurrentFixtures.Cast<Select_Floorset_Fixtures>().ToArray();
+
+    //     IEnumerable<FixtureInstance> update = old.Intersect(current);
+    //     IEnumerable<FixtureInstance> create = current.Except(old);
+    //     IEnumerable<FixtureInstance> delete = old.Except(current);
+
+    //     foreach (FixtureInstance instance in update)
+    //     {
+    //         await _fixtureContext.UpdateFixtureInstanceById(instance);
+    //     }
+
+    //     foreach (FixtureInstance instance in create)
+    //     {
+    //         await _fixtureContext.CreateFixtureInstance(instance);
+    //     }
+
+    //     foreach (FixtureInstance instance in delete)
+    //     {
+    //         int tuid = instance.TUID ?? -1;
+    //         if (tuid != -1)
+    //         {
+    //             await _fixtureContext.DeleteFixtureInstanceById(tuid);
+    //         }
+    //     }
+
+
+    //     return Ok();
+    // }
+
+
+    ///summary
+    /// 
     [Authorize(Policy = "Manager")]
-    [HttpPatch("update-fixture/{floorsetId:int}")]
+    [HttpPatch("update-fixture")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> UpdateFixtureInformation(int floorsetId, [FromBody] FixturesState fixtures)
+    public async Task<ActionResult> UpdateFixtureInstance([FromBody] UpdateFixtureInstance updateFixture)
     {
-        var old = await _fixtureContext.GetFixtureInstances(floorsetId) ?? new List<FixtureInstance>();
-        var current = fixtures.CurrentFixtures ?? new List<FixtureInstance>();
-        //Select_Floorset_Fixtures[] oldFixtures = query.Cast<Select_Floorset_Fixtures>().ToArray();
-        //Select_Floorset_Fixtures[] newFixtures = fixtures.CurrentFixtures.Cast<Select_Floorset_Fixtures>().ToArray();
+        return Ok(await _fixtureContext.UpdateFixtureInstanceById(updateFixture));
+    }
 
-        IEnumerable<FixtureInstance> update = old.Intersect(current);
-        IEnumerable<FixtureInstance> create = current.Except(old);
-        IEnumerable<FixtureInstance> delete = old.Except(current);
+    [Authorize(Policy = "Manager")]
+    [HttpPost("create-fixture")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> CreateFixtureInstance([FromBody] CreateFixtureInstance newFixture)
+    {
+        return Ok(await _fixtureContext.CreateFixtureInstance(newFixture));
+    }
 
-        foreach (FixtureInstance instance in update)
-        {
-            await _fixtureContext.UpdateFixtureInstanceById(instance);
-        }
-
-        foreach (FixtureInstance instance in create)
-        {
-            await _fixtureContext.CreateFixtureInstance(instance);
-        }
-
-        foreach (FixtureInstance instance in delete)
-        {
-            int tuid = instance.TUID ?? -1;
-            if (tuid != -1)
-            {
-                await _fixtureContext.DeleteFixtureInstanceById(tuid);
-            }
-        }
-
-
-        return Ok();
+    [Authorize(Policy = "Manager")]
+    [HttpDelete("delete-fixture/{fixtureInstanceId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> DeleteFixtureInstance([FromBody] int fixtureInstanceId)
+    {
+        return Ok(await _fixtureContext.DeleteFixtureInstanceById(fixtureInstanceId));
     }
 
     /// <summary>

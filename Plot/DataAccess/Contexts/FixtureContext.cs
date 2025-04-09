@@ -24,7 +24,7 @@ namespace Plot.DataAccess.Contexts;
 
 public class FixtureContext : DbContext, IFixtureContext
 {
-    public async Task<int> CreateFixtureInstance(FixtureInstance fixtureInstance)
+    public async Task<int> CreateFixtureInstance(CreateFixtureInstance fixtureInstance)
     {
         try
         {
@@ -152,7 +152,7 @@ public class FixtureContext : DbContext, IFixtureContext
         //throw new NotImplementedException();
     }
 
-    public async Task<int> UpdateFixtureInstanceById(FixtureInstance fixtureInstance)
+    public async Task<int> UpdateFixtureInstanceById(UpdateFixtureInstance fixtureInstance)
     {
         try
         {

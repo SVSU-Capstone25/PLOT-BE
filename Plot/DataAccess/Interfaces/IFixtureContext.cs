@@ -22,9 +22,9 @@ public interface IFixtureContext
     Task<IEnumerable<FixtureInstance>?> GetFixtureInstances(int floorsetId);
     Task<IEnumerable<FixtureModel>?> GetFixtureModels(int StoreId);
     Task<int> CreateFixtureModel(FixtureModel fixtureModel);
-    Task<int> CreateFixtureInstance(FixtureInstance fixtureInstance);
+    Task<int> CreateFixtureInstance(CreateFixtureInstance fixtureInstance);
     Task<int> UpdateFixtureModelById(FixtureModel fixtureModel);
-    Task<int> UpdateFixtureInstanceById(FixtureInstance fixtureInstance);
+    Task<int> UpdateFixtureInstanceById(UpdateFixtureInstance fixtureInstance);
     Task<int> DeleteFixtureModelById(int fixtureModelId);
     Task<int> DeleteFixtureInstanceById(int fixtureInstanceId);
 }
