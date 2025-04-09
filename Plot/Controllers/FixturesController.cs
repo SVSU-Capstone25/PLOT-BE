@@ -9,12 +9,13 @@
 
     Written by: Jordan Houlihan
 */
-using Dapper;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Fixtures;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
+using Plot.Data.Models.Allocations;
 
 namespace Plot.Controllers;
 
@@ -28,9 +29,10 @@ public class FixturesController : ControllerBase
 
     public FixturesController(IFixtureContext fixtureContext, ISalesContext salesContext, ClaimParserService claimParserService)
     {
-        _fixtureContext = fixtureContext ?? throw new ArgumentNullException(nameof(fixtureContext));
+        _fixtureContext = fixtureContext;
         _salesContext = salesContext;
         _claimParserService = claimParserService;
+
     }
 
     /// <summary>
@@ -41,17 +43,37 @@ public class FixturesController : ControllerBase
     /// <returns>A floorset's fixture information</returns>
     [Authorize]
     [HttpGet("get-fixtures/{floorsetId:int}")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<FixtureInstance>> GetFixtureInformation(int floorsetId)
+    public async Task<ActionResult<IEnumerable<FixtureInstance>>> GetFixtureInstances(int floorsetId)
     {
-        if (!ModelState.IsValid)
+        var fixtures = await _fixtureContext.GetFixtureInstances(floorsetId);
+
+        if (fixtures == null)
         {
-            return BadRequest(ModelState);
+            return BadRequest();
         }
 
-        return Ok(await _fixtureContext.GetFixtureInstances(floorsetId));
+        return Ok(fixtures);
+    }
+
+    [Authorize]
+    [HttpGet("get-fixture-models/{storeId:int}")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<IEnumerable<FixtureModel>>> GetFixtureModelsByStore(int storeId)
+    {
+        var fixtureModels = await _fixtureContext.GetFixtureModels(storeId);
+
+        if (fixtureModels == null)
+        {
+            BadRequest();
+        }
+
+        return Ok(fixtureModels);
     }
 
     /// <summary>
@@ -72,6 +94,7 @@ public class FixturesController : ControllerBase
         var old = await _fixtureContext.GetFixtureInstances(floorsetId) ?? new List<FixtureInstance>();
         var current = fixtures.CurrentFixtures ?? new List<FixtureInstance>();
         //Select_Floorset_Fixtures[] oldFixtures = query.Cast<Select_Floorset_Fixtures>().ToArray();
+
         //Select_Floorset_Fixtures[] newFixtures = fixtures.CurrentFixtures.Cast<Select_Floorset_Fixtures>().ToArray();
 
         IEnumerable<FixtureInstance> update = old.Intersect(current);
@@ -80,23 +103,41 @@ public class FixturesController : ControllerBase
 
         foreach (FixtureInstance instance in update)
         {
-            await _fixtureContext.UpdateFixtureInstanceById(instance);
+
+            Data.Models.Fixtures.UpdateFixtureInstance updateInstance = new Data.Models.Fixtures.UpdateFixtureInstance();
+
+            updateInstance.X_POS = instance.X_POS;
+
+            updateInstance.Y_POS = instance.Y_POS;
+
+            //updateInstance.SUBCATEGORY = instance.SUBCATEGORY;
+
+            //updateInstance.SUPERCATEGORY_TUID = instance.SUPERCATEGORY_NAME;
+
+            await _fixtureContext.UpdateFixtureInstanceById(updateInstance);
         }
 
         foreach (FixtureInstance instance in create)
         {
-            await _fixtureContext.CreateFixtureInstance(instance);
+
+            Data.Models.Fixtures.CreateFixtureInstance createInstance = new Data.Models.Fixtures.CreateFixtureInstance();
+
+            createInstance.X_POS = instance.X_POS;
+
+            createInstance.Y_POS = instance.Y_POS;
+
+            await _fixtureContext.CreateFixtureInstance(createInstance);
         }
 
         foreach (FixtureInstance instance in delete)
         {
             int tuid = instance.TUID ?? -1;
+
             if (tuid != -1)
             {
                 await _fixtureContext.DeleteFixtureInstanceById(tuid);
             }
         }
-
 
         return Ok();
     }
@@ -107,21 +148,45 @@ public class FixturesController : ControllerBase
     /// <param name="fixtureModel"></param>
     /// <returns></returns>
     [Authorize(Policy = "Manager")]
-    [HttpPatch("create-fixture/{storeId:int}")]
+    [HttpPost("create-fixture/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<FixtureModel>> CreateModel([FromBody] FixtureModel fixtureModel)
+    public async Task<ActionResult> CreateModel([FromBody] CreateFixtureModel fixtureModel)
     {
-        return Ok(await _fixtureContext.CreateFixtureModel(fixtureModel));
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        int rowsAffected = await _fixtureContext.CreateFixtureModel(fixtureModel);
+
+        if (rowsAffected == 0)
+        {
+            return BadRequest();
+        }
+
+        return Ok();
     }
 
     [Authorize(Policy = "Manager")]
-    [HttpPatch("delete-model/{storeId:int}")]
+    [HttpDelete("delete-model/{modelId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> DeleteModel(int modelId)
     {
-        return Ok(await _fixtureContext.DeleteFixtureModelById(modelId));
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var rowsAffected = await _fixtureContext.DeleteFixtureModelById(modelId);
+
+        if (rowsAffected == 0)
+        {
+            return BadRequest();
+        }
+
+        return Ok();
     }
 
     [Authorize(Policy = "Manager")]

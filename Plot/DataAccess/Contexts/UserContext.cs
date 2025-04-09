@@ -27,127 +27,89 @@ public class UserContext : DbContext, IUserContext
 {
     public async Task<IEnumerable<UserDTO>?> GetUsers()
     {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-
-
-            DynamicParameters parameters = new DynamicParameters();
-            return await connection.QueryAsync<UserDTO>("Select_Users", parameters, commandType: CommandType.StoredProcedure);
-
-
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception));
-            return [];
-        }
+        return await GetStoredProcedureQuery<UserDTO>("Select_Users");
     }
 
     public async Task<UserDTO?> GetUserById(int userId)
     {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("UserID", userId);
-            return await connection.QueryFirstOrDefaultAsync<UserDTO>("Select_Users", parameters, commandType: CommandType.StoredProcedure);
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("USER_TUID", userId);
 
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception));
-            return null;
-        }
-    }
-
-    public async Task<int> UpdateUserPublicInfo(int userId, UpdatePublicInfoUser user)
-    {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("FIRST_NAME", user.FIRST_NAME);
-            parameters.Add("LAST_NAME", user.LAST_NAME);
-            return await connection.ExecuteAsync("Insert_Update_User", parameters, commandType: CommandType.StoredProcedure);
-
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception));
-            return 0;
-        }
-    }
-
-    public async Task<int> DeleteUserById(int userId)
-    {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("UserId", userId);
-            return await connection.ExecuteAsync("Delete_User", parameters, commandType: CommandType.StoredProcedure);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception));
-            return 0;
-        }
-    }
-
-    public async Task<int> DeleteUserFromStore(int userid, int storeid)
-    {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("User_tuid", userid);
-            parameters.Add("Store_tuid", storeid);
-            // var DeleteRelation = "DELETE FROM Access " +
-            //                        "WHERE USER_TUID = " +userid + " AND STORE_TUID = " + storeid;
-
-            return await connection.ExecuteAsync("Delete_Access", parameters, commandType: CommandType.StoredProcedure);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception));
-            return 0;
-        }
+        return await GetFirstOrDefaultStoredProcedureQuery<UserDTO>("Select_Users", parameters);
     }
 
     public async Task<IEnumerable<Store>?> GetStoresForUser(int userid)
     {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("UserID", userid);
-            return await connection.QueryAsync<Store>("Select_Users_Store_Access", parameters, commandType: CommandType.StoredProcedure);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception));
-            return [];
-        }
-    }
-    public async Task<int> AddUserToStore(AccessModel addUser)
-    {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("User_tuid", addUser.USER_TUID);
-            parameters.Add("Store_tuid", addUser.STORE_TUID);
-            // var DeleteRelation = "DELETE FROM Access " +
-            //                        "WHERE USER_TUID = " +userid + " AND STORE_TUID = " + storeid;
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("USER_TUID", userid);
 
-            return await connection.ExecuteAsync("Insert_Access", parameters, commandType: CommandType.StoredProcedure);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception));
-            return 0;
-        }
+        return await GetStoredProcedureQuery<Store>("Select_Users_Store_Access", parameters);
     }
+
+    public async Task<int> UpdateUserPublicInfo(int userId, UpdatePublicInfoUser user)
+    {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("TUID", userId);
+        parameters.Add("FIRST_NAME", user.FIRST_NAME);
+        parameters.Add("LAST_NAME", user.LAST_NAME);
+        parameters.Add("EMAIL", user.EMAIL);
+        parameters.Add("ROLE_NAME", user.ROLE_NAME);   
+     
+        return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_User", parameters);
+    }
+
+    public async Task<int> DeleteUserById(int userId)
+    {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("USER_TUID", userId);
+
+        return await CreateUpdateDeleteStoredProcedureQuery("Delete_User", parameters);
+    }
+
+    
+    public async Task<int> UpdateAccessList(UpdateAccessList updateAccessList)
+    {
+
+        int rowsAffected = 0;
+
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("USER_TUID", updateAccessList.USER_TUID);
+
+        rowsAffected = await CreateUpdateDeleteStoredProcedureQuery("Delete_All_Access", parameters);
+
+        if (rowsAffected != 0)
+        {
+            foreach (int store in updateAccessList.STORE_TUIDS)
+            {
+                parameters = new DynamicParameters();
+                parameters.Add("USER_TUID", updateAccessList.USER_TUID);
+                parameters.Add("STORE_TUID", store); 
+                rowsAffected += await CreateUpdateDeleteStoredProcedureQuery("Insert_Access", parameters);
+            }
+        }
+
+        return rowsAffected;
+    }
+
+    public async Task<int> AddUserToStore(AccessModel accessModel)
+    {
+
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("USER_TUID", accessModel.USER_TUID);
+        parameters.Add("STORE_TUID", accessModel.STORE_TUID); 
+        int rowsAffected = await CreateUpdateDeleteStoredProcedureQuery("Insert_Access", parameters);
+
+        return rowsAffected;
+    }
+
+    public async Task<int> DeleteUserFromStore(AccessModel accessModel)
+    {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("USER_TUID", accessModel.USER_TUID);
+        parameters.Add("STORE_TUID", accessModel.STORE_TUID); 
+        int rowsAffected = await CreateUpdateDeleteStoredProcedureQuery("Delete_Access", parameters);
+
+        return rowsAffected;
+    }
+    
 }

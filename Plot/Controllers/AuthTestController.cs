@@ -84,7 +84,7 @@ public class AuthTestController : ControllerBase
             TUID = 1
         };
 
-        var testToken = _tokenService.GenerateToken(user);
+        var testToken = _tokenService.GenerateAuthToken(user);
 
         return Ok(testToken);
     }

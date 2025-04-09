@@ -20,5 +20,5 @@ public record UserRegistration
     public required string? EMAIL { get; set; }
     public required string? FIRST_NAME { get; set; }
     public required string? LAST_NAME { get; set; }
-    public required string? ROLE { get; set; }
+    public required string? ROLE_NAME { get; set; }
 }

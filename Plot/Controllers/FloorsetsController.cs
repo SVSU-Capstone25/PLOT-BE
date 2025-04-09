@@ -9,7 +9,7 @@
     
     Written by: Jordan Houlihan
 */
-using Dapper;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Floorsets;
@@ -38,6 +38,7 @@ public class FloorsetsController : ControllerBase
     /// <returns>A list of floorset objects.</returns>
     // [Authorize]
     [HttpGet("get-floorsets/{storeId:int}")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -52,12 +53,24 @@ public class FloorsetsController : ControllerBase
     /// <param name="floorset">The new floorset information</param>
     /// <returns>The newly created floorset information</returns>
     [Authorize(Policy = "Manager")]
-    [HttpPost]
+    [HttpPost("create-floorset")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<int>> Create([FromBody] CreateFloorset floorset)
+    public async Task<ActionResult> Create([FromBody] CreateFloorset floorset)
     {
-        return Ok(await _floorsetContext.CreateFloorset(floorset));
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        int rowsAffected = await _floorsetContext.CreateFloorset(floorset);
+
+        if (rowsAffected == 0)
+        {
+            return BadRequest();
+        }
+
+        return Ok();
     }
 
     /// <summary>
@@ -71,9 +84,23 @@ public class FloorsetsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<int>> UpdatePublicInfo(int floorsetId, [FromBody] UpdatePublicInfoFloorset floorset)
+    public async Task<ActionResult> UpdatePublicInfo(int floorsetId, [FromBody] UpdatePublicInfoFloorset floorset)
     {
-        return Ok(await _floorsetContext.UpdateFloorsetById(floorsetId, floorset));
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        Console.WriteLine(floorset);
+        
+        int rowsAffected = await _floorsetContext.UpdateFloorsetById(floorsetId, floorset);
+
+        if (rowsAffected == 0)
+        {
+            return BadRequest();
+        }
+
+        return Ok();
     }
 
     /// <summary>
@@ -90,7 +117,4 @@ public class FloorsetsController : ControllerBase
     {
         return Ok(await _floorsetContext.DeleteFloorsetById(floorsetId));
     }
-
-
-    
 }

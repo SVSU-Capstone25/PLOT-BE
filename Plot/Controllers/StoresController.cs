@@ -38,10 +38,18 @@ public class StoresController : ControllerBase
     /// <returns>Array of stores</returns>
     [Authorize(Policy = "Owner")]
     [HttpGet("get-all")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<Store>>> GetAll()
     {
-        return Ok(await _storeContext.GetStores());
+        var stores = await _storeContext.GetStores();
+
+        if (stores == null)
+        {
+            return BadRequest();
+        }
+
+        return Ok(stores);
     }
 
     /// <summary>
@@ -51,57 +59,100 @@ public class StoresController : ControllerBase
     /// <returns>Array of stores</returns>
     [Authorize]
     [HttpGet("access/{userId:int}")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<Store>>> GetByAccess(int userId)
     {
+        var stores = await _storeContext.GetByAccess(userId);
 
-        //controller logic should get added from other branches
-        var storeList = await _storeContext.GetByAccess(userId);
-        //return 404 error if no store was found
-        if (storeList == null) return NotFound();
-        return Ok(storeList);
+        if (stores == null)
+        {
+            return BadRequest();
+        }
+
+        return Ok(stores);
+    }
+
+    [Authorize]
+    [HttpGet("get-store/{storeId:int}")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<Store>> GetById(int storeId)
+    {
+        var store = await _storeContext.GetStoreById(storeId);
+
+        if (store == null)
+        {
+            return BadRequest();
+        }
+
+        return Ok(store);
     }
 
     [Authorize]
     [HttpGet("get-users-by-store/{storeId:int}")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<UserDTO>> GetUsersAtStore(int storeId)
+    public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsersAtStore(int storeId)
     {
-        return Ok(await _storeContext.GetUsersAtStore(storeId));
+        var users = await _storeContext.GetUsersAtStore(storeId);
+
+        if (users == null)
+        {
+            return BadRequest();
+        }
+
+        return Ok(users);
     }
 
     [Authorize]
     [HttpGet("get-users-not-in-store/{storeId:int}")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserDTO>> GetUsersNotInStore(int storeId)
     {
-        return Ok(await _storeContext.GetUsersNotInStore(storeId));
-    }
+        var users = await _storeContext.GetUsersNotInStore(storeId);
 
+        if (users == null)
+        {
+            return BadRequest();
+        }
+
+        return Ok(users);
+    }
     /// <summary>
     /// This endpoint deals with creating a store.
     /// </summary>
     /// <param name="store">The new store</param>
     /// <returns>The newly created store</returns>
     [Authorize(Policy = "Owner")]
-    [HttpPost]
+    [HttpPost("create-store")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Store>> Create([FromBody] CreateStore store)
+    public async Task<ActionResult> CreateStore([FromBody] CreateStore store)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
+        int rowsAffected = await _storeContext.CreateStoreEntry(store);
+
+        if (rowsAffected == 0)
+        {
+            return BadRequest();
+        }
+    
         //controller logic could get added from other branches
-        return Ok(await _storeContext.CreateStoreEntry(store));
+        return Ok();
     }
 
     /// <summary>
@@ -112,6 +163,7 @@ public class StoresController : ControllerBase
     /// <returns>The updated store</returns>
     [Authorize(Policy = "Manager")]
     [HttpPatch("public-info/{storeId:int}")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -123,6 +175,9 @@ public class StoresController : ControllerBase
         }
 
         var existingStore = await _storeContext.GetStoreById(storeId);
+
+        Console.WriteLine(existingStore);
+
         //return 404 error if no store was found
         if (existingStore == null)
         {
@@ -143,22 +198,21 @@ public class StoresController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Store>> UpdateSizeStore(int storeId, [FromBody] UpdateSizeStore store)
+    public async Task<ActionResult> UpdateSizeStore(int storeId, [FromBody] UpdateSizeStore store)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        var existingStore = await _storeContext.GetStoreById(storeId);
-        //return 404 error if no store was found
-        if (existingStore == null)
+        int rowsAffected = await _storeContext.UpdateSizeStore(storeId, store);
+
+        if (rowsAffected == 0)
         {
             return NotFound();
         }
 
-        //controller logic could get added from other branches
-        return Ok(await _storeContext.UpdateSizeStore(storeId, store));
+        return Ok();
     }
 
     /// <summary>

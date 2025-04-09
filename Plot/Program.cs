@@ -18,7 +18,6 @@ using Plot.Data.Models.Env;
 using Plot.DataAccess.Contexts;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
-using Xunit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,7 +62,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = envSettings.audience,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(envSettings.secret_key)),
+                Encoding.UTF8.GetBytes(envSettings.auth_secret_key)),
             ValidateLifetime = true,
         };
     });
@@ -101,6 +100,7 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
 app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();
