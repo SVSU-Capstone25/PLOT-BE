@@ -54,56 +54,13 @@ public class FixturesController : ControllerBase
         return Ok(await _fixtureContext.GetFixtureInstances(floorsetId));
     }
 
+
     /// <summary>
-    /// This endpoint deals with updating a floorset's fixture information
-    /// by going through the fixtures sent from the frontend designer and
-    /// processing if each fixture model or instance should be inserted,
-    /// updating, or deleted from the database.
+    /// updates the fixture instance in the database
+    /// with the given updatefixtureinstance model
     /// </summary>
-    /// <param name="floorsetId">The id of the floorset</param>
-    /// <param name="floorsetFixtureInformation">A floorset's fixture information</param>
+    /// <param name="updateFixture"></param>
     /// <returns></returns>
-    // [Authorize(Policy = "Manager")]
-    // [HttpPatch("update-fixture/{floorsetId:int}")]
-    // [ProducesResponseType(StatusCodes.Status200OK)]
-    // [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    // public async Task<ActionResult> UpdateFixtureInformation(int floorsetId, [FromBody] FixturesState fixtures)
-    // {
-    //     var old = await _fixtureContext.GetFixtureInstances(floorsetId) ?? new List<FixtureInstance>();
-    //     var current = fixtures.CurrentFixtures ?? new List<FixtureInstance>();
-    //     //Select_Floorset_Fixtures[] oldFixtures = query.Cast<Select_Floorset_Fixtures>().ToArray();
-    //     //Select_Floorset_Fixtures[] newFixtures = fixtures.CurrentFixtures.Cast<Select_Floorset_Fixtures>().ToArray();
-
-    //     IEnumerable<FixtureInstance> update = old.Intersect(current);
-    //     IEnumerable<FixtureInstance> create = current.Except(old);
-    //     IEnumerable<FixtureInstance> delete = old.Except(current);
-
-    //     foreach (FixtureInstance instance in update)
-    //     {
-    //         await _fixtureContext.UpdateFixtureInstanceById(instance);
-    //     }
-
-    //     foreach (FixtureInstance instance in create)
-    //     {
-    //         await _fixtureContext.CreateFixtureInstance(instance);
-    //     }
-
-    //     foreach (FixtureInstance instance in delete)
-    //     {
-    //         int tuid = instance.TUID ?? -1;
-    //         if (tuid != -1)
-    //         {
-    //             await _fixtureContext.DeleteFixtureInstanceById(tuid);
-    //         }
-    //     }
-
-
-    //     return Ok();
-    // }
-
-
-    ///summary
-    /// 
     [Authorize(Policy = "Manager")]
     [HttpPatch("update-fixture")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -112,7 +69,11 @@ public class FixturesController : ControllerBase
     {
         return Ok(await _fixtureContext.UpdateFixtureInstanceById(updateFixture));
     }
-
+    /// <summary>
+    /// call to the fixture context to create a new fixture instance
+    /// </summary>
+    /// <param name="newFixture"></param>
+    /// <returns></returns>
     [Authorize(Policy = "Manager")]
     [HttpPost("create-fixture")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -121,7 +82,11 @@ public class FixturesController : ControllerBase
     {
         return Ok(await _fixtureContext.CreateFixtureInstance(newFixture));
     }
-
+    /// <summary>
+    /// deletes a fixture instance with the given id.
+    /// </summary>
+    /// <param name="fixtureInstanceId"></param>
+    /// <returns></returns>
     [Authorize(Policy = "Manager")]
     [HttpDelete("delete-fixture/{fixtureInstanceId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
