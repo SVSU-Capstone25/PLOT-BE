@@ -89,48 +89,17 @@ public class FixturesController : ControllerBase
     [HttpPatch("update-fixture/{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-
-
-    public async Task<ActionResult> UpdateFixtureInformation(int floorsetId, [FromBody] Fixtures_State fixtures)
-
+    public async Task<ActionResult> UpdateFixtureInformation(int floorsetId, [FromBody] FixturesState fixtures)
     {
-
-
-        Console.WriteLine("Update Fixture Information called.");
-
         var old = await _fixtureContext.GetFixtureInstances(floorsetId) ?? new List<FixtureInstance>();
-
         var current = fixtures.CurrentFixtures ?? new List<FixtureInstance>();
-
         //Select_Floorset_Fixtures[] oldFixtures = query.Cast<Select_Floorset_Fixtures>().ToArray();
 
         //Select_Floorset_Fixtures[] newFixtures = fixtures.CurrentFixtures.Cast<Select_Floorset_Fixtures>().ToArray();
 
-
-
-
-        Console.WriteLine("Old contains: " + old.Count() + " entries...");
-
-
-        Console.WriteLine("Current contains: " + current.Count() + " entries...");
-
-
         IEnumerable<FixtureInstance> update = old.Intersect(current);
-
-
         IEnumerable<FixtureInstance> create = current.Except(old);
-
-
         IEnumerable<FixtureInstance> delete = old.Except(current);
-
-
-        Console.WriteLine("Update contains " + update.Count() + " entries...");
-
-
-        Console.WriteLine("Create contains " + create.Count() + " entries...");
-
-
-        Console.WriteLine("Delete contains " + delete.Count() + " entries...");
 
         foreach (FixtureInstance instance in update)
         {
