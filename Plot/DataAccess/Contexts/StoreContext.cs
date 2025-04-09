@@ -245,21 +245,6 @@ public class StoreContext : DbContext, IStoreContext
         //     return [];
         // }
     }
-    public async Task<IEnumerable<UserDTO>?> GetUsersNotInStore(int storeId)
-    {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("StoreID", storeId);
-
-            return await connection.QueryAsync<UserDTO>("Select_Users_NotAssigned_To_Store", parameters, commandType: System.Data.CommandType.StoredProcedure);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine("Database connection failed: ", exception.Message);
-            return [];
-        }
-    }
+    
 
 }
