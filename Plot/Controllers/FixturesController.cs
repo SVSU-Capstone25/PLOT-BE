@@ -84,7 +84,7 @@ public class FixturesController : ControllerBase
     /// <param name="updateFixture"></param>
     /// <returns></returns>
     [Authorize(Policy = "Manager")]
-    [HttpPatch("update-fixture-instances")]
+    [HttpPatch("update-fixture-instance")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> UpdateFixtureInstance([FromBody] UpdateFixtureInstance updateFixture)
