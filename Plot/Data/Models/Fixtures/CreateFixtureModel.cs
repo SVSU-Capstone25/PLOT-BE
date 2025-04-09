@@ -19,10 +19,10 @@ public record CreateFixtureModel
 {
     public string? NAME { get; set; }
     public int? WIDTH { get; set; }
-    public int? HEIGHT { get; set; }
+    public int? LENGTH { get; set; }
     public float? LF_CAP { get; set; }
     public int? STORE_TUID { get; set; }
     //TODO: define how we convert this file to 
     // be store in the database
-    public IFormFile? ICON { get; set; }
+    public byte[]? ICON { get; set; }
 }

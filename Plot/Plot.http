@@ -67,8 +67,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-    "FirstName": "Bart",
-    "LastName": "Simpson",
+    "FirstName": "",
+    "LastName": "",
     "Email": "bartsimpson@gmail.com",
     "Role": 1,
     "Store": 1

@@ -41,8 +41,7 @@ public class RazorEmailRenderer
     public RazorEmailRenderer()
     {
         _razorEngine = new RazorLightEngineBuilder()
-            .UseFileSystemProject(
-                AppContext.BaseDirectory + "Data/Templates")
+            .UseFileSystemProject("/app/wwwroot/Templates")
                 .UseMemoryCachingProvider()
                 .Build();
     }

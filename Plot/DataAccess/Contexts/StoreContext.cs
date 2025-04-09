@@ -24,167 +24,227 @@ namespace Plot.DataAccess.Contexts;
 
 public class StoreContext : DbContext, IStoreContext
 {
-    public async Task<IEnumerable<Store>> GetStores()
+    public async Task<IEnumerable<Store>?> GetStores()
     {
-        try
-        {
-            using SqlConnection connection = GetConnection();
+        return await GetStoredProcedureQuery<Store>("Select_Stores");
+        // try
+        // {
+        //     var connection = GetConnection();
 
-            return await connection.QueryAsync<Store>("Select_Stores", commandType: System.Data.CommandType.StoredProcedure);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception.Message));
-            return [];
-        }
+        //     return await connection.QueryAsync<Store>("Select_Stores", commandType: System.Data.CommandType.StoredProcedure);
+        // }
+        // catch (SqlException exception)
+        // {
+        //     Console.WriteLine(("Database connection failed: ", exception.Message));
+        //     return [];
+        // }
     }
-    public async Task<IEnumerable<Store>> GetByAccess(int? userId)
+   
+
+    public async Task<Store?> GetStoreById(int? storeId)
+    {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("STORE_TUID", storeId);
+
+        return await GetFirstOrDefaultStoredProcedureQuery<Store>("Select_Stores", parameters);
+        // try
+        // {
+        //     var connection = GetConnection();
+
+        //     DynamicParameters parameters = new DynamicParameters();
+        //     parameters.Add("STORE_TUID", storeId);
+        //     return await connection.QueryFirstOrDefaultAsync<Store>("Select_Stores", parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+        // }
+        // catch (SqlException exception)
+        // {
+        //     Console.WriteLine(("Database connection failed: ", exception.Message));
+        //     return null;
+        // }
+    }
+    public async Task<IEnumerable<Store>?> GetByAccess(int? userId)
     {//grab stores a user works at
-        try
-        {
-            using SqlConnection connection = GetConnection();
 
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("UserID", userId);
-            return await connection.QueryAsync<Store>("Select_Users_Store_Access", parameters, commandType: System.Data.CommandType.StoredProcedure);
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("USER_TUID", userId);
 
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception.Message));
-            return [];
-        }
-    }
-    public async Task<IEnumerable<Store>> GetStoreById(int? storeId)
-    {
-        try
-        {
-            using SqlConnection connection = GetConnection();
+        return await GetStoredProcedureQuery<Store>("Select_Users_Store_Access", parameters);
+        // try
+        // {
+        //     using SqlConnection connection = GetConnection();
 
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("StoreID", storeId);
-            return await connection.QueryAsync<Store>("Select_Stores", parameters, commandType: System.Data.CommandType.StoredProcedure);
+        //     DynamicParameters parameters = new DynamicParameters();
+        //     parameters.Add("USER_TUID", userId);
+        //     return await connection.QueryAsync<Store>("Select_Users_Store_Access", parameters, commandType: System.Data.CommandType.StoredProcedure);
 
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception.Message));
-            return [];
-        }
+        // }
+        // catch (SqlException exception)
+        // {
+        //     Console.WriteLine(("Database connection failed: ", exception.Message));
+        //     return [];
+        // }
     }
 
-    public async Task<int> UpdatePublicInfoStore(int storeId, UpdatePublicInfoStore updatestore)
+    public async Task<int> UpdatePublicInfoStore(int storeId, UpdatePublicInfoStore updateStore)
     {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("TUID", storeId);
-            parameters.Add("NAME", updatestore.NAME);
-            parameters.Add("ADDRESS", updatestore.ADDRESS);
-            parameters.Add("CITY", updatestore.CITY);
-            parameters.Add("STATE", updatestore.STATE);
-            parameters.Add("ZIP", updatestore.ZIP);
-            parameters.Add("BLUEPRINT_IMAGE", updatestore.BLUEPRINT_IMAGE);
-            return await connection.ExecuteAsync("Insert_Update_Stores", parameters, commandType: System.Data.CommandType.StoredProcedure);
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("TUID", storeId);
+        parameters.Add("NAME", updateStore.NAME);
+        parameters.Add("ADDRESS", updateStore.ADDRESS);
+        parameters.Add("CITY", updateStore.CITY);
+        parameters.Add("STATE", updateStore.STATE);
+        parameters.Add("ZIP", updateStore.ZIP);
+        parameters.Add("BLUEPRINT_IMAGE", updateStore.BLUEPRINT_IMAGE);
 
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception.Message));
-            return 0;
-        }
+        return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Store", parameters);
+        // try
+        // {
+        //     var connection = GetConnection();
+        //     DynamicParameters parameters = new DynamicParameters();
+        //     parameters.Add("TUID", storeId);
+        //     parameters.Add("NAME", updatestore.NAME);
+        //     parameters.Add("ADDRESS", updatestore.ADDRESS);
+        //     parameters.Add("CITY", updatestore.CITY);
+        //     parameters.Add("STATE", updatestore.STATE);
+        //     parameters.Add("ZIP", updatestore.ZIP);
+        //     parameters.Add("BLUEPRINT_IMAGE", updatestore.BLUEPRINT_IMAGE);
+        //     return await connection.ExecuteAsync("Insert_Update_Store", parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+        // }
+        // catch (SqlException exception)
+        // {
+        //     Console.WriteLine(("Database connection failed: ", exception.Message));
+        //     return 0;
+        // }
     }
     public async Task<int> UpdateSizeStore(int storeId, UpdateSizeStore updatestore)
-    {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("TUID", storeId);
-            parameters.Add("WIDTH", updatestore.WIDTH);
-            parameters.Add("HEIGHT", updatestore.LENGTH);
+    {   
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("TUID", storeId);
+        parameters.Add("WIDTH", updatestore.WIDTH);
+        parameters.Add("LENGTH", updatestore.LENGTH);
 
-            return await connection.ExecuteAsync("Insert_Update_Stores", parameters, commandType: System.Data.CommandType.StoredProcedure);
+        return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Store", parameters);
+        // try
+        // {
+        //     var connection = GetConnection();
+        //     DynamicParameters parameters = new DynamicParameters();
+        //     parameters.Add("TUID", storeId);
+        //     parameters.Add("WIDTH", updatestore.WIDTH);
+        //     parameters.Add("LENGTH", updatestore.LENGTH);
 
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception.Message));
-            return 0;
-        }
+        //     return await connection.ExecuteAsync("Insert_Update_Store", parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+        // }
+        // catch (SqlException exception)
+        // {
+        //     Console.WriteLine(("Database connection failed: ", exception.Message));
+        //     return 0;
+        // }
     }
 
     public async Task<int> DeleteStoreById(int storeId)
     {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("StoreID", storeId);
-            return await connection.ExecuteAsync("Delete_Store", parameters, commandType: System.Data.CommandType.StoredProcedure);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception.Message));
-            return 0;
-        }
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("STORE_TUID", storeId);
+
+        return await CreateUpdateDeleteStoredProcedureQuery("Delete_Store", parameters);
+        // try
+        // {
+        //     var connection = GetConnection();
+        //     DynamicParameters parameters = new DynamicParameters();
+        //     parameters.Add("STORE_TUID", storeId);
+        //     return await connection.ExecuteAsync("Delete_Store", parameters, commandType: System.Data.CommandType.StoredProcedure);
+        // }
+        // catch (SqlException exception)
+        // {
+        //     Console.WriteLine(("Database connection failed: ", exception.Message));
+        //     return 0;
+        // }
     }
+    
     public async Task<IEnumerable<UserDTO>?> GetUsersAtStore(int storeId)
     {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("StoreID", storeId);
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("STORE_TUID", storeId);
 
-            return await connection.QueryAsync<UserDTO>("Select_Store_Users", parameters, commandType: System.Data.CommandType.StoredProcedure);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine("Database connection failed: ", exception.Message);
-            return [];
-        }
+        return await GetStoredProcedureQuery<UserDTO>("Select_Store_Users", parameters);
+
+        // try
+        // {
+        //     var connection = GetConnection();
+        //     DynamicParameters parameters = new DynamicParameters();
+        //     parameters.Add("STORE_TUID", storeId);
+
+        //     return await connection.QueryAsync<UserDTO>("Select_Store_Users", parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+        // }
+        // catch (SqlException exception)
+        // {
+        //     Console.WriteLine("Database connection failed: ", exception.Message);
+        //     return [];
+        // }
     }
 
-    public async Task<int> CreateStoreEntry(CreateStore store)
+    public async Task<int> CreateStoreEntry(CreateStore createstore)
     {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("NAME", store.NAME);
-            parameters.Add("ADDRESS", store.ADDRESS);
-            parameters.Add("CITY", store.CITY);
-            parameters.Add("STATE", store.STATE);
-            parameters.Add("ZIP", store.ZIP);
-            parameters.Add("WIDTH", store.WIDTH);
-            parameters.Add("LENGTH", store.LENGTH);
-            parameters.Add("BLUEPRINT_IMAGE", store.BLUEPRINT_IMAGE);
-            return await connection.ExecuteAsync("Insert_Update_Stores", parameters, commandType: System.Data.CommandType.StoredProcedure);
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("NAME", createstore.NAME);
+        parameters.Add("ADDRESS", createstore.ADDRESS);
+        parameters.Add("CITY", createstore.CITY);
+        parameters.Add("STATE", createstore.STATE);
+        parameters.Add("ZIP", createstore.ZIP);
+        parameters.Add("WIDTH", createstore.WIDTH);
+        parameters.Add("LENGTH", createstore.LENGTH);
+        parameters.Add("BLUEPRINT_IMAGE", createstore.BLUEPRINT_IMAGE);
+        parameters.Add("USER_TUIDS", createstore.USER_TUIDS);
 
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine(("Database connection failed: ", exception.Message));
-            return 0;
-        }
+        return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Store", parameters);
+
+        // try
+        // {
+        //     using SqlConnection connection = GetConnection();
+        //     DynamicParameters parameters = new DynamicParameters();
+        //     parameters.Add("NAME", createstore.NAME);
+        //     parameters.Add("ADDRESS", createstore.ADDRESS);
+        //     parameters.Add("CITY", createstore.CITY);
+        //     parameters.Add("STATE", createstore.STATE);
+        //     parameters.Add("ZIP", createstore.ZIP);
+        //     parameters.Add("WIDTH", createstore.WIDTH);
+        //     parameters.Add("LENGTH", createstore.LENGTH);
+        //     parameters.Add("BLUEPRINT_IMAGE", createstore.BLUEPRINT_IMAGE);
+        //     parameters.Add("USER_TUIDS", createstore.USER_TUIDS);
+        //     return await connection.ExecuteAsync("Insert_Update_Store", parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+        // }
+        // catch (SqlException exception)
+        // {
+        //     Console.WriteLine(("Database connection failed: ", exception.Message));
+        //     return 0;
+        // }
     }
+
     public async Task<IEnumerable<UserDTO>?> GetUsersNotInStore(int storeId)
     {
-        try
-        {
-            using SqlConnection connection = GetConnection();
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("StoreID", storeId);
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("STORE_TUID", storeId);
 
-            return await connection.QueryAsync<UserDTO>("Select_Users_NotAssigned_To_Store", parameters, commandType: System.Data.CommandType.StoredProcedure);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine("Database connection failed: ", exception.Message);
-            return [];
-        }
+        return await GetStoredProcedureQuery<UserDTO>("Select_Users_Not_Assigned_To_Store", parameters);
+
+        // try
+        // {
+        //     using SqlConnection connection = GetConnection();
+        //     DynamicParameters parameters = new DynamicParameters();
+        //     parameters.Add("STORE_TUID", storeId);
+
+        //     return await connection.QueryAsync<UserDTO>("Select_Users_Not_Assigned_To_Store", parameters, commandType: System.Data.CommandType.StoredProcedure);
+        // }
+        // catch (SqlException exception)
+        // {
+        //     Console.WriteLine("Database connection failed: ", exception.Message);
+        //     return [];
+        // }
     }
+    
 
 }

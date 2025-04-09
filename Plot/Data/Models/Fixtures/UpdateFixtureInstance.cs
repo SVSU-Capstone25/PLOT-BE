@@ -26,7 +26,9 @@ public record UpdateFixtureInstance
     public int? HANGER_STACK { get; set; }
     public float? TOT_LF { get; set; }
     public int? SUPERCATEGORY_TUID { get; set; }
-    public string? SUBCATEGORY { get; set; }
+    public string? SUBSUBCATEGORY { get; set; }
     public int? EDITOR_ID { get; set; }
     public string? NOTE { get; set; }
+    public int? SUPERCATEGORY_TUID {get; set;}
+    public int? EDITOR_ID {get; set;}
 }

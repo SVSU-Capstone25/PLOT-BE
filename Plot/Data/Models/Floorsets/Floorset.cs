@@ -34,4 +34,5 @@ public class Floorset
     public DateTime? DATE_MODIFIED { get; set; }
     [Required]
     public int? MODIFIED_BY { get; set; }
+    public byte[] FLOORSET_IMAGE {get; set;}
 }

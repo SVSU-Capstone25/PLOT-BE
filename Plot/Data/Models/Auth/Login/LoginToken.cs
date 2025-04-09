@@ -17,10 +17,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Plot.Data.Models.Auth.Login;
 
-public record LoginRequest
+public record LoginToken
 {
     [Required]
-    public required string EMAIL { get; set; }
-    [Required]
-    public required string PASSWORD { get; set; }
+    public required string Token { get; set; }
 }

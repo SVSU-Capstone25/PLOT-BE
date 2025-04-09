@@ -9,12 +9,13 @@
 
     Written by: Jordan Houlihan
 */
-using Dapper;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Plot.Data.Models.Fixtures;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
+using Plot.Data.Models.Allocations;
 
 namespace Plot.Controllers;
 
@@ -28,9 +29,10 @@ public class FixturesController : ControllerBase
 
     public FixturesController(IFixtureContext fixtureContext, ISalesContext salesContext, ClaimParserService claimParserService)
     {
-        _fixtureContext = fixtureContext ?? throw new ArgumentNullException(nameof(fixtureContext));
+        _fixtureContext = fixtureContext;
         _salesContext = salesContext;
         _claimParserService = claimParserService;
+
     }
 
     /// <summary>
@@ -41,17 +43,37 @@ public class FixturesController : ControllerBase
     /// <returns>A floorset's fixture information</returns>
     [Authorize]
     [HttpGet("get-fixtures/{floorsetId:int}")]
+    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<FixtureInstance>> GetFixtureInformation(int floorsetId)
+    public async Task<ActionResult<IEnumerable<FixtureInstance>>> GetFixtureInstances(int floorsetId)
     {
-        if (!ModelState.IsValid)
+        var fixtures = await _fixtureContext.GetFixtureInstances(floorsetId);
+
+        if (fixtures == null)
         {
-            return BadRequest(ModelState);
+            return BadRequest();
         }
 
-        return Ok(await _fixtureContext.GetFixtureInstances(floorsetId));
+        return Ok(fixtures);
+    }
+
+    [Authorize]
+    [HttpGet("get-fixture-models/{storeId:int}")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<IEnumerable<FixtureModel>>> GetFixtureModelsByStore(int storeId)
+    {
+        var fixtureModels = await _fixtureContext.GetFixtureModels(storeId);
+
+        if (fixtureModels == null)
+        {
+            BadRequest();
+        }
+
+        return Ok(fixtureModels);
     }
 
 
@@ -104,22 +126,16 @@ public class FixturesController : ControllerBase
     /// <param name="fixtureModel"></param>
     /// <returns></returns>
     [Authorize(Policy = "Manager")]
-    [HttpPatch("create-fixture/{storeId:int}")]
+    [HttpPost("create-fixture/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<FixtureModel>> CreateModel([FromBody] FixtureModel fixtureModel)
+    public async Task<ActionResult> CreateModel([FromBody] CreateFixtureModel fixtureModel)
     {
         return Ok(await _fixtureContext.CreateFixtureModel(fixtureModel));
     }
 
-    /// <summary>
-    /// Deletes a fixture model at a given store
-    /// with a given id.
-    /// </summary>
-    /// <param name="modelId"></param>
-    /// <returns></returns>
     [Authorize(Policy = "Manager")]
-    [HttpPatch("delete-model/{storeId:int}")]
+    [HttpDelete("delete-model/{modelId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> DeleteModel(int modelId)
@@ -127,12 +143,6 @@ public class FixturesController : ControllerBase
         return Ok(await _fixtureContext.DeleteFixtureModelById(modelId));
     }
 
-    /// <summary>
-    /// Updates the data for a fixture model and sends the new 
-    /// information to the database.
-    /// </summary>
-    /// <param name="update"></param>
-    /// <returns></returns>
     [Authorize(Policy = "Manager")]
     [HttpPatch("update-model/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]

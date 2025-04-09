@@ -30,7 +30,8 @@ public record UserDTO
     [Required]
     [StringLength(747, ErrorMessage = "First Name cannot exceed 747 characters.")]
     public string? LAST_NAME { get; set; }
-    [Required, EmailAddress]
+    [Required]
+    [EmailAddress]
     [StringLength(320, ErrorMessage = "First Name cannot exceed 320 characters.")]
     public string? EMAIL { get; set; }
     [Required]

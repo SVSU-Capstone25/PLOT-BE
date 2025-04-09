@@ -29,4 +29,7 @@ public record CreateFixtureInstance
     public string? SUBCATEGORY { get; set; }
     public int? EDITOR_ID { get; set; }
     public string? NOTE { get; set; }
+    public int? SUPERCATEGORY_TUID {get; set;}
+    public string? SUBCATEGORY {get; set;}
+    public int? EDITOR_ID {get; set;}
 }

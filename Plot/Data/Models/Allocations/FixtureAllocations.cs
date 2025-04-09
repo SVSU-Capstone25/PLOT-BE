@@ -17,8 +17,9 @@ namespace Plot.Data.Models.Allocations;
 
 public record FixtureAllocations
 {
-    public int? TUID {get; set;}
-    public string? CATEGORY { get; set; }
-    public int? TOTAL_SALES { get; set; }
-    public int? SALES_TUID { get; set; }
+    public required int TUID {get; set;}
+    public required int SUPERCATEGORY_TUID { get; set; }
+    public required string SUBCATEGORY { get; set; }
+    public required int TOTAL_SALES { get; set; }
+    public required int SALES_TUID { get; set; }
 }
