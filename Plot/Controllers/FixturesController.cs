@@ -110,6 +110,12 @@ public class FixturesController : ControllerBase
         return Ok(await _fixtureContext.CreateFixtureModel(fixtureModel));
     }
 
+    /// <summary>
+    /// Deletes a fixture model at a given store
+    /// with a given id.
+    /// </summary>
+    /// <param name="modelId"></param>
+    /// <returns></returns>
     [Authorize(Policy = "Manager")]
     [HttpPatch("delete-model/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -119,6 +125,12 @@ public class FixturesController : ControllerBase
         return Ok(await _fixtureContext.DeleteFixtureModelById(modelId));
     }
 
+    /// <summary>
+    /// Updates the data for a fixture model and sends the new 
+    /// information to the database.
+    /// </summary>
+    /// <param name="update"></param>
+    /// <returns></returns>
     [Authorize(Policy = "Manager")]
     [HttpPatch("update-model/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
