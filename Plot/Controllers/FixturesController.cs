@@ -69,6 +69,7 @@ public class FixturesController : ControllerBase
     {
         return Ok(await _fixtureContext.UpdateFixtureInstanceById(updateFixture));
     }
+    
     /// <summary>
     /// call to the fixture context to create a new fixture instance
     /// </summary>
@@ -82,6 +83,7 @@ public class FixturesController : ControllerBase
     {
         return Ok(await _fixtureContext.CreateFixtureInstance(newFixture));
     }
+
     /// <summary>
     /// deletes a fixture instance with the given id.
     /// </summary>
