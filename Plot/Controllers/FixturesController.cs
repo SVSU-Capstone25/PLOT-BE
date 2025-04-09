@@ -42,7 +42,7 @@ public class FixturesController : ControllerBase
     /// <param name="floorsetId">The id of the floorset</param>
     /// <returns>A floorset's fixture information</returns>
     [Authorize]
-    [HttpGet("get-fixtures/{floorsetId:int}")]
+    [HttpGet("get-fixtures-instances/{floorsetId:int}")]
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -84,21 +84,21 @@ public class FixturesController : ControllerBase
     /// <param name="updateFixture"></param>
     /// <returns></returns>
     [Authorize(Policy = "Manager")]
-    [HttpPatch("update-fixture")]
+    [HttpPatch("update-fixture-instances")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> UpdateFixtureInstance([FromBody] UpdateFixtureInstance updateFixture)
     {
         return Ok(await _fixtureContext.UpdateFixtureInstanceById(updateFixture));
     }
-    
+
     /// <summary>
     /// call to the fixture context to create a new fixture instance
     /// </summary>
     /// <param name="newFixture"></param>
     /// <returns></returns>
     [Authorize(Policy = "Manager")]
-    [HttpPost("create-fixture")]
+    [HttpPost("create-fixture-instance")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> CreateFixtureInstance([FromBody] CreateFixtureInstance newFixture)
@@ -112,7 +112,7 @@ public class FixturesController : ControllerBase
     /// <param name="fixtureInstanceId"></param>
     /// <returns></returns>
     [Authorize(Policy = "Manager")]
-    [HttpDelete("delete-fixture/{fixtureInstanceId:int}")]
+    [HttpDelete("delete-fixture-instance/{fixtureInstanceId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> DeleteFixtureInstance([FromBody] int fixtureInstanceId)
@@ -126,7 +126,7 @@ public class FixturesController : ControllerBase
     /// <param name="fixtureModel"></param>
     /// <returns></returns>
     [Authorize(Policy = "Manager")]
-    [HttpPost("create-fixture/{storeId:int}")]
+    [HttpPost("create-fixture-model")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> CreateModel([FromBody] CreateFixtureModel fixtureModel)
@@ -135,7 +135,7 @@ public class FixturesController : ControllerBase
     }
 
     [Authorize(Policy = "Manager")]
-    [HttpDelete("delete-model/{modelId:int}")]
+    [HttpDelete("delete-fixture-model/{modelId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> DeleteModel(int modelId)
@@ -144,7 +144,7 @@ public class FixturesController : ControllerBase
     }
 
     [Authorize(Policy = "Manager")]
-    [HttpPatch("update-model/{storeId:int}")]
+    [HttpPatch("update-fixture-model/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> UpdateFixtureModel([FromBody] FixtureModel update)
