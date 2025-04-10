@@ -44,7 +44,7 @@ public class UsersController : ControllerBase
     {
         var users = await _userContext.GetUsers();
 
-        if (users == null) 
+        if (users == null)
         {
             BadRequest();
         }
@@ -98,7 +98,7 @@ public class UsersController : ControllerBase
 
         int rowsAffected = await _userContext.UpdateUserPublicInfo(userId, user);
 
-        if (rowsAffected == 0) 
+        if (rowsAffected == 0)
         {
             return NotFound();
         }
@@ -230,7 +230,7 @@ public class UsersController : ControllerBase
         {
             return BadRequest(ModelState);
         }
-        
+
         int rowsAffected = await _userContext.DeleteUserFromStore(accessModel);
 
         if (rowsAffected == 0)
@@ -261,6 +261,29 @@ public class UsersController : ControllerBase
             NotFound();
         }
 
-        return Ok();
+        return Ok(stores);
+    }
+
+    /// <summary>
+    /// returns all the stores a user doesn't work at
+    /// </summary>
+    /// <param name="userId">The id of the user</param>
+    /// <returns>UserDTO object</returns>
+    [Authorize]
+    [HttpGet("stores-not/{userId:int}")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<Store>>> GetStoresUserIsntAssignedById(int userId)
+    {
+        var stores = await _userContext.GetStoresNotForUser(userId);
+
+        if (stores == null)
+        {
+            NotFound();
+        }
+
+        return Ok(stores);
     }
 }
