@@ -34,10 +34,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins(envSettings.audience, "http://localhost:8080");
-                          policy.AllowAnyHeader();
-                          policy.AllowAnyMethod();
-                          policy.AllowCredentials();
+                          policy.WithOrigins("http://frontend:8080", "http://localhost:8080") // Add your actual frontend URL(s)
+                                .AllowAnyHeader()
+                                .AllowAnyMethod()
+                                .AllowCredentials();
                       });
 });
 
@@ -98,6 +98,12 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("Referrer-Policy", "no-referrer-when-downgrade");
+    await next.Invoke();
+});
 
 //app.UseHttpsRedirection();
 app.UseStaticFiles();

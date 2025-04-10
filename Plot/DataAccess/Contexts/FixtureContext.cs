@@ -196,12 +196,12 @@ public class FixtureContext : DbContext, IFixtureContext
         parameters.Add("TUID", fixtureInstance.TUID);
         parameters.Add("FLOORSET_TUID", fixtureInstance.FLOORSET_TUID);
         parameters.Add("FIXTURE_TUID", fixtureInstance.FIXTURE_TUID);
+        parameters.Add("EDITOR_ID", fixtureInstance.EDITOR_ID);
         parameters.Add("XPOS", fixtureInstance.X_POS);//I swear to god if someone tries to change this to X_POS again I will scream
         parameters.Add("YPOS", fixtureInstance.Y_POS);// In the procedure it is XPOS and YPOS, but in the db model and schema it is X_POS and Y_POS
         parameters.Add("HANGER_STACK", fixtureInstance.HANGER_STACK);
         parameters.Add("TOT_LF", fixtureInstance.TOT_LF);
         parameters.Add("ALLOCATED_LF", fixtureInstance.ALLOCATED_LF);
-        parameters.Add("EDITOR_ID", fixtureInstance.EDITOR_ID);
         parameters.Add("SUPERCATEGORY_TUID", fixtureInstance.SUPERCATEGORY_TUID);
         parameters.Add("SUBCATEGORY", fixtureInstance.SUBCATEGORY);
         parameters.Add("NOTE", fixtureInstance.NOTE);
