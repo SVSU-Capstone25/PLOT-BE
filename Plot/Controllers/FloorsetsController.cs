@@ -53,7 +53,7 @@ public class FloorsetsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<Floorset>>> GetFloorsetById(int floorsetId)
+    public async Task<ActionResult<IEnumerable<Floorset>>> GetFloorsetByIdController(int floorsetId)
     {
         return Ok(await _floorsetContext.GetFloorsetById(floorsetId));
     }
