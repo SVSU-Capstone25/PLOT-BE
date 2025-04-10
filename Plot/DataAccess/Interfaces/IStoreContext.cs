@@ -28,4 +28,5 @@ public interface IStoreContext
     Task<IEnumerable<UserDTO>?> GetUsersAtStore(int storeId);
     Task<IEnumerable<UserDTO>?> GetUsersNotInStore(int storeId);
     Task<int> CreateStoreEntry(CreateStore createstore);
+
 }

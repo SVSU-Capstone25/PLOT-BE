@@ -47,6 +47,20 @@ public class FloorsetsController : ControllerBase
         return Ok(await _floorsetContext.GetFloorsetsByStoreId(storeId));
     }
 
+
+    [HttpGet("get-floorset/{floorsetId:int}")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<Floorset>>> GetFloorsetById(int floorsetId)
+    {
+        return Ok(await _floorsetContext.GetFloorsetById(floorsetId));
+    }
+
+
+
+
     /// <summary>
     /// This endpoint deals with creating a floorset.
     /// </summary>
@@ -92,7 +106,7 @@ public class FloorsetsController : ControllerBase
         }
 
         Console.WriteLine(floorset);
-        
+
         int rowsAffected = await _floorsetContext.UpdateFloorsetById(floorsetId, floorset);
 
         if (rowsAffected == 0)

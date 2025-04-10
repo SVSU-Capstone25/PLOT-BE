@@ -24,6 +24,12 @@ namespace Plot.DataAccess.Contexts;
 
 public class FloorsetContext : DbContext, IFloorsetContext
 {
+    public async Task<Floorset?> GetFloorsetById(int floorsetId)
+    {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("FLOORSET_TUID", floorsetId);
+        return await GetFirstOrDefaultStoredProcedureQuery<Floorset>("Select_Stores_Floorsets", parameters);
+    }
     public async Task<IEnumerable<Floorset>?> GetFloorsetsByStoreId(int storeId)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -45,7 +51,7 @@ public class FloorsetContext : DbContext, IFloorsetContext
         // }
         // throw new NotImplementedException();
     }
-    
+
     public async Task<int> CreateFloorset(CreateFloorset floorset)
     {
         try
@@ -115,9 +121,9 @@ public class FloorsetContext : DbContext, IFloorsetContext
     {
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("FLOORSET_TUID", floorsetId);
-        
+
         return await CreateUpdateDeleteStoredProcedureQuery("Delete_Floorset", parameters);
-        
+
         // try
         // {
         //     var connection = GetConnection();
