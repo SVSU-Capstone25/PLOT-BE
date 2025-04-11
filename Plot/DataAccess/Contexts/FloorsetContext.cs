@@ -28,7 +28,7 @@ public class FloorsetContext : DbContext, IFloorsetContext
     {
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("FLOORSET_TUID", floorsetId);
-        return await GetFirstOrDefaultStoredProcedureQuery<Floorset>("Select_Stores_Floorsets", parameters);
+        return await GetFirstOrDefaultStoredProcedureQuery<Floorset>("Select_Floorsets", parameters);
     }
     public async Task<IEnumerable<Floorset>?> GetFloorsetsByStoreId(int storeId)
     {
