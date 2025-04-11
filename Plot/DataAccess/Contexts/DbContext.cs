@@ -55,7 +55,11 @@ public class DbContext
         {
             var connection = GetConnection();
 
-            return await connection.QueryAsync<T>(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
+            var response = await connection.QueryAsync<T>(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
+
+            connection.Close();
+
+            return response;
         }
         catch (SqlException exception)
         {
@@ -69,7 +73,12 @@ public class DbContext
         try
         {
             var connection = GetConnection();
-            return await connection.QueryFirstOrDefaultAsync<T>(storedProcedure, parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+            var response = await connection.QueryFirstOrDefaultAsync<T>(storedProcedure, parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+            connection.Close();
+
+            return response;
         }
         catch (SqlException exception)
         {
@@ -83,8 +92,11 @@ public class DbContext
         try
         {
             var connection = GetConnection();
+
             var response = await connection.ExecuteAsync(storedProcedure, parameters, commandType: System.Data.CommandType.StoredProcedure);
+
             connection.Close();
+
             return response;
         }
         catch (SqlException exception)
