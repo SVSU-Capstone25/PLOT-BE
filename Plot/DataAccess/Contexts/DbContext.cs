@@ -42,20 +42,24 @@ public class DbContext
         }
     }
 
-    public async Task<IEnumerable<T>?> GetStoredProcedureQuery<T>(string storedProcedure) 
+    public async Task<IEnumerable<T>?> GetStoredProcedureQuery<T>(string storedProcedure)
     {
-            DynamicParameters parameters = new DynamicParameters();
+        DynamicParameters parameters = new DynamicParameters();
 
-            return await this.GetStoredProcedureQuery<T>(storedProcedure, parameters);
+        return await this.GetStoredProcedureQuery<T>(storedProcedure, parameters);
     }
 
-    public async Task<IEnumerable<T>?> GetStoredProcedureQuery<T>(string storedProcedure, DynamicParameters parameters) 
+    public async Task<IEnumerable<T>?> GetStoredProcedureQuery<T>(string storedProcedure, DynamicParameters parameters)
     {
-        try 
+        try
         {
             var connection = GetConnection();
-            
-            return await connection.QueryAsync<T>(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
+
+            var response = await connection.QueryAsync<T>(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
+
+            connection.Close();
+
+            return response;
         }
         catch (SqlException exception)
         {
@@ -64,12 +68,17 @@ public class DbContext
         }
     }
 
-    public async Task<T?> GetFirstOrDefaultStoredProcedureQuery<T>(string storedProcedure, DynamicParameters parameters) 
+    public async Task<T?> GetFirstOrDefaultStoredProcedureQuery<T>(string storedProcedure, DynamicParameters parameters)
     {
         try
         {
             var connection = GetConnection();
-            return await connection.QueryFirstOrDefaultAsync<T>(storedProcedure, parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+            var response = await connection.QueryFirstOrDefaultAsync<T>(storedProcedure, parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+            connection.Close();
+
+            return response;
         }
         catch (SqlException exception)
         {
@@ -83,7 +92,12 @@ public class DbContext
         try
         {
             var connection = GetConnection();
-            return await connection.ExecuteAsync(storedProcedure, parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+            var response = await connection.ExecuteAsync(storedProcedure, parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+            connection.Close();
+
+            return response;
         }
         catch (SqlException exception)
         {
