@@ -46,7 +46,7 @@ public record UpdatePublicInfoStore
     [Required]
     [Range(int.MinValue, int.MaxValue, ErrorMessage = "Length must be an integer.")]
     public int LENGTH { get; set; }
-    
-    public required string USER_TUIDS {get; set;}
+
+    public required string USER_TUIDS { get; set; }
     public byte[]? BLUEPRINT_IMAGE { get; set; }
 }

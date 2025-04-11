@@ -20,7 +20,7 @@ public record CreateFixtureModel
     public string? NAME { get; set; }
     public int? WIDTH { get; set; }
     public int? LENGTH { get; set; }
-    public float? LF_CAP { get; set; }
+    public int? LF_CAP { get; set; }
     public int? STORE_TUID { get; set; }
     //TODO: define how we convert this file to 
     // be store in the database

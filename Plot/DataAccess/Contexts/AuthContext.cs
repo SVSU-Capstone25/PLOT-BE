@@ -46,31 +46,6 @@ public class AuthContext : DbContext, IAuthContext
         parameters.Add("ROLE_NAME", user.ROLE_NAME);
 
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_User", parameters);
-        // try
-        // {
-        //     var connection = GetConnection();
-
-        //     int oneTimePassword = RandomNumberGenerator.GetInt32(oneTimePasswordSizeLowerBound, oneTimePasswordSizeUpperBound);
-        //     PasswordHasher<UserRegistration> hasher = new();
-
-        //     string oneTimePasswordHash = hasher.HashPassword(user, oneTimePassword.ToString());
-
-
-        //     DynamicParameters parameters = new DynamicParameters();
-
-        //     parameters.Add("FIRST_NAME", user.FIRST_NAME);
-        //     parameters.Add("LAST_NAME", user.LAST_NAME);
-        //     parameters.Add("EMAIL", user.EMAIL);
-        //     parameters.Add("PASSWORD", oneTimePasswordHash);
-        //     parameters.Add("ROLE_NAME", user.ROLE_NAME);
-
-        //     return await connection.ExecuteAsync("Insert_Update_User", parameters, commandType: System.Data.CommandType.StoredProcedure);
-        // }
-        // catch (SqlException exception)
-        // {
-        //     Console.WriteLine("Database connection failed: ", exception.Message);
-        //     return 0;
-        // }
     }
 
     public async Task<User?> GetUserByEmail(string email)
@@ -78,8 +53,8 @@ public class AuthContext : DbContext, IAuthContext
         try
         {
             using SqlConnection connection = GetConnection();
-            
-            var GetUserByEmailSQL = "SELECT TUID, FIRST_NAME, LAST_NAME, EMAIL, " + 
+
+            var GetUserByEmailSQL = "SELECT TUID, FIRST_NAME, LAST_NAME, EMAIL, " +
                                     "PASSWORD, (SELECT NAME FROM Roles WHERE TUID = ROLE_TUID) AS 'ROLE', ACTIVE " +
                                     "FROM Users " +
                                     "WHERE EMAIL = @EMAIL";
@@ -101,21 +76,6 @@ public class AuthContext : DbContext, IAuthContext
         parameters.Add("NewPassword", user.PASSWORD);
 
         return await CreateUpdateDeleteStoredProcedureQuery("Update_User_Password", parameters);
-        // try
-        // {
-        //     var connection = GetConnection();
-
-        //     DynamicParameters parameters = new DynamicParameters();
-        //     parameters.Add("EMAIL", user.EMAIL);
-        //     parameters.Add("NewPassword", user.PASSWORD);
-
-        //     return await connection.ExecuteAsync("Update_User_Password", parameters, commandType: System.Data.CommandType.StoredProcedure);
-        // }
-        // catch (SqlException exception)
-        // {
-        //     Console.WriteLine("Database connection failed: ", exception.Message);
-        //     return 0;
-        // }
     }
     public async Task<int> DeleteUserById(int userId)
     {
@@ -123,20 +83,5 @@ public class AuthContext : DbContext, IAuthContext
         parameters.Add("USER_TUID", userId);
 
         return await CreateUpdateDeleteStoredProcedureQuery("Delete_User", parameters);
-        // try
-        // {
-        //     var connection = GetConnection();
-
-        //     DynamicParameters parameters = new DynamicParameters();
-        //     parameters.Add("USER_TUID", userId);
-            
-
-        //     return await connection.ExecuteAsync("Delete_User", parameters, commandType: System.Data.CommandType.StoredProcedure);
-        // }
-        // catch (SqlException exception)
-        // {
-        //     Console.WriteLine(("Database connection failed: ", exception.Message));
-        //     return 0;
-        // }
     }
 }
