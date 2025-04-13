@@ -181,7 +181,8 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> Register(UserRegistration user)
+    //public async Task<ActionResult> Register(UserRegistration user)
+    public async Task<int> Register(UserRegistration user)
     {
         int success = await _authContext.CreateUser(user);
 
@@ -203,7 +204,8 @@ public class AuthController : ControllerBase
 
         await _emailService.SendRegistrationEmailAsync(registeredUser.EMAIL!, registeredUser.FIRST_NAME!, resetLink);
 
-        return Ok();
+        //return Ok();
+        return success;
     }
 
     /// <summary>
@@ -224,14 +226,12 @@ public class AuthController : ControllerBase
         {
             return BadRequest(ModelState);
         }
-        
-        //Console.WriteLine(userLoginAttempt);
+
         var user = await _authContext.GetUserByEmail(userLoginAttempt.EMAIL!);
 
-        Console.WriteLine(user);
         if (user == null || userLoginAttempt.PASSWORD == null)
         {
-            ErrorMessage errorMessage = new ErrorMessage() { Message = "Invalid login."};
+            ErrorMessage errorMessage = new ErrorMessage() { Message = "Invalid login." };
             return BadRequest(errorMessage);
         }
 
@@ -239,7 +239,7 @@ public class AuthController : ControllerBase
 
         if (passwordHasher.VerifyHashedPassword(user, user.PASSWORD!, userLoginAttempt.PASSWORD) == PasswordVerificationResult.Failed)
         {
-            ErrorMessage errorMessage = new ErrorMessage() { Message = "Invalid login."};
+            ErrorMessage errorMessage = new ErrorMessage() { Message = "Invalid login." };
             return BadRequest(errorMessage);
         }
 

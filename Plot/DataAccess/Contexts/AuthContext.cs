@@ -34,6 +34,7 @@ public class AuthContext : DbContext, IAuthContext
 
     public async Task<int> CreateUser(UserRegistration user)
     {
+        Console.WriteLine("In CreateUser in AuthContext");
         int oneTimePassword = RandomNumberGenerator.GetInt32(oneTimePasswordSizeLowerBound, oneTimePasswordSizeUpperBound);
         PasswordHasher<UserRegistration> hasher = new();
         string oneTimePasswordHash = hasher.HashPassword(user, oneTimePassword.ToString());
@@ -45,7 +46,15 @@ public class AuthContext : DbContext, IAuthContext
         parameters.Add("PASSWORD", oneTimePasswordHash);
         parameters.Add("ROLE_NAME", user.ROLE_NAME);
 
-        return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_User", parameters);
+        // int result = await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_User", parameters);
+        int result = await GetFirstOrDefaultStoredProcedureQuery<int>("Insert_User_2", parameters);
+
+        Console.WriteLine($"CreateUser returned: {result}");
+
+        return result;
+
+        //return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_User", parameters);
+        
         // try
         // {
         //     var connection = GetConnection();
