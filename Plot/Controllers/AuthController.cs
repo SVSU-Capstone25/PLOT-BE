@@ -294,7 +294,6 @@ public class AuthController : ControllerBase
     {
         string? authHeader = HttpContext.Request.Headers["Authorization"];
 
-        Console.WriteLine(authHeader);
 
         if (string.IsNullOrEmpty(authHeader))
         {
@@ -305,7 +304,6 @@ public class AuthController : ControllerBase
 
         var userEmail = _tokenService.ValidateAuthToken(token);
 
-        Console.WriteLine(userEmail);
 
         var user = await _authContext.GetUserByEmail(userEmail!);
 
