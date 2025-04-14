@@ -77,15 +77,12 @@ public class UserContext : DbContext, IUserContext
 
         rowsAffected = await CreateUpdateDeleteStoredProcedureQuery("Delete_All_Access", parameters);
 
-        if (rowsAffected != 0)
+        foreach (int store in updateAccessList.STORE_TUIDS)
         {
-            foreach (int store in updateAccessList.STORE_TUIDS)
-            {
-                parameters = new DynamicParameters();
-                parameters.Add("USER_TUID", updateAccessList.USER_TUID);
-                parameters.Add("STORE_TUID", store); 
-                rowsAffected += await CreateUpdateDeleteStoredProcedureQuery("Insert_Access", parameters);
-            }
+            parameters = new DynamicParameters();
+            parameters.Add("USER_TUID", updateAccessList.USER_TUID);
+            parameters.Add("STORE_TUID", store); 
+            rowsAffected += await CreateUpdateDeleteStoredProcedureQuery("Insert_Access", parameters);
         }
 
         return rowsAffected;
