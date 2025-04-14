@@ -32,8 +32,16 @@ public class SalesContext : DbContext, ISalesContext
     public Task<int> UploadSales(int floorsetId, IFormFile excelFile)
     {
         //Need to come back to this with more eyes
-        
-        
+
+
         throw new NotImplementedException();
+    }
+
+    public async Task<IEnumerable<AllocationFufillments>?> GetAllocationFufillments(int floorsetId)
+    {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("FLOORSET_TUID", floorsetId);
+
+        return await GetStoredProcedureQuery<AllocationFufillments>("Select_Allocation_Fufillments", parameters);
     }
 }
