@@ -89,6 +89,7 @@ public class TokenService
         }
     }
 
+
     public string GenerateAuthToken(User user)
     {
         ClaimsIdentity authClaimsIdentity = new ClaimsIdentity(
@@ -101,6 +102,7 @@ public class TokenService
         return GenerateToken(user, authClaimsIdentity, _authSecretKey, _authExpirationTime);
     }   
 
+
     public string GeneratePasswordResetToken(User user)
     {
         ClaimsIdentity passwordResetClaimsIdentity = new ClaimsIdentity(
@@ -111,13 +113,17 @@ public class TokenService
         return GenerateToken(user, passwordResetClaimsIdentity, _passwordResetSecretKey, _passwordResetExpirationTime);
     }   
 
+
     public string? ValidateAuthToken(string token)
     {
-       return ValidateToken(token, _authSecretKey);}
+       return ValidateToken(token, _authSecretKey);
+    }
+
 
     public string? ValidatePasswordResetToken(string token)
     {
-       return ValidateToken(token, _passwordResetSecretKey);}
+       return ValidateToken(token, _passwordResetSecretKey);
+    }
 
     
     // public string GenerateToken(User user)
