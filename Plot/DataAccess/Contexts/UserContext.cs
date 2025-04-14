@@ -46,6 +46,14 @@ public class UserContext : DbContext, IUserContext
         return await GetStoredProcedureQuery<Store>("Select_Users_Store_Access", parameters);
     }
 
+        public async Task<IEnumerable<Store>?> GetStoresNotForUser(int userid)
+    {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("USER_TUID", userid);
+
+        return await GetStoredProcedureQuery<Store>("Select_Unassigned_User_Stores", parameters);
+    }
+
     public async Task<int> UpdateUserPublicInfo(int userId, UpdatePublicInfoUser user)
     {
         DynamicParameters parameters = new DynamicParameters();
