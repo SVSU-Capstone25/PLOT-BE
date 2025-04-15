@@ -69,6 +69,8 @@ public class StoreContext : DbContext, IStoreContext
         parameters.Add("CITY", updateStore.CITY);
         parameters.Add("STATE", updateStore.STATE);
         parameters.Add("ZIP", updateStore.ZIP);
+        parameters.Add("LENGTH", updateStore.LENGTH);
+        parameters.Add("WIDTH", updateStore.WIDTH);
         parameters.Add("BLUEPRINT_IMAGE", updateStore.BLUEPRINT_IMAGE);
 
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Store", parameters);
