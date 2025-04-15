@@ -41,17 +41,17 @@ public class FixtureContext : DbContext, IFixtureContext
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Floorset_Fixture", parameters);
     }
 
-    public async Task<int> CreateFixtureModel(CreateFixtureModel fixtureModel)
+    public async Task<int> CreateFixtureModel(int storeId, CreateFixtureModel fixtureModel)
     {
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("NAME", fixtureModel.NAME);
         parameters.Add("WIDTH", fixtureModel.WIDTH);
         parameters.Add("LENGTH", fixtureModel.LENGTH);
-        parameters.Add("LF_CAP", fixtureModel.LF_CAP);
         parameters.Add("ICON", fixtureModel.ICON);
-        parameters.Add("STORE_TUID", fixtureModel.STORE_TUID);
+        parameters.Add("LF_CAP", fixtureModel.LF_CAP);
+        parameters.Add("STORE_TUID", storeId);
 
-        return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Fixture", parameters);
+        return await CreateUpdateDeleteStoredProcedureQuery("Insert_Fixture", parameters);
     }
 
     public async Task<int> DeleteFixtureInstanceById(int fixtureInstanceId)

@@ -151,12 +151,12 @@ public class FixturesController : ControllerBase
     /// <param name="fixtureModel"></param>
     /// <returns></returns>
     [Authorize(Policy = "Manager")]
-    [HttpPost("create-fixture-model")]
+    [HttpPost("create-fixture-model/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> CreateModel([FromBody] CreateFixtureModel fixtureModel)
+    public async Task<ActionResult> CreateModel(int storeId, [FromBody] CreateFixtureModel fixtureModel)
     {
-        return Ok(await _fixtureContext.CreateFixtureModel(fixtureModel));
+        return Ok(await _fixtureContext.CreateFixtureModel(storeId, fixtureModel));
     }
 
     [Authorize(Policy = "Manager")]
