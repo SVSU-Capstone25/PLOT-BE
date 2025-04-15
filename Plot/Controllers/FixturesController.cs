@@ -51,11 +51,6 @@ public class FixturesController : ControllerBase
     {
         var fixtures = await _fixtureContext.GetFixtureInstances(floorsetId);
 
-        foreach (var fixture in fixtures)
-        {
-            Console.WriteLine(fixture.NAME);
-        }
-
         if (fixtures == null)
         {
             return BadRequest();

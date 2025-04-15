@@ -17,5 +17,5 @@ public record AllocationFulfillments
     public required string SUPERCATEGORY_NAME { get; set; }
     public required string SUPERCATEGORY_COLOR { get; set; }
     public required int TOTAL_SALES { get; set; }
-    public int? SUPERCATEGORY_TUID { get; set; }
+    public required int SUPERCATEGORY_TUID { get; set; }
 }
