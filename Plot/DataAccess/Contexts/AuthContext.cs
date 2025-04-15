@@ -50,23 +50,27 @@ public class AuthContext : DbContext, IAuthContext
 
     public async Task<User?> GetUserByEmail(string email)
     {
-        try
-        {
-            using SqlConnection connection = GetConnection();
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("EMAIL", email);
 
-            var GetUserByEmailSQL = "SELECT TUID, FIRST_NAME, LAST_NAME, EMAIL, " +
-                                    "PASSWORD, (SELECT NAME FROM Roles WHERE TUID = ROLE_TUID) AS 'ROLE', ACTIVE " +
-                                    "FROM Users " +
-                                    "WHERE EMAIL = @EMAIL";
-            object GetUserByEmailParameters = new { EMAIL = email };
+        return await GetFirstOrDefaultStoredProcedureQuery<User>("Select_User_Login", parameters);
+        // try
+        // {
+        //     using SqlConnection connection = GetConnection();
 
-            return await connection.QuerySingleOrDefaultAsync<User>(GetUserByEmailSQL, GetUserByEmailParameters);
-        }
-        catch (SqlException exception)
-        {
-            Console.WriteLine("Database connection failed: ", exception.Message);
-            return null;
-        }
+        //     var GetUserByEmailSQL = "SELECT TUID, FIRST_NAME, LAST_NAME, EMAIL, " +
+        //                             "PASSWORD, (SELECT NAME FROM Roles WHERE TUID = ROLE_TUID) AS 'ROLE', ACTIVE " +
+        //                             "FROM Users " +
+        //                             "WHERE EMAIL = @EMAIL";
+        //     object GetUserByEmailParameters = new { EMAIL = email };
+
+        //     return await connection.QuerySingleOrDefaultAsync<User>(GetUserByEmailSQL, GetUserByEmailParameters);
+        // }
+        // catch (SqlException exception)
+        // {
+        //     Console.WriteLine("Database connection failed: ", exception.Message);
+        //     return null;
+        // }
     }
 
     public async Task<int> UpdatePassword(LoginRequest user)
