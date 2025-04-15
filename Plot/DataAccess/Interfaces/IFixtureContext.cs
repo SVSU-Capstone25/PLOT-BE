@@ -13,6 +13,7 @@
     Written by: Jordan Houlihan
 */
 
+using System.Net;
 using Plot.Data.Models.Fixtures;
 
 namespace Plot.DataAccess.Interfaces;

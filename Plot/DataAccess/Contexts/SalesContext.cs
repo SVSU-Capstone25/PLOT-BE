@@ -37,11 +37,11 @@ public class SalesContext : DbContext, ISalesContext
         throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<AllocationFufillments>?> GetAllocationFufillments(int floorsetId)
+    public async Task<IEnumerable<AllocationFulfillments>?> GetAllocationFulfillments(int floorsetId)
     {
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("FLOORSET_TUID", floorsetId);
 
-        return await GetStoredProcedureQuery<AllocationFufillments>("Select_Allocation_Fufillments", parameters);
+        return await GetStoredProcedureQuery<AllocationFulfillments>("Select_Allocation_Fulfillments", parameters);
     }
 }
