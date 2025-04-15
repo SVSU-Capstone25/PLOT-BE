@@ -83,13 +83,13 @@ public class SalesController : ControllerBase
     /// data for the allocation sidebar
     /// </summary>
     /// <param name="floorsetId">The id of the floorset</param>
-    /// <returns>A list of allocation fufillments.</returns>
-    [HttpGet("allocation-fufillments/{floorsetId:int}")]
+    /// <returns>A list of allocation fulfillments.</returns>
+    [HttpGet("allocation-fulfillments/{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<AllocationFufillments>>> GetAllocationFufillments(int floorsetId)
+    public async Task<ActionResult<IEnumerable<AllocationFulfillments>>> GetAllocationFulfillments(int floorsetId)
     {
-        return Ok(await _salesContext.GetAllocationFufillments(floorsetId));
+        return Ok(await _salesContext.GetAllocationFulfillments(floorsetId));
     }
 }

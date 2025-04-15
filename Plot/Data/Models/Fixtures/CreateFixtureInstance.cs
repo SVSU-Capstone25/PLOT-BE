@@ -22,9 +22,8 @@ public record CreateFixtureInstance
     public int? FLOORSET_TUID { get; set; }
     public int? X_POS { get; set; }
     public int? Y_POS { get; set; }
-    public int? ALLOCATED_LF { get; set; }
-    public int? HANGER_STACK { get; set; }
-    public int? TOT_LF { get; set; }
+    public required int ALLOCATED_LF { get; set; }
+    public required int HANGER_STACK { get; set; }
     public int? SUPERCATEGORY_TUID { get; set; }
     public string? SUBCATEGORY { get; set; }
     public int? EDITOR_ID { get; set; }
