@@ -69,16 +69,18 @@ public class StoreContext : DbContext, IStoreContext
         parameters.Add("CITY", updateStore.CITY);
         parameters.Add("STATE", updateStore.STATE);
         parameters.Add("ZIP", updateStore.ZIP);
+        parameters.Add("WIDTH", updateStore.WIDTH);
+        parameters.Add("LENGTH", updateStore.LENGTH);
         parameters.Add("BLUEPRINT_IMAGE", updateStore.BLUEPRINT_IMAGE);
 
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Store", parameters);
     }
-    public async Task<int> UpdateSizeStore(int storeId, UpdateSizeStore updatestore)
+    public async Task<int> UpdateSizeStore(int storeId, UpdateSizeStore updateStore)
     {
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("TUID", storeId);
-        parameters.Add("WIDTH", updatestore.WIDTH);
-        parameters.Add("LENGTH", updatestore.LENGTH);
+        parameters.Add("WIDTH", updateStore.WIDTH);
+        parameters.Add("LENGTH", updateStore.LENGTH);
 
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Store", parameters);
     }

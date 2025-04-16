@@ -285,6 +285,40 @@ public class AuthController : ControllerBase
         return Ok();
     }
 
+    [Authorize]
+    [HttpGet("get-current-user")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<UserDTO?>> GetCurrentUser()
+    {
+        string? authHeader = HttpContext.Request.Headers["Authorization"];
+
+
+        if (string.IsNullOrEmpty(authHeader))
+        {
+            return BadRequest();
+        }
+        
+        string token = authHeader.Substring("Bearer ".Length).Trim();
+
+        var userEmail = _tokenService.ValidateAuthToken(token);
+
+
+        var user = await _authContext.GetUserByEmail(userEmail!);
+
+        UserDTO userDTO = new UserDTO()
+        {
+            TUID=user?.TUID,
+            FIRST_NAME=user?.FIRST_NAME,
+            LAST_NAME=user?.LAST_NAME,
+            EMAIL=user?.EMAIL,
+            ROLE=user?.ROLE
+        };
+
+        return Ok(userDTO);
+    }
+
     [HttpPost("data-test")]
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]

@@ -59,7 +59,7 @@ public class SalesController : ControllerBase
         List<CreateFixtureAllocations> allocations = [];
 
         foreach (var row in rows)
-        {   
+        {
             if (string.IsNullOrEmpty(row.Cell(1).Value.ToString()) && string.IsNullOrEmpty(row.Cell(2).Value.ToString()))
             {
                 var categorySubCategoryNames = row.Cell(3).Value.ToString().Split(' ', 2);
@@ -76,5 +76,20 @@ public class SalesController : ControllerBase
         }
 
         return Ok();
+    }
+
+    /// <summary>
+    /// This endpoint deals with retreiving allocation 
+    /// data for the allocation sidebar
+    /// </summary>
+    /// <param name="floorsetId">The id of the floorset</param>
+    /// <returns>A list of allocation fulfillments.</returns>
+    [HttpGet("allocation-fulfillments/{floorsetId:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<AllocationFulfillments>>> GetAllocationFulfillments(int floorsetId)
+    {
+        return Ok(await _salesContext.GetAllocationFulfillments(floorsetId));
     }
 }

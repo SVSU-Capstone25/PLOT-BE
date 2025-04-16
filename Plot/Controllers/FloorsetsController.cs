@@ -91,7 +91,6 @@ public class FloorsetsController : ControllerBase
             return BadRequest();
         }
 
-        Console.WriteLine(floorset);
         
         int rowsAffected = await _floorsetContext.UpdateFloorsetById(floorsetId, floorset);
 
