@@ -121,4 +121,24 @@ public class FixtureContext : DbContext, IFixtureContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Fixture", parameters);
     }
+
+    public async Task<int> AddEmployeeAreas(AddEmployeeAreaModel employeeAreaModel)
+    {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("FLOORSET_TUID", employeeAreaModel.FLOORSET_TUID);
+        parameters.Add("X_POS", employeeAreaModel.X_POS);
+        parameters.Add("Y_POS", employeeAreaModel.Y_POS);
+
+        return await CreateUpdateDeleteStoredProcedureQuery("Insert_Employee_Area", parameters);
+    }
+
+    public async Task<int> DeleteEmployeeAreas(DeleteEmployeeAreaModel employeeAreaModel)
+    {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("FLOORSET_TUID", employeeAreaModel.FLOORSET_TUID);
+        parameters.Add("X_POS", employeeAreaModel.X_POS);
+        parameters.Add("Y_POS", employeeAreaModel.Y_POS);
+
+        return await CreateUpdateDeleteStoredProcedureQuery("Delete_Employee_Area", parameters);
+    }
 }
