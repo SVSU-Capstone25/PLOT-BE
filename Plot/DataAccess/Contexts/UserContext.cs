@@ -46,6 +46,14 @@ public class UserContext : DbContext, IUserContext
         return await GetStoredProcedureQuery<Store>("Select_Users_Store_Access", parameters);
     }
 
+        public async Task<IEnumerable<Store>?> GetStoresNotForUser(int userid)
+    {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("USER_TUID", userid);
+
+        return await GetStoredProcedureQuery<Store>("Select_Unassigned_User_Stores", parameters);
+    }
+
     public async Task<int> UpdateUserPublicInfo(int userId, UpdatePublicInfoUser user)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -77,15 +85,12 @@ public class UserContext : DbContext, IUserContext
 
         rowsAffected = await CreateUpdateDeleteStoredProcedureQuery("Delete_All_Access", parameters);
 
-        if (rowsAffected != 0)
+        foreach (int store in updateAccessList.STORE_TUIDS)
         {
-            foreach (int store in updateAccessList.STORE_TUIDS)
-            {
-                parameters = new DynamicParameters();
-                parameters.Add("USER_TUID", updateAccessList.USER_TUID);
-                parameters.Add("STORE_TUID", store); 
-                rowsAffected += await CreateUpdateDeleteStoredProcedureQuery("Insert_Access", parameters);
-            }
+            parameters = new DynamicParameters();
+            parameters.Add("USER_TUID", updateAccessList.USER_TUID);
+            parameters.Add("STORE_TUID", store); 
+            rowsAffected += await CreateUpdateDeleteStoredProcedureQuery("Insert_Access", parameters);
         }
 
         return rowsAffected;
