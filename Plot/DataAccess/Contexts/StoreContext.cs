@@ -72,6 +72,7 @@ public class StoreContext : DbContext, IStoreContext
         parameters.Add("WIDTH", updateStore.WIDTH);
         parameters.Add("LENGTH", updateStore.LENGTH);
         parameters.Add("BLUEPRINT_IMAGE", updateStore.BLUEPRINT_IMAGE);
+        parameters.Add("USER_TUIDS", updateStore.USER_TUIDS);
 
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Store", parameters);
     }
