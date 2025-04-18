@@ -43,7 +43,7 @@ public class UserContext : DbContext, IUserContext
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("EMAIL", userEmail);
 
-        var response = await GetFirstOrDefaultStoredProcedureQuery<UserDTO>("Select_User_By_Email", parameters);
+        var response = await GetFirstOrDefaultStoredProcedureQuery<UserDTO>("Select_User_Login", parameters);
 
         Console.WriteLine("In user context response is " + response);
 
@@ -99,6 +99,7 @@ public class UserContext : DbContext, IUserContext
 
         foreach (int store in updateAccessList.STORE_TUIDS)
         {
+            Console.WriteLine("In the user context " + store);
             parameters = new DynamicParameters();
             parameters.Add("USER_TUID", updateAccessList.USER_TUID);
             parameters.Add("STORE_TUID", store); 
