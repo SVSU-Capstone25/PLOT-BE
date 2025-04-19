@@ -132,6 +132,32 @@ public class FixtureContext : DbContext, IFixtureContext
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Employee_Area", parameters);
     }
 
+    public async Task<int> BulkAddEmployeeAreas(BulkAddEmployeeAreaModel employeeAreaModel)
+    {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("FLOORSET_TUID", employeeAreaModel.FLOORSET_TUID);
+
+        parameters.Add("X1_POS", employeeAreaModel.X1_POS);
+        parameters.Add("Y1_POS", employeeAreaModel.Y1_POS);
+        parameters.Add("X2_POS", employeeAreaModel.X2_POS);
+        parameters.Add("Y2_POS", employeeAreaModel.Y2_POS);
+
+        return await CreateUpdateDeleteStoredProcedureQuery("Bulk_Insert_Employee_Area", parameters);
+    }
+
+    public async Task<int> BulkDeleteEmployeeAreas(BulkDeleteEmployeeAreaModel employeeAreaModel)
+    {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("FLOORSET_TUID", employeeAreaModel.FLOORSET_TUID);
+
+        parameters.Add("X1_POS", employeeAreaModel.X1_POS);
+        parameters.Add("Y1_POS", employeeAreaModel.Y1_POS);
+        parameters.Add("X2_POS", employeeAreaModel.X2_POS);
+        parameters.Add("Y2_POS", employeeAreaModel.Y2_POS);
+
+        return await CreateUpdateDeleteStoredProcedureQuery("Bulk_Delete_Employee_Area", parameters);
+    }
+
     public async Task<int> DeleteEmployeeAreas(DeleteEmployeeAreaModel employeeAreaModel)
     {
         DynamicParameters parameters = new DynamicParameters();

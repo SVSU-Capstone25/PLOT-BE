@@ -197,6 +197,20 @@ public class FixturesController : ControllerBase
     }
 
     [Authorize(Policy = "Manager")]
+    [HttpPost("bulk-add-employee-areas")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> BulkAddEmployeeAreas([FromBody] BulkAddEmployeeAreaModel employeeAreas)
+    {
+        if (!ModelState.IsValid) return BadRequest();
+
+        await _fixtureContext.BulkAddEmployeeAreas(employeeAreas);
+
+        return Ok();
+    }
+
+    [Authorize(Policy = "Manager")]
     [HttpDelete("delete-employee-areas")]
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -209,6 +223,20 @@ public class FixturesController : ControllerBase
         {
             await _fixtureContext.DeleteEmployeeAreas(employeeArea);
         }
+
+        return Ok();
+    }
+
+    [Authorize(Policy = "Manager")]
+    [HttpDelete("bulk-delete-employee-areas")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> BulkDeleteEmployeeAreas([FromBody] BulkDeleteEmployeeAreaModel employeeAreas)
+    {
+        if (!ModelState.IsValid) return BadRequest();
+
+        await _fixtureContext.BulkDeleteEmployeeAreas(employeeAreas);
 
         return Ok();
     }
