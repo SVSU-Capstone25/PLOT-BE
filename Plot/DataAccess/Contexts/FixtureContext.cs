@@ -141,4 +141,12 @@ public class FixtureContext : DbContext, IFixtureContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Delete_Employee_Area", parameters);
     }
+
+    public async Task<IEnumerable<EmployeeAreaModel>?> GetEmployeeAreas(int floorsetId)
+    {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("FLOORSET_TUID", floorsetId);
+
+        return await GetStoredProcedureQuery<EmployeeAreaModel>("Select_Employee_Area", parameters);
+    }
 }

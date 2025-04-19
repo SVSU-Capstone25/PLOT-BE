@@ -30,4 +30,5 @@ public interface IFixtureContext
     Task<int> DeleteFixtureInstanceById(int fixtureInstanceId);
     Task<int> AddEmployeeAreas(AddEmployeeAreaModel employeeAreas);
     Task<int> DeleteEmployeeAreas(DeleteEmployeeAreaModel employeeAreas);
+    Task<IEnumerable<EmployeeAreaModel>?> GetEmployeeAreas(int floorsetId);
 }

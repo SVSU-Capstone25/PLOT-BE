@@ -212,4 +212,22 @@ public class FixturesController : ControllerBase
 
         return Ok();
     }
+
+    [Authorize(Policy = "Employee")]
+    [HttpGet("get-employee-areas/{floorsetId:int}")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<IEnumerable<EmployeeAreaModel>>> GetAllEmployeeAreas(int floorsetId)
+    {
+        Console.WriteLine("Get employee areas");
+        var employeeAreas = await _fixtureContext.GetEmployeeAreas(floorsetId);
+
+        if (employeeAreas == null)
+        {
+            return BadRequest();
+        }
+
+        return Ok(employeeAreas);
+    }
 }
