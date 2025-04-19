@@ -26,19 +26,16 @@ builder.Services.AddScoped<EnvironmentSettings>();
 
 builder.WebHost.UseUrls(envSettings.issuer);
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
-// Add CORS configuration
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.WithOrigins("http://frontend:8080", "http://localhost:8080") // Add your actual frontend URL(s)
-                                .AllowAnyHeader()
-                                .AllowAnyMethod()
-                                .AllowCredentials();
-                      });
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .SetIsOriginAllowed(origin => true)
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
+    });
 });
 
 // Add services to the container.
@@ -108,7 +105,7 @@ app.Use(async (context, next) =>
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseCors(MyAllowSpecificOrigins);
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapHealthChecks("/health");
