@@ -56,21 +56,21 @@ public class FloorsetsController : ControllerBase
     [HttpPost("create-floorset")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> Create([FromBody] CreateFloorset floorset)
+    public async Task<ActionResult<int>> Create([FromBody] CreateFloorset floorset)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest();
         }
 
-        int rowsAffected = await _floorsetContext.CreateFloorset(floorset);
+        int newFloorsetTUID = await _floorsetContext.CreateFloorset(floorset);
 
-        if (rowsAffected == 0)
+        if (newFloorsetTUID == 0)
         {
             return BadRequest();
         }
 
-        return Ok();
+        return Ok(newFloorsetTUID);
     }
 
     /// <summary>
