@@ -38,6 +38,14 @@ public class UserContext : DbContext, IUserContext
         return await GetFirstOrDefaultStoredProcedureQuery<UserDTO>("Select_Users", parameters);
     }
 
+    public async Task<UserDTO?> GetUserByEmail(string userEmail)
+    {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("EMAIL", userEmail);
+
+        return await GetFirstOrDefaultStoredProcedureQuery<UserDTO>("Select_User_Login", parameters);
+    }
+
     public async Task<IEnumerable<Store>?> GetStoresForUser(int userid)
     {
         DynamicParameters parameters = new DynamicParameters();
