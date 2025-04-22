@@ -38,7 +38,7 @@ public class FixtureContext : DbContext, IFixtureContext
         parameters.Add("SUBCATEGORY", fixtureInstance.SUBCATEGORY);
         parameters.Add("NOTE", fixtureInstance.NOTE);
 
-        return await CreateUpdateDeleteStoredProcedureQuery("Insert_Floorset_Fixture", parameters);
+        return await GetFirstOrDefaultStoredProcedureQuery<int>("Insert_Floorset_Fixture", parameters);
     }
 
     public async Task<int> CreateFixtureModel(int storeId, CreateFixtureModel fixtureModel)
