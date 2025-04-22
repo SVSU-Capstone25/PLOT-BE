@@ -40,11 +40,11 @@ public record UpdatePublicInfoStore
     public required string ZIP { get; set; }
 
     [Required]
-    [Range(int.MinValue, int.MaxValue, ErrorMessage = "Width must be an integer.")]
+    [Range(1, int.MaxValue, ErrorMessage = "Width must be an integer.")]
     public int WIDTH { get; set; }
 
     [Required]
-    [Range(int.MinValue, int.MaxValue, ErrorMessage = "Length must be an integer.")]
+    [Range(1, int.MaxValue, ErrorMessage = "Length must be an integer.")]
     public int LENGTH { get; set; }
 
     public required string USER_TUIDS { get; set; }

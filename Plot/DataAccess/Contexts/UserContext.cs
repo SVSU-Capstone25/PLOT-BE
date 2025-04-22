@@ -69,8 +69,8 @@ public class UserContext : DbContext, IUserContext
         parameters.Add("FIRST_NAME", user.FIRST_NAME);
         parameters.Add("LAST_NAME", user.LAST_NAME);
         parameters.Add("EMAIL", user.EMAIL);
-        parameters.Add("ROLE_NAME", user.ROLE_NAME);   
-     
+        parameters.Add("ROLE_NAME", user.ROLE_NAME);
+
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_User", parameters);
     }
 
@@ -82,7 +82,7 @@ public class UserContext : DbContext, IUserContext
         return await CreateUpdateDeleteStoredProcedureQuery("Delete_User", parameters);
     }
 
-    
+
     public async Task<int> UpdateAccessList(UpdateAccessList updateAccessList)
     {
 
@@ -109,7 +109,7 @@ public class UserContext : DbContext, IUserContext
 
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("USER_TUID", accessModel.USER_TUID);
-        parameters.Add("STORE_TUID", accessModel.STORE_TUID); 
+        parameters.Add("STORE_TUID", accessModel.STORE_TUID);
         int rowsAffected = await CreateUpdateDeleteStoredProcedureQuery("Insert_Access", parameters);
 
         return rowsAffected;
@@ -119,10 +119,18 @@ public class UserContext : DbContext, IUserContext
     {
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("USER_TUID", accessModel.USER_TUID);
-        parameters.Add("STORE_TUID", accessModel.STORE_TUID); 
+        parameters.Add("STORE_TUID", accessModel.STORE_TUID);
         int rowsAffected = await CreateUpdateDeleteStoredProcedureQuery("Delete_Access", parameters);
 
         return rowsAffected;
     }
-    
+
+    public async Task<IEnumerable<UserDTO>?> GetUsersByString(UsersByStringRequest usersByStringRequest)
+    {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("TUIDS", usersByStringRequest.TUIDS);
+
+        return await GetStoredProcedureQuery<UserDTO>("Select_Users_By_String", parameters);
+    }
+
 }

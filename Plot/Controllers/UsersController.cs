@@ -44,7 +44,7 @@ public class UsersController : ControllerBase
     {
         var users = await _userContext.GetUsers();
 
-        if (users == null) 
+        if (users == null)
         {
             BadRequest();
         }
@@ -98,7 +98,7 @@ public class UsersController : ControllerBase
 
         int rowsAffected = await _userContext.UpdateUserPublicInfo(userId, user);
 
-        if (rowsAffected == 0) 
+        if (rowsAffected == 0)
         {
             return NotFound();
         }
@@ -230,7 +230,7 @@ public class UsersController : ControllerBase
         {
             return BadRequest(ModelState);
         }
-        
+
         int rowsAffected = await _userContext.DeleteUserFromStore(accessModel);
 
         if (rowsAffected == 0)
@@ -311,5 +311,30 @@ public class UsersController : ControllerBase
         }
 
         return Ok(userDTO);
+    }
+
+    /// <summary>
+    /// TODO
+    /// </summary>
+    /// <returns>Array of userDTO objects</returns>
+    [Authorize]
+    [HttpPost("get-users-by-string")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsersByString([FromBody] UsersByStringRequest usersByStringRequest)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var users = await _userContext.GetUsersByString(usersByStringRequest);
+
+        if (users == null)
+        {
+            BadRequest();
+        }
+
+        return Ok(users);
     }
 }

@@ -28,4 +28,9 @@ public interface IFixtureContext
     Task<int> UpdateFixtureInstanceById(UpdateFixtureInstance fixtureInstance);
     Task<int> DeleteFixtureModelById(int fixtureModelId);
     Task<int> DeleteFixtureInstanceById(int fixtureInstanceId);
+    Task<int> AddEmployeeAreas(AddEmployeeAreaModel employeeAreas);
+    Task<int> BulkAddEmployeeAreas(BulkAddEmployeeAreaModel employeeAreas);
+    Task<int> DeleteEmployeeAreas(DeleteEmployeeAreaModel employeeAreas);
+    Task<int> BulkDeleteEmployeeAreas(BulkDeleteEmployeeAreaModel employeeAreas);
+    Task<IEnumerable<EmployeeAreaModel>?> GetEmployeeAreas(int floorsetId);
 }

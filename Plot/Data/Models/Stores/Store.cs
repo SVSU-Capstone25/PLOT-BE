@@ -43,11 +43,11 @@ public class Store
     public required string ZIP { get; set; }
 
     [Required]
-    [Range(int.MinValue, int.MaxValue, ErrorMessage = "Width must be an integer.")]
+    [Range(1, int.MaxValue, ErrorMessage = "Width must be an integer.")]
     public int WIDTH { get; set; }
 
     [Required]
-    [Range(int.MinValue, int.MaxValue, ErrorMessage = "Length must be an integer.")]
+    [Range(1, int.MaxValue, ErrorMessage = "Length must be an integer.")]
     public int LENGTH { get; set; }
     public byte[]? BLUEPRINT_IMAGE { get; set; }
 }

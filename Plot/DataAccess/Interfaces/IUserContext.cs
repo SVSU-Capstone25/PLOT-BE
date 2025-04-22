@@ -30,4 +30,6 @@ public interface IUserContext
     Task<IEnumerable<Store>?> GetStoresNotForUser(int userid);
     Task<int> AddUserToStore(AccessModel accessModel);
     Task<int> UpdateAccessList(UpdateAccessList updateAccessList);
+    Task<IEnumerable<UserDTO>?> GetUsersByString(UsersByStringRequest usersByStringRequest);
+
 }
