@@ -36,22 +36,21 @@ public class SalesController : ControllerBase
     /// for an excel file.
     /// </summary>
     /// <param name="floorsetId">The floorset id</param>
-    /// <param name="excelFile">The excel file</param>
+    /// <param name="file">The excel file</param>
     /// <returns></returns>
     [Authorize(Policy = "Manager")]
     [HttpPost("upload-sales/{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<IEnumerable<CreateFixtureAllocations>>> UploadSales(int floorsetId, [FromForm] IFormFile excelFile)
+    public async Task<ActionResult<IEnumerable<CreateFixtureAllocations>>> UploadSales(int floorsetId, [FromForm] IFormFile file)
     {
-        Console.WriteLine("BE sales");
-        if (excelFile == null)
+        if (file == null)
         {
             return BadRequest();
         }
 
         using var memoryStream = new MemoryStream();
-        await excelFile.CopyToAsync(memoryStream);
+        await file.CopyToAsync(memoryStream);
 
         using var workbook = new XLWorkbook(memoryStream);
         var worksheet = workbook.Worksheet(1);
@@ -69,25 +68,19 @@ public class SalesController : ControllerBase
                 {
                     SUPERCATEGORY = categorySubCategoryNames[0],
                     SUBCATEGORY = categorySubCategoryNames[1],
-                    UNITS = string.IsNullOrEmpty(row.Cell(6).Value.ToString()) ? 0 : int.Parse(row.Cell(6).Value.ToString())
+                    TOTAL_SALES = string.IsNullOrEmpty(row.Cell(5).Value.ToString()) ? 0 : double.Parse(row.Cell(5).Value.ToString())
                 };
 
                 allocations.Add(allocation);
-
-                
-
-
             }
-
-            
         }
 
-        // foreach (var allocation in allocations)
-        //         {
-        //             Console.WriteLine(allocation.ToString());
-        //         }
+        var rowsAffected = await _salesContext.UploadSales(floorsetId,allocations);
 
-        var stores = await _salesContext.UploadSales(floorsetId,allocations);
+        if (rowsAffected == 0)
+        {
+            return BadRequest();
+        }
 
         return Ok();
     }

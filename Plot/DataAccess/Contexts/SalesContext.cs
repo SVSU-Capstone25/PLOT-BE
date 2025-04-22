@@ -33,27 +33,17 @@ public class SalesContext : DbContext, ISalesContext
     public async Task<int> UploadSales(int salesTuid, List<CreateFixtureAllocations> allocations)
     {
         
-
-        // parameters.Add("category", newAllocations.SUPERCATEGORY);
-        // parameters.Add("subCategory", newAllocations.SUBCATEGORY);
-        // parameters.Add("units", newAllocations.UNITS);
-
         var inputJson = JsonSerializer.Serialize(allocations.Select(a => new
         {
             category = a.SUPERCATEGORY,
             subCategory = a.SUBCATEGORY,
-            units = a.UNITS
+            units = a.TOTAL_SALES
         }));
 
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("SALES_TUID", salesTuid);
         parameters.Add("INPUT", inputJson);
-        
-
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Sales_Allocations", parameters);
-
-
-        
     }
 
     public async Task<IEnumerable<AllocationFulfillments>?> GetAllocationFulfillments(int floorsetId)
