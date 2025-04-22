@@ -90,6 +90,8 @@ public class FixturesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> UpdateFixtureInstance([FromBody] UpdateFixtureInstance updateFixture)
     {
+
+        Console.WriteLine(updateFixture.TUID);
         if (!ModelState.IsValid)
         {
             return BadRequest();
@@ -114,22 +116,14 @@ public class FixturesController : ControllerBase
     [HttpPost("create-fixture-instance")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> CreateFixtureInstance([FromBody] CreateFixtureInstance newFixture)
+    public async Task<ActionResult<int>> CreateFixtureInstance([FromBody] CreateFixtureInstance newFixture)
     {
-        Console.WriteLine(newFixture);
         if (!ModelState.IsValid)
         {
             return BadRequest();
         }
 
-        int rowsAffected = await _fixtureContext.CreateFixtureInstance(newFixture);
-        Console.WriteLine(rowsAffected);
-
-        if (rowsAffected == 0)
-        {
-            return BadRequest();
-        }
-        return Ok();
+        return Ok(await _fixtureContext.CreateFixtureInstance(newFixture));
     }
 
     /// <summary>
@@ -141,7 +135,7 @@ public class FixturesController : ControllerBase
     [HttpDelete("delete-fixture-instance/{fixtureInstanceId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> DeleteFixtureInstance([FromBody] int fixtureInstanceId)
+    public async Task<ActionResult> DeleteFixtureInstance(int fixtureInstanceId)
     {
         return Ok(await _fixtureContext.DeleteFixtureInstanceById(fixtureInstanceId));
     }
