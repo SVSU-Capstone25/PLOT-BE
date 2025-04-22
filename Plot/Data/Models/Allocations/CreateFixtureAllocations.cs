@@ -16,4 +16,9 @@ public record CreateFixtureAllocations
     public string? SUPERCATEGORY { get; set; }
     public string? SUBCATEGORY {get; set;}
     public int? UNITS {get; set;}
+
+    public override string ToString()
+{
+    return $"SUPERCATEGORY: {SUPERCATEGORY}, SUBCATEGORY: {SUBCATEGORY}, UNITS: {UNITS}";
+}
 }

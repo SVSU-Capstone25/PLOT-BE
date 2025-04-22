@@ -18,6 +18,7 @@ using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Allocations;
 using Plot.DataAccess.Interfaces;
 using ClosedXML;
+using System.Text.Json;
 
 namespace Plot.DataAccess.Contexts;
 
@@ -29,12 +30,30 @@ public class SalesContext : DbContext, ISalesContext
         throw new NotImplementedException();
     }
 
-    public Task<int> UploadSales(int floorsetId, IFormFile excelFile)
+    public async Task<int> UploadSales(int salesTuid, List<CreateFixtureAllocations> allocations)
     {
-        //Need to come back to this with more eyes
+        
+
+        // parameters.Add("category", newAllocations.SUPERCATEGORY);
+        // parameters.Add("subCategory", newAllocations.SUBCATEGORY);
+        // parameters.Add("units", newAllocations.UNITS);
+
+        var inputJson = JsonSerializer.Serialize(allocations.Select(a => new
+        {
+            category = a.SUPERCATEGORY,
+            subCategory = a.SUBCATEGORY,
+            units = a.UNITS
+        }));
+
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("SALES_TUID", salesTuid);
+        parameters.Add("INPUT", inputJson);
+        
+
+        return await CreateUpdateDeleteStoredProcedureQuery("Insert_Sales_Allocations", parameters);
 
 
-        throw new NotImplementedException();
+        
     }
 
     public async Task<IEnumerable<AllocationFulfillments>?> GetAllocationFulfillments(int floorsetId)

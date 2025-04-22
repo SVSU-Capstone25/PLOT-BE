@@ -42,15 +42,16 @@ public class SalesController : ControllerBase
     [HttpPost("upload-sales/{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<IEnumerable<CreateFixtureAllocations>>> UploadSales(int floorsetId, [FromBody] UploadFile excelFile)
+    public async Task<ActionResult<IEnumerable<CreateFixtureAllocations>>> UploadSales(int floorsetId, [FromForm] IFormFile excelFile)
     {
-        if (excelFile.EXCEL_FILE == null)
+        Console.WriteLine("BE sales");
+        if (excelFile == null)
         {
             return BadRequest();
         }
 
         using var memoryStream = new MemoryStream();
-        await excelFile.EXCEL_FILE.CopyToAsync(memoryStream);
+        await excelFile.CopyToAsync(memoryStream);
 
         using var workbook = new XLWorkbook(memoryStream);
         var worksheet = workbook.Worksheet(1);
@@ -72,8 +73,21 @@ public class SalesController : ControllerBase
                 };
 
                 allocations.Add(allocation);
+
+                
+
+
             }
+
+            
         }
+
+        // foreach (var allocation in allocations)
+        //         {
+        //             Console.WriteLine(allocation.ToString());
+        //         }
+
+        var stores = await _salesContext.UploadSales(floorsetId,allocations);
 
         return Ok();
     }
