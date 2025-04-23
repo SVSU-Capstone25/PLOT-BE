@@ -47,24 +47,14 @@ public class FloorsetContext : DbContext, IFloorsetContext
             parameters.Add("MODIFIED_BY", floorset.MODIFIED_BY);
             parameters.Add("FLOORSET_IMAGE", floorset.FLOORSET_IMAGE);
 
-            string tuid = await connection.QuerySingleAsync<int>(
+            int tuid = await connection.QuerySingleAsync<int>(
                 "INSERT INTO Floorsets " + "(NAME, STORE_TUID, DATE_CREATED, CREATED_BY, DATE_MODIFIED, MODIFIED_BY, FLOORSET_IMAGE) " +
 
                 "VALUES " +
                 
                 "(@NAME, @STORE_TUID, @DATE_CREATED, @CREATED_BY, @DATE_MODIFIED, @MODIFIED_BY, @FLOORSET_IMAGE); SELECT CAST(SCOPE_IDENTITY() AS INT);", parameters);
 
-            return new Floorset
-            {
-                TUID = (int) tuid,
-                NAME = floorset.NAME,
-                STORE_TUID = floorset.STORE_TUID,
-                DATE_CREATED = floorset.DATE_CREATED,
-                CREATED_BY = floorset.CREATED_BY,
-                DATE_MODIFIED = floorset.DATE_MODIFIED,
-                MODIFIED_BY = floorset.MODIFIED_BY,
-                FLOORSET_IMAGE = floorset.FLOORSET_IMAGE
-            };
+            return tuid;
         }
         catch (SqlException exception)
         {
