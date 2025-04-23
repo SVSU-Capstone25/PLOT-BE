@@ -24,7 +24,7 @@ public interface IFixtureContext
     Task<IEnumerable<FixtureModel>?> GetFixtureModels(int StoreId);
     Task<int> CreateFixtureModel(int storeId, CreateFixtureModel fixtureModel);
     Task<int> CreateFixtureInstance(CreateFixtureInstance fixtureInstance);
-    Task<int> UpdateFixtureModelById(FixtureModel fixtureModel);
+    Task<int> UpdateFixtureModelById(int fixtureId, CreateFixtureModel fixtureModel);
     Task<int> UpdateFixtureInstanceById(UpdateFixtureInstance fixtureInstance);
     Task<int> DeleteFixtureModelById(int fixtureModelId);
     Task<int> DeleteFixtureInstanceById(int fixtureInstanceId);

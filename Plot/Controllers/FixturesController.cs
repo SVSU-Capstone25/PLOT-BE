@@ -164,12 +164,12 @@ public class FixturesController : ControllerBase
     }
 
     [Authorize(Policy = "Manager")]
-    [HttpPatch("update-fixture-model")]
+    [HttpPatch("update-fixture-model/{fixtureId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> UpdateFixtureModel([FromBody] FixtureModel update)
+    public async Task<ActionResult> UpdateFixtureModel(int fixtureId, [FromBody] CreateFixtureModel update)
     {
-        return Ok(await _fixtureContext.UpdateFixtureModelById(update));
+        return Ok(await _fixtureContext.UpdateFixtureModelById(fixtureId, update));
     }
 
     [Authorize(Policy = "Manager")]
