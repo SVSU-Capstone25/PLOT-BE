@@ -33,7 +33,7 @@ public class SalesContext : DbContext, ISalesContext
     public async Task<int> UploadSales(List<CreateFixtureAllocations> allocations, CreateExcelFileModel excelFile)
     {
         //Console.WriteLine("in Upload sales");
-        
+
         var inputJson = JsonSerializer.Serialize(allocations.Select(a => new
         {
             category = a.SUPERCATEGORY,
@@ -42,8 +42,8 @@ public class SalesContext : DbContext, ISalesContext
         }));
 
         DynamicParameters parameters = new DynamicParameters();
-        
-        
+
+
         parameters.Add("FILE_NAME", excelFile.FILE_NAME);
         parameters.Add("FILE_DATA", excelFile.FILE_DATA);
         parameters.Add("CAPTURE_DATE", excelFile.CAPTURE_DATE);
@@ -65,7 +65,7 @@ public class SalesContext : DbContext, ISalesContext
     // public async Task<int> SaveFileToDatabase(CreateExcelFileModel excelFile)
     // {
     //     Console.WriteLine(excelFile.ToString());
-        
+
     //     DynamicParameters parameters = new DynamicParameters();
     //     parameters.Add("FILE_NAME", excelFile.FILE_NAME);
     //     parameters.Add("FILE_DATA", excelFile.FILE_DATA);

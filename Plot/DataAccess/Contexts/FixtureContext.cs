@@ -38,7 +38,7 @@ public class FixtureContext : DbContext, IFixtureContext
         parameters.Add("SUBCATEGORY", fixtureInstance.SUBCATEGORY);
         parameters.Add("NOTE", fixtureInstance.NOTE);
 
-        return await CreateUpdateDeleteStoredProcedureQuery("Insert_Floorset_Fixture", parameters);
+        return await GetFirstOrDefaultStoredProcedureQuery<int>("Insert_Floorset_Fixture", parameters);
     }
 
     public async Task<int> CreateFixtureModel(int storeId, CreateFixtureModel fixtureModel)
@@ -88,10 +88,11 @@ public class FixtureContext : DbContext, IFixtureContext
 
     public async Task<int> UpdateFixtureInstanceById(UpdateFixtureInstance fixtureInstance)
     {
+        Console.WriteLine(fixtureInstance);
+
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("TUID", fixtureInstance.TUID);
         parameters.Add("FLOORSET_TUID", fixtureInstance.FLOORSET_TUID);
-        parameters.Add("FIXTURE_TUID", fixtureInstance.FIXTURE_TUID);
         parameters.Add("EDITOR_ID", fixtureInstance.EDITOR_ID);
         parameters.Add("XPOS", fixtureInstance.X_POS);//I swear to god if someone tries to change this to X_POS again I will scream
         parameters.Add("YPOS", fixtureInstance.Y_POS);// In the procedure it is XPOS and YPOS, but in the db model and schema it is X_POS and Y_POS
@@ -100,8 +101,9 @@ public class FixtureContext : DbContext, IFixtureContext
         parameters.Add("SUPERCATEGORY_TUID", fixtureInstance.SUPERCATEGORY_TUID);
         parameters.Add("SUBCATEGORY", fixtureInstance.SUBCATEGORY);
         parameters.Add("NOTE", fixtureInstance.NOTE);
+        parameters.Add("FIXTURE_IDENTIFIER", fixtureInstance.FIXTURE_IDENTIFIER);
 
-        var response = await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Floorset_Fixture", parameters);
+        var response = await CreateUpdateDeleteStoredProcedureQuery("Update_Floorset_Fixture", parameters);
 
         Console.WriteLine(response);
 

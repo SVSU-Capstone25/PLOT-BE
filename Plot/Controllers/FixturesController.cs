@@ -95,6 +95,8 @@ public class FixturesController : ControllerBase
             return BadRequest();
         }
 
+        Console.WriteLine(updateFixture);
+
         int rowsAffected = await _fixtureContext.UpdateFixtureInstanceById(updateFixture);
 
         if (rowsAffected == 0)
@@ -114,22 +116,20 @@ public class FixturesController : ControllerBase
     [HttpPost("create-fixture-instance")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> CreateFixtureInstance([FromBody] CreateFixtureInstance newFixture)
+    public async Task<ActionResult<int>> CreateFixtureInstance([FromBody] CreateFixtureInstance newFixture)
     {
-        Console.WriteLine(newFixture);
         if (!ModelState.IsValid)
         {
             return BadRequest();
         }
 
-        int rowsAffected = await _fixtureContext.CreateFixtureInstance(newFixture);
-        Console.WriteLine(rowsAffected);
+        Console.WriteLine(newFixture);
 
-        if (rowsAffected == 0)
-        {
-            return BadRequest();
-        }
-        return Ok();
+        var response = await _fixtureContext.CreateFixtureInstance(newFixture);
+
+        Console.WriteLine(response);
+
+        return Ok(response);
     }
 
     /// <summary>

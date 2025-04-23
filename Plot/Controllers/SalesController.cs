@@ -59,8 +59,8 @@ public class SalesController : ControllerBase
         using var workbook = new XLWorkbook(memoryStream);
         var worksheet = workbook.Worksheet(1);
 
-//Save file shit------------------------------------------------------
-        var captureDate=worksheet.Cell(1,11).Value.ToString();
+        //Save file shit------------------------------------------------------
+        var captureDate = worksheet.Cell(1, 11).Value.ToString();
 
         var match = Regex.Match(captureDate, @"\b\d{1,2}/\d{1,2}/\d{4}\b");
 
@@ -68,23 +68,23 @@ public class SalesController : ControllerBase
 
         if (match.Success)
         {
-            string dateOnly = match.Value; 
-            dateUploaded= DateTime.Parse(dateOnly);
+            string dateOnly = match.Value;
+            dateUploaded = DateTime.Parse(dateOnly);
         }
 
         //Add datetime to the file name so that the 
         // file name is alwayse unique across all stores.
         // for some reason the DB fails if a file has the same name
         // across the entire. 
-        var fileName = DateTime.Now +"-"+ file.FileName;
+        var fileName = DateTime.Now + "-" + file.FileName;
 
         var saveExcelFile = new CreateExcelFileModel
         {
-            FILE_NAME=fileName,
-            FILE_DATA=fileData,
-            CAPTURE_DATE=dateUploaded,
-            DATE_UPLOADED=DateTime.Today,
-            FLOORSET_TUID=floorsetId
+            FILE_NAME = fileName,
+            FILE_DATA = fileData,
+            CAPTURE_DATE = dateUploaded,
+            DATE_UPLOADED = DateTime.Today,
+            FLOORSET_TUID = floorsetId
         };
 
         var rows = worksheet.RowsUsed().Skip(6);
@@ -104,11 +104,15 @@ public class SalesController : ControllerBase
                     TOTAL_SALES = string.IsNullOrEmpty(row.Cell(5).Value.ToString()) ? 0 : double.Parse(row.Cell(5).Value.ToString())
                 };
 
+                Console.WriteLine(allocation);
+
                 allocations.Add(allocation);
             }
         }
 
-        var rowsAffected = await _salesContext.UploadSales(allocations,saveExcelFile);
+        var rowsAffected = await _salesContext.UploadSales(allocations, saveExcelFile);
+
+        Console.WriteLine($"Insert sales: {rowsAffected}");
 
         if (rowsAffected == 0)
         {
@@ -130,6 +134,8 @@ public class SalesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<AllocationFulfillments>>> GetAllocationFulfillments(int floorsetId)
     {
-        return Ok(await _salesContext.GetAllocationFulfillments(floorsetId));
+        var response = await _salesContext.GetAllocationFulfillments(floorsetId);
+
+        return Ok(response);
     }
 }

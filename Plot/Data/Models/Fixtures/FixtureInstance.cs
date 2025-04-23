@@ -34,6 +34,7 @@ public class FixtureInstance : IEquatable<FixtureInstance>
     public string? SUBCATEGORY { get; set; }
     public string? COLOR { get; set; }
     public int? EDITOR_ID { get; set; }
+    public string? FIXTURE_IDENTIFIER { get; set; }
 
 
     public bool Equals(FixtureInstance? other)
