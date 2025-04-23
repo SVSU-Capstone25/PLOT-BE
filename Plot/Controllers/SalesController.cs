@@ -15,6 +15,7 @@ using Plot.DataAccess.Interfaces;
 using Plot.Services;
 using Plot.Data.Models.Allocations;
 using ClosedXML.Excel;
+using System.Text.RegularExpressions;
 
 namespace Plot.Controllers;
 
@@ -52,8 +53,40 @@ public class SalesController : ControllerBase
         using var memoryStream = new MemoryStream();
         await file.CopyToAsync(memoryStream);
 
+        var fileData = memoryStream.ToArray(); // capture before Excel use
+        memoryStream.Position = 0;
+
         using var workbook = new XLWorkbook(memoryStream);
         var worksheet = workbook.Worksheet(1);
+
+//Save file shit------------------------------------------------------
+        var captureDate=worksheet.Cell(1,11).Value.ToString();
+
+        var match = Regex.Match(captureDate, @"\b\d{1,2}/\d{1,2}/\d{4}\b");
+
+        DateTime dateUploaded = DateTime.MinValue;
+
+        if (match.Success)
+        {
+            string dateOnly = match.Value; 
+            dateUploaded= DateTime.Parse(dateOnly);
+        }
+
+        //Add datetime to the file name so that the 
+        // file name is alwayse unique across all stores.
+        // for some reason the DB fails if a file has the same name
+        // across the entire. 
+        var fileName = DateTime.Now +"-"+ file.FileName;
+
+        var saveExcelFile = new CreateExcelFileModel
+        {
+            FILE_NAME=fileName,
+            FILE_DATA=fileData,
+            CAPTURE_DATE=dateUploaded,
+            DATE_UPLOADED=DateTime.Today,
+            FLOORSET_TUID=floorsetId
+        };
+
         var rows = worksheet.RowsUsed().Skip(6);
 
         List<CreateFixtureAllocations> allocations = [];
@@ -75,14 +108,14 @@ public class SalesController : ControllerBase
             }
         }
 
-        var rowsAffected = await _salesContext.UploadSales(floorsetId,allocations);
+        var rowsAffected = await _salesContext.UploadSales(allocations,saveExcelFile);
 
         if (rowsAffected == 0)
         {
-            return BadRequest();
+            return BadRequest(rowsAffected);
         }
 
-        return Ok();
+        return Ok(rowsAffected);
     }
 
     /// <summary>

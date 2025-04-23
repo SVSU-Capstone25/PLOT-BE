@@ -30,8 +30,9 @@ public class SalesContext : DbContext, ISalesContext
         throw new NotImplementedException();
     }
 
-    public async Task<int> UploadSales(int salesTuid, List<CreateFixtureAllocations> allocations)
+    public async Task<int> UploadSales(List<CreateFixtureAllocations> allocations, CreateExcelFileModel excelFile)
     {
+        //Console.WriteLine("in Upload sales");
         
         var inputJson = JsonSerializer.Serialize(allocations.Select(a => new
         {
@@ -41,9 +42,16 @@ public class SalesContext : DbContext, ISalesContext
         }));
 
         DynamicParameters parameters = new DynamicParameters();
-        parameters.Add("SALES_TUID", salesTuid);
+        
+        
+        parameters.Add("FILE_NAME", excelFile.FILE_NAME);
+        parameters.Add("FILE_DATA", excelFile.FILE_DATA);
+        parameters.Add("CAPTURE_DATE", excelFile.CAPTURE_DATE);
+        parameters.Add("DATE_UPLOADED", excelFile.DATE_UPLOADED);
+        parameters.Add("FLOORSET_TUID", excelFile.FLOORSET_TUID);
         parameters.Add("INPUT", inputJson);
-        return await CreateUpdateDeleteStoredProcedureQuery("Insert_Sales_Allocations", parameters);
+
+        return await CreateUpdateDeleteStoredProcedureQuery("Insert_Sales_With_Allocations", parameters);
     }
 
     public async Task<IEnumerable<AllocationFulfillments>?> GetAllocationFulfillments(int floorsetId)
@@ -53,4 +61,18 @@ public class SalesContext : DbContext, ISalesContext
 
         return await GetStoredProcedureQuery<AllocationFulfillments>("Select_Allocation_Fulfillments", parameters);
     }
+
+    // public async Task<int> SaveFileToDatabase(CreateExcelFileModel excelFile)
+    // {
+    //     Console.WriteLine(excelFile.ToString());
+        
+    //     DynamicParameters parameters = new DynamicParameters();
+    //     parameters.Add("FILE_NAME", excelFile.FILE_NAME);
+    //     parameters.Add("FILE_DATA", excelFile.FILE_DATA);
+    //     parameters.Add("CAPTURE_DATE", excelFile.CAPTURE_DATE);
+    //     parameters.Add("DATE_UPLOADED", excelFile.DATE_UPLOADED);
+    //     parameters.Add("FLOORSET_TUID", excelFile.FLOORSET_TUID);
+
+    //     return await CreateUpdateDeleteStoredProcedureQuery("Insert_Sales_File", parameters);
+    // }
 }
