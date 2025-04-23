@@ -261,7 +261,56 @@ public class UsersController : ControllerBase
             NotFound();
         }
 
-        return Ok();
+        return Ok(stores);
+    }
+
+    /// <summary>
+    /// returns all the stores a user does not work at
+    /// </summary>
+    /// <param name="userId">The id of the user</param>
+    /// <returns>UserDTO object</returns>
+    [Authorize]
+    [HttpGet("stores-not/{userId:int}")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<Store>>> GetStoresNotForUser(int userId)
+    {
+        var stores = await _userContext.GetStoresNotForUser(userId);
+
+        if (stores == null)
+        {
+            NotFound();
+        }
+
+        return Ok(stores);
+    }
+
+    /// <summary>
+    /// Get user by email
+    /// </summary>
+    /// <param name="userEmail">The email of the user</param>
+    /// <returns>UserDTO object</returns>
+    [Authorize]
+    [HttpGet("get-user-by-email/{userEmail}")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<UserDTO>> GetUserByEmail(string userEmail)
+    {
+        Console.WriteLine("User controller getting user by email for " + userEmail);
+        var userDTO = await _userContext.GetUserByEmail(userEmail);
+
+        Console.WriteLine(userDTO.TUID);
+
+        if (userDTO == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(userDTO);
     }
 
     /// <summary>
