@@ -108,10 +108,10 @@ public class FixtureContext : DbContext, IFixtureContext
         return response;
     }
 
-    public async Task<int> UpdateFixtureModelById(FixtureModel fixtureModel)
+    public async Task<int> UpdateFixtureModelById(int fixtureId, CreateFixtureModel fixtureModel)
     {
         DynamicParameters parameters = new DynamicParameters();
-        parameters.Add("TUID", fixtureModel.TUID);
+        parameters.Add("TUID", fixtureId);
         parameters.Add("NAME", fixtureModel.NAME);
         parameters.Add("WIDTH", fixtureModel.WIDTH);
         parameters.Add("LENGTH", fixtureModel.LENGTH);
