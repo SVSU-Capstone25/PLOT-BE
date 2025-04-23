@@ -173,6 +173,9 @@ public class FixtureContext : DbContext, IFixtureContext
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("FLOORSET_TUID", floorsetId);
 
-        return await GetStoredProcedureQuery<EmployeeAreaModel>("Select_Employee_Area", parameters);
+        var response = await GetStoredProcedureQuery<EmployeeAreaModel>("Select_Employee_Area", parameters);
+        Console.WriteLine("In context response: " + response);
+        Console.WriteLine("Floorset id " + floorsetId + " in the context");
+        return response;
     }
 }

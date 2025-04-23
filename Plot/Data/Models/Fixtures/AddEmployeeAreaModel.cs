@@ -13,6 +13,7 @@ namespace Plot.Data.Models.Fixtures;
 
 public record AddEmployeeAreaModel
 {
+    public int TUID {get; set;}
     public required int FLOORSET_TUID { get; set; }
     public required int X_POS { get; set; }
     public required int Y_POS { get; set; }

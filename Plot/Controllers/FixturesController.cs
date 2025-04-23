@@ -240,15 +240,30 @@ public class FixturesController : ControllerBase
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<IEnumerable<EmployeeAreaModel>>> GetAllEmployeeAreas(int floorsetId)
+    public async Task<ActionResult<IEnumerable<EmployeeAreaModel>?>> GetEmployeeAreas(int floorsetId)
     {
         Console.WriteLine("Get employee areas");
+        Console.WriteLine("Floorset id in fixtures controlelr is " + floorsetId);
         var employeeAreas = await _fixtureContext.GetEmployeeAreas(floorsetId);
 
         if (employeeAreas == null)
         {
+            Console.WriteLine("Employee areas are null in the controller");
             return BadRequest();
         }
+        else{
+            Console.WriteLine("Employee areas exist within controller");
+        }
+
+        Console.WriteLine("Employee Areas");
+        Console.WriteLine(employeeAreas);
+        foreach(var area in employeeAreas)
+        {
+            Console.WriteLine(area.FLOORSET_TUID);
+            Console.WriteLine(area.X_POS);
+            Console.WriteLine(area.Y_POS);
+        }
+        Console.WriteLine("Reaches here: List is size " + employeeAreas.Count());
 
         return Ok(employeeAreas);
     }
