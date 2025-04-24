@@ -99,6 +99,8 @@ public class FixturesController : ControllerBase
 
         int rowsAffected = await _fixtureContext.UpdateFixtureInstanceById(updateFixture);
 
+        Console.WriteLine(rowsAffected);
+
         if (rowsAffected == 0)
         {
             return BadRequest();
@@ -141,7 +143,7 @@ public class FixturesController : ControllerBase
     [HttpDelete("delete-fixture-instance/{fixtureInstanceId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> DeleteFixtureInstance([FromBody] int fixtureInstanceId)
+    public async Task<ActionResult> DeleteFixtureInstance(int fixtureInstanceId)
     {
         return Ok(await _fixtureContext.DeleteFixtureInstanceById(fixtureInstanceId));
     }
