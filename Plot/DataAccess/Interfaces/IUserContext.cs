@@ -22,10 +22,12 @@ public interface IUserContext
 {
     Task<IEnumerable<UserDTO>?> GetUsers();
     Task<UserDTO?> GetUserById(int userId);
+    Task<UserDTO?> GetUserByEmail(string userEmail);
     Task<int> UpdateUserPublicInfo(int userId, UpdatePublicInfoUser user);
     Task<int> DeleteUserById(int userId);
     Task<int> DeleteUserFromStore(AccessModel accessModel);
     Task<IEnumerable<Store>?> GetStoresForUser(int userid);
+    Task<IEnumerable<Store>?> GetStoresNotForUser(int userid);
     Task<int> AddUserToStore(AccessModel accessModel);
     Task<int> UpdateAccessList(UpdateAccessList updateAccessList);
     Task<IEnumerable<UserDTO>?> GetUsersByString(UsersByStringRequest usersByStringRequest);

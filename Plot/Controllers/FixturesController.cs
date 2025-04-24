@@ -90,6 +90,8 @@ public class FixturesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> UpdateFixtureInstance([FromBody] UpdateFixtureInstance updateFixture)
     {
+
+        Console.WriteLine(updateFixture.TUID);
         if (!ModelState.IsValid)
         {
             return BadRequest();
@@ -125,13 +127,7 @@ public class FixturesController : ControllerBase
             return BadRequest();
         }
 
-        Console.WriteLine(newFixture);
-
-        var response = await _fixtureContext.CreateFixtureInstance(newFixture);
-
-        Console.WriteLine(response);
-
-        return Ok(response);
+        return Ok(await _fixtureContext.CreateFixtureInstance(newFixture));
     }
 
     /// <summary>
@@ -172,12 +168,12 @@ public class FixturesController : ControllerBase
     }
 
     [Authorize(Policy = "Manager")]
-    [HttpPatch("update-fixture-model")]
+    [HttpPatch("update-fixture-model/{fixtureId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> UpdateFixtureModel([FromBody] FixtureModel update)
+    public async Task<ActionResult> UpdateFixtureModel(int fixtureId, [FromBody] CreateFixtureModel update)
     {
-        return Ok(await _fixtureContext.UpdateFixtureModelById(update));
+        return Ok(await _fixtureContext.UpdateFixtureModelById(fixtureId, update));
     }
 
     [Authorize(Policy = "Manager")]

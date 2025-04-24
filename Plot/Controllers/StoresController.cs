@@ -36,7 +36,7 @@ public class StoresController : ControllerBase
     /// This endpoint deals with getting all of the stores.
     /// </summary>
     /// <returns>Array of stores</returns>
-    [Authorize(Policy = "Owner")]
+    [Authorize(Policy = "Manager")]
     [HttpGet("get-all")]
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -150,7 +150,7 @@ public class StoresController : ControllerBase
         {
             return BadRequest();
         }
-    
+
         //controller logic could get added from other branches
         return Ok();
     }

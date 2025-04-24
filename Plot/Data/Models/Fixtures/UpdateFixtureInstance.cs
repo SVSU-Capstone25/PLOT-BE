@@ -17,8 +17,8 @@ namespace Plot.Data.Models.Fixtures;
 
 public record UpdateFixtureInstance
 {
-    public int? TUID { get; set; }
-    public int? FLOORSET_TUID { get; set; }
+    public required int TUID { get; set; }
+    public required int FLOORSET_TUID { get; set; }
     public int? FIXTURE_TUID { get; set; }
     public int? X_POS { get; set; }
     public int? Y_POS { get; set; }
@@ -27,5 +27,4 @@ public record UpdateFixtureInstance
     public string? NOTE { get; set; }
     public int? SUPERCATEGORY_TUID { get; set; }
     public string? FIXTURE_IDENTIFIER { get; set; }
-
 }
