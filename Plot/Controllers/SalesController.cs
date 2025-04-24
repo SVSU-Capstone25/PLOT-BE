@@ -15,6 +15,7 @@ using Plot.DataAccess.Interfaces;
 using Plot.Services;
 using Plot.Data.Models.Allocations;
 using ClosedXML.Excel;
+using System.Text.RegularExpressions;
 
 namespace Plot.Controllers;
 
@@ -36,24 +37,56 @@ public class SalesController : ControllerBase
     /// for an excel file.
     /// </summary>
     /// <param name="floorsetId">The floorset id</param>
-    /// <param name="excelFile">The excel file</param>
+    /// <param name="file">The excel file</param>
     /// <returns></returns>
     [Authorize(Policy = "Manager")]
     [HttpPost("upload-sales/{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<IEnumerable<CreateFixtureAllocations>>> UploadSales(int floorsetId, [FromBody] UploadFile excelFile)
+    public async Task<ActionResult<IEnumerable<CreateFixtureAllocations>>> UploadSales(int floorsetId, [FromForm] IFormFile file)
     {
-        if (excelFile.EXCEL_FILE == null)
+        if (file == null)
         {
             return BadRequest();
         }
 
         using var memoryStream = new MemoryStream();
-        await excelFile.EXCEL_FILE.CopyToAsync(memoryStream);
+        await file.CopyToAsync(memoryStream);
+
+        var fileData = memoryStream.ToArray(); // capture before Excel use
+        memoryStream.Position = 0;
 
         using var workbook = new XLWorkbook(memoryStream);
         var worksheet = workbook.Worksheet(1);
+
+        //Save file shit------------------------------------------------------
+        var captureDate = worksheet.Cell(1, 11).Value.ToString();
+
+        var match = Regex.Match(captureDate, @"\b\d{1,2}/\d{1,2}/\d{4}\b");
+
+        DateTime dateUploaded = DateTime.MinValue;
+
+        if (match.Success)
+        {
+            string dateOnly = match.Value;
+            dateUploaded = DateTime.Parse(dateOnly);
+        }
+
+        //Add datetime to the file name so that the 
+        // file name is alwayse unique across all stores.
+        // for some reason the DB fails if a file has the same name
+        // across the entire. 
+        var fileName = DateTime.Now + "-" + file.FileName;
+
+        var saveExcelFile = new CreateExcelFileModel
+        {
+            FILE_NAME = fileName,
+            FILE_DATA = fileData,
+            CAPTURE_DATE = dateUploaded,
+            DATE_UPLOADED = DateTime.Today,
+            FLOORSET_TUID = floorsetId
+        };
+
         var rows = worksheet.RowsUsed().Skip(6);
 
         List<CreateFixtureAllocations> allocations = [];
@@ -68,14 +101,25 @@ public class SalesController : ControllerBase
                 {
                     SUPERCATEGORY = categorySubCategoryNames[0],
                     SUBCATEGORY = categorySubCategoryNames[1],
-                    UNITS = string.IsNullOrEmpty(row.Cell(6).Value.ToString()) ? 0 : int.Parse(row.Cell(6).Value.ToString())
+                    TOTAL_SALES = string.IsNullOrEmpty(row.Cell(5).Value.ToString()) ? 0 : double.Parse(row.Cell(5).Value.ToString())
                 };
+
+                Console.WriteLine(allocation);
 
                 allocations.Add(allocation);
             }
         }
 
-        return Ok();
+        var rowsAffected = await _salesContext.UploadSales(allocations, saveExcelFile);
+
+        Console.WriteLine($"Insert sales: {rowsAffected}");
+
+        if (rowsAffected == 0)
+        {
+            return BadRequest(rowsAffected);
+        }
+
+        return Ok(rowsAffected);
     }
 
     /// <summary>
@@ -90,7 +134,9 @@ public class SalesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<AllocationFulfillments>>> GetAllocationFulfillments(int floorsetId)
     {
-        return Ok(await _salesContext.GetAllocationFulfillments(floorsetId));
+        var response = await _salesContext.GetAllocationFulfillments(floorsetId);
+
+        return Ok(response);
     }
 
     /// <summary>

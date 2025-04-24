@@ -27,13 +27,12 @@ public class FixtureInstance : IEquatable<FixtureInstance>
     public int? X_POS { get; set; }
     public int? Y_POS { get; set; }
     public required int HANGER_STACK { get; set; }
-    public required int ALLOCATED_LF { get; set; }
     public string? NOTE { get; set; }
     public string? SUPERCATEGORY_NAME { get; set; }
     public int? SUPERCATEGORY_TUID { get; set; }
     public string? SUBCATEGORY { get; set; }
     public string? COLOR { get; set; }
-    public int? EDITOR_ID { get; set; }
+    public string? FIXTURE_IDENTIFIER { get; set; }
 
 
     public bool Equals(FixtureInstance? other)

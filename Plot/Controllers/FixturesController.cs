@@ -97,7 +97,11 @@ public class FixturesController : ControllerBase
             return BadRequest();
         }
 
+        Console.WriteLine(updateFixture);
+
         int rowsAffected = await _fixtureContext.UpdateFixtureInstanceById(updateFixture);
+
+        Console.WriteLine(rowsAffected);
 
         if (rowsAffected == 0)
         {

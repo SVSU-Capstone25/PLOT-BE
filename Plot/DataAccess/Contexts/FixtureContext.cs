@@ -32,8 +32,6 @@ public class FixtureContext : DbContext, IFixtureContext
         parameters.Add("XPOS", fixtureInstance.X_POS);//It is XPOS and YPOS in the procedure, but in the db model and schema it is X_POS and Y_POS
         parameters.Add("YPOS", fixtureInstance.Y_POS);
         parameters.Add("HANGER_STACK", fixtureInstance.HANGER_STACK);
-        parameters.Add("ALLOCATED_LF", fixtureInstance.ALLOCATED_LF);
-        parameters.Add("EDITOR_ID", fixtureInstance.EDITOR_ID);
         parameters.Add("SUPERCATEGORY_TUID", fixtureInstance.SUPERCATEGORY_TUID);
         parameters.Add("SUBCATEGORY", fixtureInstance.SUBCATEGORY);
         parameters.Add("NOTE", fixtureInstance.NOTE);
@@ -59,7 +57,9 @@ public class FixtureContext : DbContext, IFixtureContext
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("FLOORSET_FIXTURE_TUID", fixtureInstanceId);
 
-        return await CreateUpdateDeleteStoredProcedureQuery("Delete_Floorset_Fixture", parameters);
+        var response = await CreateUpdateDeleteStoredProcedureQuery("Delete_Floorset_Fixture", parameters);
+
+        return response;
     }
 
     public async Task<int> DeleteFixtureModelById(int fixtureModelId)
@@ -88,20 +88,20 @@ public class FixtureContext : DbContext, IFixtureContext
 
     public async Task<int> UpdateFixtureInstanceById(UpdateFixtureInstance fixtureInstance)
     {
+        Console.WriteLine(fixtureInstance);
+
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("TUID", fixtureInstance.TUID);
         parameters.Add("FLOORSET_TUID", fixtureInstance.FLOORSET_TUID);
-        parameters.Add("FIXTURE_TUID", fixtureInstance.FIXTURE_TUID);
-        parameters.Add("EDITOR_ID", fixtureInstance.EDITOR_ID);
         parameters.Add("XPOS", fixtureInstance.X_POS);//I swear to god if someone tries to change this to X_POS again I will scream
         parameters.Add("YPOS", fixtureInstance.Y_POS);// In the procedure it is XPOS and YPOS, but in the db model and schema it is X_POS and Y_POS
         parameters.Add("HANGER_STACK", fixtureInstance.HANGER_STACK);
-        parameters.Add("ALLOCATED_LF", fixtureInstance.ALLOCATED_LF);
         parameters.Add("SUPERCATEGORY_TUID", fixtureInstance.SUPERCATEGORY_TUID);
         parameters.Add("SUBCATEGORY", fixtureInstance.SUBCATEGORY);
         parameters.Add("NOTE", fixtureInstance.NOTE);
+        parameters.Add("FIXTURE_IDENTIFIER", fixtureInstance.FIXTURE_IDENTIFIER);
 
-        var response = await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Floorset_Fixture", parameters);
+        var response = await CreateUpdateDeleteStoredProcedureQuery("Update_Floorset_Fixture", parameters);
 
         Console.WriteLine(response);
 

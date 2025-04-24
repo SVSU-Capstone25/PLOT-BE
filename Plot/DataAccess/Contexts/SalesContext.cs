@@ -18,6 +18,7 @@ using Microsoft.Data.SqlClient;
 using Plot.Data.Models.Allocations;
 using Plot.DataAccess.Interfaces;
 using ClosedXML;
+using System.Text.Json;
 
 namespace Plot.DataAccess.Contexts;
 
@@ -28,12 +29,28 @@ public class SalesContext : DbContext, ISalesContext
         throw new NotImplementedException();
     }
 
-    public Task<int> UploadSales(int floorsetId, IFormFile excelFile)
+    public async Task<int> UploadSales(List<CreateFixtureAllocations> allocations, CreateExcelFileModel excelFile)
     {
-        //Need to come back to this with more eyes
+        //Console.WriteLine("in Upload sales");
+
+        var inputJson = JsonSerializer.Serialize(allocations.Select(a => new
+        {
+            category = a.SUPERCATEGORY,
+            subCategory = a.SUBCATEGORY,
+            units = a.TOTAL_SALES
+        }));
+
+        DynamicParameters parameters = new DynamicParameters();
 
 
-        throw new NotImplementedException();
+        parameters.Add("FILE_NAME", excelFile.FILE_NAME);
+        parameters.Add("FILE_DATA", excelFile.FILE_DATA);
+        parameters.Add("CAPTURE_DATE", excelFile.CAPTURE_DATE);
+        parameters.Add("DATE_UPLOADED", excelFile.DATE_UPLOADED);
+        parameters.Add("FLOORSET_TUID", excelFile.FLOORSET_TUID);
+        parameters.Add("INPUT", inputJson);
+
+        return await CreateUpdateDeleteStoredProcedureQuery("Insert_Sales_With_Allocations", parameters);
     }
 
     public async Task<IEnumerable<AllocationFulfillments>?> GetAllocationFulfillments(int floorsetId)
@@ -43,6 +60,20 @@ public class SalesContext : DbContext, ISalesContext
 
         return await GetStoredProcedureQuery<AllocationFulfillments>("Select_Allocation_Fulfillments", parameters);
     }
+
+    // public async Task<int> SaveFileToDatabase(CreateExcelFileModel excelFile)
+    // {
+    //     Console.WriteLine(excelFile.ToString());
+
+    //     DynamicParameters parameters = new DynamicParameters();
+    //     parameters.Add("FILE_NAME", excelFile.FILE_NAME);
+    //     parameters.Add("FILE_DATA", excelFile.FILE_DATA);
+    //     parameters.Add("CAPTURE_DATE", excelFile.CAPTURE_DATE);
+    //     parameters.Add("DATE_UPLOADED", excelFile.DATE_UPLOADED);
+    //     parameters.Add("FLOORSET_TUID", excelFile.FLOORSET_TUID);
+
+    //     return await CreateUpdateDeleteStoredProcedureQuery("Insert_Sales_File", parameters);
+    // }
 
     public async Task<int> InsertSales(CreateExcelFileModel ExcelFileModel)
     {
