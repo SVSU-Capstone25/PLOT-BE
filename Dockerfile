@@ -26,6 +26,9 @@ WORKDIR /app
 # Copy the published files from the build stage
 COPY --from=build-env /publish .
 
+# Copy the wwwroot for static files
+COPY Plot/wwwroot wwwroot
+
 # Expose the port on which the app will run
 EXPOSE 8085
 
