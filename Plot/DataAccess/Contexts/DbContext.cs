@@ -68,6 +68,42 @@ public class DbContext
         }
     }
 
+    public async Task<IEnumerable<Data.Models.Allocations.CreateExcelFileModel>?> GetStoredProcedureQueryForGetSalesByFloorset(string storedProcedure, DynamicParameters parameters)
+    {
+        Console.WriteLine("Entered DB context for sales");
+        try
+        {
+            var connection = GetConnection();
+
+            var response = await connection.QueryAsync<Data.Models.Allocations.CreateExcelFileModel>(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
+            
+            if(response != null && response.Any()){
+            foreach(var SalesDatum in response)
+            {
+                Console.WriteLine("Sales dataum being read");
+                Console.WriteLine("fILENAME:" + SalesDatum.FILE_NAME);
+                Console.WriteLine("FileData:" + SalesDatum.FILE_DATA);
+                Console.WriteLine("Capture Date:" + SalesDatum.CAPTURE_DATE);
+                Console.WriteLine("Date Uploaded:" + SalesDatum.DATE_UPLOADED);
+                Console.WriteLine("Floorset TUID: " + SalesDatum.FLOORSET_TUID);
+            }
+            }
+            else
+            {
+                Console.WriteLine("Response from database is null or empty");
+            }
+            
+            connection.Close();
+
+            return response;
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine($"Get query failed: {exception.Message} {exception.Procedure}");
+            return default;
+        }
+    }
+
     public async Task<T?> GetFirstOrDefaultStoredProcedureQuery<T>(string storedProcedure, DynamicParameters parameters)
     {
         try
@@ -94,6 +130,27 @@ public class DbContext
             var connection = GetConnection();
 
             var response = await connection.ExecuteAsync(storedProcedure, parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+            connection.Close();
+
+            return response;
+        }
+        catch (SqlException exception)
+        {
+            Console.WriteLine($"Create/Update/Delete query failed: {exception.Message}");
+            return 0;
+        }
+    }
+
+        public async Task<int> CreateUpdateDeleteStoredProcedureQueryForInsertSales(string storedProcedure, DynamicParameters parameters)
+    {
+        try
+        {
+            var connection = GetConnection();
+
+            var response = await connection.ExecuteAsync(storedProcedure, parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+            Console.WriteLine("Response in CreateUpdateDeleteStoredProcedureforInsertSales\n" + response);
 
             connection.Close();
 

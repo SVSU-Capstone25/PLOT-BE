@@ -21,7 +21,6 @@ using ClosedXML;
 
 namespace Plot.DataAccess.Contexts;
 
-
 public class SalesContext : DbContext, ISalesContext
 {
     public Task<IEnumerable<FixtureAllocations>> GetFixtureAllocations(int floorsetId)
@@ -43,5 +42,37 @@ public class SalesContext : DbContext, ISalesContext
         parameters.Add("FLOORSET_TUID", floorsetId);
 
         return await GetStoredProcedureQuery<AllocationFulfillments>("Select_Allocation_Fulfillments", parameters);
+    }
+
+    public async Task<int> InsertSales(CreateExcelFileModel ExcelFileModel)
+    {
+        DynamicParameters parameters = new DynamicParameters();
+
+        Console.WriteLine("Inserting with params:");
+        Console.WriteLine($"FILE_NAME: {ExcelFileModel.FILE_NAME}");
+        Console.WriteLine($"CAPTURE_DATE: {ExcelFileModel.CAPTURE_DATE}");
+        Console.WriteLine($"DATE_UPLOADED: {ExcelFileModel.DATE_UPLOADED}");
+        Console.WriteLine($"FLOORSET_TUID: {ExcelFileModel.FLOORSET_TUID}");
+        Console.WriteLine($"FILE_DATA length: {ExcelFileModel.FILE_DATA?.Length ?? 0}");
+
+        parameters.Add("TUID", null);
+        parameters.Add("FILE_NAME", ExcelFileModel.FILE_NAME);
+        parameters.Add("FILE_DATA", ExcelFileModel.FILE_DATA);
+        parameters.Add("CAPTURE_DATE", ExcelFileModel.CAPTURE_DATE);
+        parameters.Add("DATE_UPLOADED", ExcelFileModel.DATE_UPLOADED);
+        parameters.Add("FLOORSET_TUID", ExcelFileModel.FLOORSET_TUID);
+        
+        return await CreateUpdateDeleteStoredProcedureQueryForInsertSales("Insert_Update_Sales_File", parameters);
+    }
+
+    public async Task<IEnumerable<CreateExcelFileModel>> GetSalesByFloorset(int floorsetId)
+    {
+        Console.WriteLine("floorset id " + floorsetId);
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("FLOORSET_TUID", floorsetId);
+
+        // Return to this after debugging DBContext
+        //return await GetStoredProcedureQueryForGetSalesByFloorset<CreateExcelFileModel>("Select_Sales_By_Floorset", parameters);
+        return await GetStoredProcedureQueryForGetSalesByFloorset("Select_Sales_By_Floorset", parameters);
     }
 }

@@ -92,4 +92,55 @@ public class SalesController : ControllerBase
     {
         return Ok(await _salesContext.GetAllocationFulfillments(floorsetId));
     }
+
+    /// <summary>
+    /// This endpoint deals with inserting sales
+    /// data given parameters such as when copying
+    /// </summary>
+    /// <param name="ExcelFileModel">The excel file</param>
+    /// <returns></returns>
+    ///    
+    [HttpPost("insert-sales")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> InsertSales([FromBody] CreateExcelFileModel ExcelFileModels)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        int rowsAffected = await _salesContext.InsertSales(ExcelFileModels);
+
+        if (rowsAffected == 0)
+        {
+            return BadRequest();
+        }
+
+        return Ok();
+    }
+
+    /// <summary>
+    /// Get sales data (from sales table) by floorset
+    /// </summary>
+    /// <param name="floorsetId">The floorset Id</param>
+    /// <returns>UserDTO object</returns>
+    [HttpGet("get-sales-by-floorset/{floorsetId}")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<CreateExcelFileModel>>> GetSalesByFloorset(int floorsetId)
+    {
+        var ExcelFileModel = await _salesContext.GetSalesByFloorset(floorsetId);
+
+        if (ExcelFileModel == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(ExcelFileModel);
+    }
+
 }

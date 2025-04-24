@@ -23,4 +23,8 @@ public interface ISalesContext
     Task<IEnumerable<FixtureAllocations>> GetFixtureAllocations(int floorsetId);
 
     Task<IEnumerable<AllocationFulfillments>?> GetAllocationFulfillments(int floorsetId);
+
+    Task<int> InsertSales(CreateExcelFileModel ExcelFileModel);
+
+    Task<IEnumerable<CreateExcelFileModel>> GetSalesByFloorset(int floorsetId);
 }
