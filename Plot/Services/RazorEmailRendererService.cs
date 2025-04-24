@@ -40,10 +40,12 @@ public class RazorEmailRenderer
     /// </summary>
     public RazorEmailRenderer()
     {
+        var templatesPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Templates");
+
         _razorEngine = new RazorLightEngineBuilder()
-            .UseFileSystemProject("/app/wwwroot/Templates")
-                .UseMemoryCachingProvider()
-                .Build();
+            .UseFileSystemProject(templatesPath)
+            .UseMemoryCachingProvider()
+            .Build();
     }
 
     /// <summary>
