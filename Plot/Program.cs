@@ -65,10 +65,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 
-builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("Employee", policy => policy.RequireClaim("Role", "Owner", "Manager", "Employee"))
-    .AddPolicy("Manager", policy => policy.RequireClaim("Role", "Owner", "Manager"))
-    .AddPolicy("Owner", policy => policy.RequireClaim("Role", "Owner"));
+// builder.Services.AddAuthorizationBuilder()
+//     .AddPolicy("Employee", policy => policy.RequireClaim("Role", "Owner", "Manager", "Employee"))
+//     .AddPolicy("Manager", policy => policy.RequireClaim("Role", "Owner", "Manager"))
+//     .AddPolicy("Owner", policy => policy.RequireClaim("Role", "Owner"));
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Employee", policy =>
+        policy.Requirements.Add(new RoleRequirement("Owner", "Manager", "Employee")));
+    options.AddPolicy("Manager", policy =>
+        policy.Requirements.Add(new RoleRequirement("Owner", "Manager")));
+    options.AddPolicy("Owner", policy =>
+        policy.Requirements.Add(new RoleRequirement("Owner")));
+});
 
 // Add contexts and services as scoped services throughout
 // the backend project for dependency injection.
@@ -81,6 +91,7 @@ builder.Services.AddSingleton<ISalesContext, SalesContext>();
 builder.Services.AddScoped<ClaimParserService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<IAuthorizationHandler, RoleHandler>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
