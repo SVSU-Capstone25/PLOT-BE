@@ -116,4 +116,29 @@ public class FloorsetsController : ControllerBase
     {
         return Ok(await _floorsetContext.DeleteFloorsetById(floorsetId));
     }
+
+    /// <summary>
+    /// This endpoint deals with copying a floorset.
+    /// </summary>
+    /// <param name="floorsetId">The TUID of floorset being copied as JSON object</param>
+    /// <returns>This endpoint doesn't return a value.</returns>
+    [HttpPost("copy-floorset")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> CopyFloorset([FromBody] FloorsetRef FloorsetRef)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        int rowsAffected = await _floorsetContext.CopyFloorset(FloorsetRef);
+
+        if (rowsAffected == 0)
+        {
+            return BadRequest();
+        }
+
+        return Ok();
+    }
 }

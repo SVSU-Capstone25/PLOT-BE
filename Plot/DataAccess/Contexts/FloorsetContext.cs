@@ -83,4 +83,12 @@ public class FloorsetContext : DbContext, IFloorsetContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Delete_Floorset", parameters);
     }
+
+    public async Task<int> CopyFloorset(FloorsetRef FloorsetRef){
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("OLD_FLOORSET_TUID", FloorsetRef.TUID);
+        Console.WriteLine("Old TUID " + FloorsetRef.TUID);
+        
+        return await CreateUpdateDeleteStoredProcedureQuery("Copy_Floorset", parameters);
+    }
 }

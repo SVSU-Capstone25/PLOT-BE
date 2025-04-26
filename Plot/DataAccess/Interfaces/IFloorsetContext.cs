@@ -23,4 +23,6 @@ public interface IFloorsetContext
     Task<int> CreateFloorset(CreateFloorset floorset);
     Task<int> UpdateFloorsetById(int floorsetId, UpdatePublicInfoFloorset updatefloorset);
     Task<int> DeleteFloorsetById(int floorsetId);
+
+    Task<int> CopyFloorset(FloorsetRef FloorsetRef);
 }
