@@ -32,7 +32,12 @@ public class FloorsetContext : DbContext, IFloorsetContext
         return await GetStoredProcedureQuery<Floorset>("Select_Stores_Floorsets", parameters);
     }
 
-
+    public async Task<Floorset?> GetFloorsetById(int floorsetId)
+    {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("FLOORSET_TUID", floorsetId);
+        return await GetFirstOrDefaultStoredProcedureQuery<Floorset>("Select_Floorsets", parameters);
+    }
 
     public async Task<int> CreateFloorset(CreateFloorset floorset)
     {
