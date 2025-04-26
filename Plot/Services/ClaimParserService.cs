@@ -37,7 +37,7 @@ public class ClaimParserService
         return loggedInUserId;
     }
 
-    public int? GetRoleId(ClaimsPrincipal User)
+    public string? GetRole(ClaimsPrincipal User)
     {
         var loggedInRoleIdClaim = User.FindFirst(USER_ROLE_CLAIM);
 
@@ -46,13 +46,7 @@ public class ClaimParserService
             return null;
         }
 
-
-        if (!int.TryParse(loggedInRoleIdClaim.Value, out int loggedInRoleId))
-        {
-            return null;
-        }
-
-        return loggedInRoleId;
+        return loggedInRoleIdClaim.Value;
     }
 
     public string? GetEmail(ClaimsPrincipal User)

@@ -83,7 +83,7 @@ public class UsersController : ControllerBase
     /// <param name="userId">The id of the user</param>
     /// <param name="user">The updated public information</param>
     /// <returns>The updated user</returns>
-    [Authorize]
+    [Authorize(Policy = "Manager")]
     [HttpPatch("public-info/{userId:int}")]
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]

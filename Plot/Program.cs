@@ -12,6 +12,7 @@
 
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Plot.Data.Models.Auth.Email;
 using Plot.Data.Models.Env;
@@ -48,6 +49,22 @@ builder.Services.AddHealthChecks();
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
 
+builder.Services.AddHttpContextAccessor();
+
+    // Add contexts and services as scoped services throughout
+// the backend project for dependency injection.
+builder.Services.AddSingleton<IAuthContext, AuthContext>();
+builder.Services.AddSingleton<IUserContext, UserContext>();
+builder.Services.AddSingleton<IStoreContext, StoreContext>();
+builder.Services.AddSingleton<IFloorsetContext, FloorsetContext>();
+builder.Services.AddSingleton<IFixtureContext, FixtureContext>();
+builder.Services.AddSingleton<ISalesContext, SalesContext>();
+builder.Services.AddScoped<ClaimParserService>();
+builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<TokenService>();
+
+builder.Services.AddScoped<IAuthorizationHandler, RoleHandler>();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -80,18 +97,7 @@ builder.Services.AddAuthorization(options =>
         policy.Requirements.Add(new RoleRequirement("Owner")));
 });
 
-// Add contexts and services as scoped services throughout
-// the backend project for dependency injection.
-builder.Services.AddSingleton<IAuthContext, AuthContext>();
-builder.Services.AddSingleton<IUserContext, UserContext>();
-builder.Services.AddSingleton<IStoreContext, StoreContext>();
-builder.Services.AddSingleton<IFloorsetContext, FloorsetContext>();
-builder.Services.AddSingleton<IFixtureContext, FixtureContext>();
-builder.Services.AddSingleton<ISalesContext, SalesContext>();
-builder.Services.AddScoped<ClaimParserService>();
-builder.Services.AddScoped<EmailService>();
-builder.Services.AddScoped<TokenService>();
-builder.Services.AddScoped<IAuthorizationHandler, RoleHandler>();
+
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

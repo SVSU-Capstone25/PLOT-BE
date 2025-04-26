@@ -52,6 +52,7 @@ public class AuthController : ControllerBase
 
     private readonly IAuthContext _authContext;
     private readonly EnvironmentSettings _envSettings;
+    private readonly ClaimParserService _claimParserService;
     // Methods -- Methods -- Methods -- Methods -- Methods -- Methods -----
 
     /// <summary>
@@ -61,12 +62,13 @@ public class AuthController : ControllerBase
     /// <param name="emailService"></param>
     /// <param name="tokenService"></param>
     /// <param name="authContext"></param>
-    public AuthController(EmailService emailService, TokenService tokenService, IAuthContext authContext, EnvironmentSettings envSettings)
+    public AuthController(EmailService emailService, TokenService tokenService, IAuthContext authContext, EnvironmentSettings envSettings, ClaimParserService claimParserService)
     {
         _emailService = emailService;
         _tokenService = tokenService;
         _authContext = authContext;
         _envSettings = envSettings;
+        _claimParserService = claimParserService;
 
         RESET_LINK_TEMPLATE = $"{_envSettings.audience}/password-reset?token=";
     }
@@ -135,7 +137,14 @@ public class AuthController : ControllerBase
         // Otherwise returns null.
         //var email = _tokenService.ValidateToken(token);
 
-        var email = _tokenService.ValidatePasswordResetToken(token);
+        var userClaims = _tokenService.ValidatePasswordResetToken(token);
+
+        if (userClaims==null)
+        {
+            return BadRequest();
+        }
+
+        var email=_claimParserService.GetEmail(userClaims);
 
 
         // If the email is null, return bad request.
@@ -302,10 +311,23 @@ public class AuthController : ControllerBase
         
         string token = authHeader.Substring("Bearer ".Length).Trim();
 
-        var userEmail = _tokenService.ValidateAuthToken(token);
+        var userClaims = _tokenService.ValidateAuthToken(token);
+
+        if (userClaims==null)
+        {
+            return BadRequest();
+        }
+
+        var userEmail=_claimParserService.GetEmail(userClaims);
 
 
         var user = await _authContext.GetUserByEmail(userEmail!);
+
+        if(user==null)
+        {
+            
+            return BadRequest();
+        }
 
         UserDTO userDTO = new UserDTO()
         {

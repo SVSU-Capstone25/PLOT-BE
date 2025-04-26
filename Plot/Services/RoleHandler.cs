@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
+using Org.BouncyCastle.Bcpg.Sig;
+using Plot.Data.Models.Users;
 using Plot.DataAccess.Interfaces;
+using Plot.Services;
 
 
 
@@ -9,23 +12,25 @@ public class RoleHandler : AuthorizationHandler<RoleRequirement>, IAuthorization
 
     //private readonly Cookie _cookie;
 
-    //private readonly JwtService _jwtService;
+    private readonly TokenService _tokenService;
 
     private readonly IAuthContext _authContext;
-    private readonly HttpContextAccessor _httpContextAccessor;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ClaimParserService _claimParserService;
 
     //private readonly ClaimParserService _claimParserService;
 
-    public RoleHandler(IAuthContext authContext, HttpContextAccessor httpContextAccessor)
+    public RoleHandler(IAuthContext authContext, IHttpContextAccessor httpContextAccessor, TokenService tokenService, ClaimParserService claimParserService)
     {
         _authContext = authContext;
         _httpContextAccessor = httpContextAccessor;
-        //_cookie=cookie;
+        _tokenService=tokenService;
+        _claimParserService=claimParserService;
         //_jwtService=jwtService;
         //_claimParserService=claimParserService;
     }
 
-    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, RoleRequirement requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, RoleRequirement requirement)
     {
         //string? authHeader = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
 
@@ -33,15 +38,50 @@ public class RoleHandler : AuthorizationHandler<RoleRequirement>, IAuthorization
 
         if (httpContext != null)
         {
-            var token = httpContext.Request.Headers["Authorization"].ToString();
+            var bearerToken = httpContext.Request.Headers["Authorization"].ToString();
 
-            Console.WriteLine(token);
+            string token = bearerToken.Substring("Bearer ".Length).Trim();
 
-            context.Succeed(requirement);
-        }else
-        {
-            context.Fail();
+            var requestUserClaims=_tokenService.ValidateAuthToken(token);
+
+            if(requestUserClaims!=null)
+            {
+                var requestUserEmail = _claimParserService.GetEmail(requestUserClaims);
+                var requestUserRole = _claimParserService.GetRole(requestUserClaims);
+
+
+                if(String.IsNullOrEmpty(requestUserEmail) || String.IsNullOrEmpty(requestUserRole) )
+                {
+                    context.Fail();
+                }else
+                {
+                    var currentUser= await _authContext.GetUserByEmail(requestUserEmail);
+
+                    if(currentUser!=null)
+                    {
+                        if(requestUserRole != currentUser.ROLE)
+                        {
+                            //KeyExpirationTime = httpContext.Request.
+                            //httpContext.Response.Cookies.Append
+                        }
+
+                    if(requirement.AllowedRoles.Contains(currentUser.ROLE))
+                    {
+                        
+                        context.Succeed(requirement);
+                    }
+
+                    }
+
+                    
+                }
+            }
         }
+
+
+        context.Fail();
+        
+
         
 
         

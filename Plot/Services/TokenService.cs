@@ -102,6 +102,18 @@ public class TokenService
         return GenerateToken(user, authClaimsIdentity, _authSecretKey, _authExpirationTime);
     }   
 
+    public string GenerateAuthToken(User user, double expirationTime)
+    {
+        ClaimsIdentity authClaimsIdentity = new ClaimsIdentity(
+                [
+                    new("Email", user.EMAIL!),
+                    new("Role", user.ROLE!),
+                    new("UserId", user.TUID.ToString()!)
+                ]);
+
+        return GenerateToken(user, authClaimsIdentity, _authSecretKey, expirationTime);
+    }   
+
 
     public string GeneratePasswordResetToken(User user)
     {
@@ -114,13 +126,13 @@ public class TokenService
     }   
 
 
-    public string? ValidateAuthToken(string token)
+    public ClaimsPrincipal? ValidateAuthToken(string token)
     {
        return ValidateToken(token, _authSecretKey);
     }
 
 
-    public string? ValidatePasswordResetToken(string token)
+    public ClaimsPrincipal? ValidatePasswordResetToken(string token)
     {
        return ValidateToken(token, _passwordResetSecretKey);
     }
@@ -236,7 +248,7 @@ public class TokenService
     /// </summary>
     /// <param name="token">Jwt token to validate</param>
     /// <returns>Valid Token: Users email. Else: null</returns>
-    private string? ValidateToken(string token, string secretKey)
+    private ClaimsPrincipal? ValidateToken(string token, string secretKey)
     {
         // Token handler to validate the token.
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -272,7 +284,7 @@ public class TokenService
             var principal = tokenHandler.ValidateToken(
                 token, validationParameters, out _);
 
-            return _claimParserService.GetEmail(principal);
+            return principal;
         }
         catch
         {
