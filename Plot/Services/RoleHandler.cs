@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
-using Org.BouncyCastle.Bcpg.Sig;
+using Plot.Data.Models.Env;
 using Plot.Data.Models.Users;
 using Plot.DataAccess.Interfaces;
 using Plot.Services;
@@ -18,14 +18,17 @@ public class RoleHandler : AuthorizationHandler<RoleRequirement>, IAuthorization
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ClaimParserService _claimParserService;
 
+    private readonly EnvironmentSettings _envSettings;
+
     //private readonly ClaimParserService _claimParserService;
 
-    public RoleHandler(IAuthContext authContext, IHttpContextAccessor httpContextAccessor, TokenService tokenService, ClaimParserService claimParserService)
+    public RoleHandler(IAuthContext authContext, IHttpContextAccessor httpContextAccessor, TokenService tokenService, ClaimParserService claimParserService, EnvironmentSettings environmentSettings)
     {
         _authContext = authContext;
         _httpContextAccessor = httpContextAccessor;
         _tokenService=tokenService;
         _claimParserService=claimParserService;
+        _envSettings = environmentSettings;
         //_jwtService=jwtService;
         //_claimParserService=claimParserService;
     }
@@ -35,6 +38,10 @@ public class RoleHandler : AuthorizationHandler<RoleRequirement>, IAuthorization
         //string? authHeader = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
 
         var httpContext = _httpContextAccessor.HttpContext;
+
+        //Console.WriteLine(httpContext.Response.HasStarted);
+
+        Console.WriteLine(httpContext.Request.Path);
 
         if (httpContext != null)
         {
@@ -53,7 +60,8 @@ public class RoleHandler : AuthorizationHandler<RoleRequirement>, IAuthorization
                 if(String.IsNullOrEmpty(requestUserEmail) || String.IsNullOrEmpty(requestUserRole) )
                 {
                     context.Fail();
-                }else
+                }
+                else
                 {
                     var currentUser= await _authContext.GetUserByEmail(requestUserEmail);
 
@@ -61,91 +69,32 @@ public class RoleHandler : AuthorizationHandler<RoleRequirement>, IAuthorization
                     {
                         if(requestUserRole != currentUser.ROLE)
                         {
+                            // var updatedToken = _tokenService.GenerateAuthToken(currentUser);
+                            // var expTime = Convert.ToDouble(_envSettings.auth_expiration_time);
+
+                            // Console.WriteLine("Adding new token");
+                            // Console.WriteLine(httpContext.Response.HasStarted);
+                            
+
+                            // httpContext.Response.Headers.Append("NEW-HEADER","TESET-TETET");
+                            
                             //KeyExpirationTime = httpContext.Request.
                             //httpContext.Response.Cookies.Append
                         }
 
-                    if(requirement.AllowedRoles.Contains(currentUser.ROLE))
-                    {
-                        
-                        context.Succeed(requirement);
+                        if(requirement.AllowedRoles.Contains(currentUser.ROLE))
+                        {
+                            Console.WriteLine("GOOD Req");
+                            context.Succeed(requirement);
+                            return;
+                        }
                     }
-
-                    }
-
-                    
                 }
             }
         }
 
-
+        Console.WriteLine("Bad Req");
         context.Fail();
-        
-
-        
-
-        
-
-        
-
-
-        // if (string.IsNullOrEmpty(authHeader))
-        // {
-        //     return BadRequest();
-        // }
-        
-        // string token = authHeader.Substring("Bearer ".Length).Trim();
-
-        // var userEmail = _tokenService.ValidateAuthToken(token);
-
-        
-        
-
-
-
-
-        // UserDTO? currentUser = await _authHttpClient.GetCurrentUser();
-
-        // if(currentUser!=null && requirement.AllowedRoles.Contains(currentUser.ROLE))
-        // {
-        //     Console.WriteLine("ROLE GOOD");
-        //     context.Succeed(requirement);
-        // }else
-        // {
-        //     Console.WriteLine("ROLE BAD");
-        //     context.Fail();
-        // }
-
-
-        //var token = await _cookie.GetValue("Auth");
-
-        // if(String.IsNullOrEmpty(token))
-        // {
-        //     var userPrincipal = _jwtService.ValidateAuthToken(token);
-
-        //     if(userPrincipal!=null)
-        //     {
-        //         var currentUserTUID = _claimParserService.GetUserId(userPrincipal);
-
-        //         var userInDb = _usersHttpClient.GetUserById(currentUserTUID.Value);
-
-        //         if(userInDb!=null && requirement.AllowedRoles.Contains(userInDb.ROLE))
-
-
-        //     }
-
-        // }
-
-        // var email = context.User.Identity?.Name; // or ClaimTypes.Email
-
-        // if (string.IsNullOrEmpty(email))
-        //     return;
-
-        // var user = await _usersHttpClient.GetUserByEmail(email); // Call DB every time
-
-        // if (user != null && requirement.AllowedRoles.Contains(user.ROLE))
-        // {
-        //     context.Succeed(requirement);
-        // }
+        return;
     }
 }

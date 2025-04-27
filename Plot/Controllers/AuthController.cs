@@ -270,6 +270,37 @@ public class AuthController : ControllerBase
         });
     }
 
+    [Authorize]
+    [HttpPost("refresh-token")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> RefreshToken([FromBody] string email)
+    {
+        if (email==null)
+        {
+            ErrorMessage errorMessage = new ErrorMessage() { Message = "Invalid credentials."};
+            return BadRequest();
+        }
+        
+        //Console.WriteLine(userLoginAttempt);
+        var user = await _authContext.GetUserByEmail(email);
+
+        Console.WriteLine(user);
+        if (user == null)
+        {
+            ErrorMessage errorMessage = new ErrorMessage() { Message = "Internal error"};
+            return BadRequest(errorMessage);
+        }
+
+        var token = _tokenService.GenerateAuthToken(user);
+
+        return Ok(new LoginToken()
+        {
+            Token = token
+        });
+    }
+
     /// <summary>
     /// This endpoint deals with logging out a user. This will delete the token 
     /// from the user.
