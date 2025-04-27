@@ -112,7 +112,9 @@ public class StoreContext : DbContext, IStoreContext
         parameters.Add("ZIP", createstore.ZIP);
         parameters.Add("WIDTH", createstore.WIDTH);
         parameters.Add("LENGTH", createstore.LENGTH);
-        parameters.Add("BLUEPRINT_IMAGE", createstore.BLUEPRINT_IMAGE);
+        if(createstore.BLUEPRINT_IMAGE != null && createstore.BLUEPRINT_IMAGE.Any()){
+            parameters.Add("BLUEPRINT_IMAGE", createstore.BLUEPRINT_IMAGE);
+        }
         parameters.Add("USER_TUIDS", createstore.USER_TUIDS);
 
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Store", parameters);
