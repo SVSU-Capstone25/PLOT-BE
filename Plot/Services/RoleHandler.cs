@@ -69,6 +69,8 @@ public class RoleHandler : AuthorizationHandler<RoleRequirement>, IAuthorization
                     {
                         if(requestUserRole != currentUser.ROLE)
                         {
+
+                            httpContext.Response.Headers.Add("X-Role-Mismatch", "true");
                             // var updatedToken = _tokenService.GenerateAuthToken(currentUser);
                             // var expTime = Convert.ToDouble(_envSettings.auth_expiration_time);
 
@@ -84,6 +86,7 @@ public class RoleHandler : AuthorizationHandler<RoleRequirement>, IAuthorization
 
                         if(requirement.AllowedRoles.Contains(currentUser.ROLE))
                         {
+                            httpContext.Response.Headers.Add("X-Role-Mismatch", "true");
                             Console.WriteLine("GOOD Req");
                             context.Succeed(requirement);
                             return;

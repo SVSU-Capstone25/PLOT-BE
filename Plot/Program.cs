@@ -35,7 +35,8 @@ builder.Services.AddCors(options =>
             .SetIsOriginAllowed(origin => true)
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .AllowCredentials();
+            .AllowCredentials()
+            .WithExposedHeaders("X-Role-Mismatch");
     });
 });
 
