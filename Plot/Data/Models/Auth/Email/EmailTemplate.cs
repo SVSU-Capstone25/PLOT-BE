@@ -3,7 +3,7 @@
     Part of Project: PLOT/PLOT-BE/Plot/Data/Models/Auth/Email
     
     File Purpose:
-    This file defines the EmailTemplate model class, 
+    This file defines the EmailTemplate model, 
     it defines data to inject into an html email template.
 
     Class Purpose:

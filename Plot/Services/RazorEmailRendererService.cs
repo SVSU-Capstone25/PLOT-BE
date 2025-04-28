@@ -32,6 +32,7 @@ public class RazorEmailRenderer
 
     // Methods -- Methods -- Methods -- Methods -- Methods -- Methods -----
 
+
     /// <summary>
     /// Constructor used for RazorEmailRenderer class.
     /// Initializes a new instance of the RazorEmailRenderer class.
@@ -48,6 +49,7 @@ public class RazorEmailRenderer
             .Build();
     }
 
+
     /// <summary>
     /// Method used to render an email template asynchronously.
     /// Uses an html template and accompanying model data to generate an
@@ -55,11 +57,12 @@ public class RazorEmailRenderer
     /// </summary>
     /// <param name="emailModel"> Model used to inject info into the
     /// template</param>
-    /// <returns></returns>
+    /// <returns>Rendered email as a string</returns>
     public async Task<string> RenderEmailAsync(EmailTemplate emailModel)
     {
         // Path to the html email template file.
         string templatePath = "EmailTemplate.cshtml";
+
         // Render the email template adding the data from the emailModel.
         return await _razorEngine.CompileRenderAsync(
             templatePath, emailModel);

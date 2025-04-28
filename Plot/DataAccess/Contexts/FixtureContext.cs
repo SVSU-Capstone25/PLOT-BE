@@ -93,8 +93,8 @@ public class FixtureContext : DbContext, IFixtureContext
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("TUID", fixtureInstance.TUID);
         parameters.Add("FLOORSET_TUID", fixtureInstance.FLOORSET_TUID);
-        parameters.Add("XPOS", fixtureInstance.X_POS);//I swear to god if someone tries to change this to X_POS again I will scream
-        parameters.Add("YPOS", fixtureInstance.Y_POS);// In the procedure it is XPOS and YPOS, but in the db model and schema it is X_POS and Y_POS
+        parameters.Add("XPOS", fixtureInstance.X_POS);
+        parameters.Add("YPOS", fixtureInstance.Y_POS);
         parameters.Add("HANGER_STACK", fixtureInstance.HANGER_STACK);
         parameters.Add("SUPERCATEGORY_TUID", fixtureInstance.SUPERCATEGORY_TUID);
         parameters.Add("SUBCATEGORY", fixtureInstance.SUBCATEGORY);
