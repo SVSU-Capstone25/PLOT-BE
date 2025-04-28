@@ -13,6 +13,7 @@
 
     Written by: Jordan Houlihan
     Edited by: Joshua Rodack
+    Comments by: Josh Rodack
 */
 
 using Dapper;

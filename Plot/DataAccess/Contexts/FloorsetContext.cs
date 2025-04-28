@@ -13,6 +13,7 @@
 
     Written by: Jordan Houlihan
     Modified by: Josh Rodack
+    Comments by: Josh Rodack
 */
 using System.Data;
 using Dapper;
