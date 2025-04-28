@@ -22,16 +22,15 @@ public record TokenSettings
 {
     // VARIABLES -- VARIABLES -- VARIABLES -- VARIABLES -- VARIABLES ------
 
-    //TODO: Change when Info is Available on these
+
     // Issuer of the token 
     public string? Issuer { get; set; }
-    //TODO: Change when Info is Available on these
+
     // Audience of the token 
     public string? Audience { get; set; }
-    //TODO: Change when Info is Available on these
+
     // Token expiration time (in hours)
     public double? ExpirationTime { get; set; }
     // Secret key
-    //TODO: Change when Info is Available on these
     public string? SecretKey { get; set; }
 }
