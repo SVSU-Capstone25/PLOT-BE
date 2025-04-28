@@ -12,6 +12,7 @@
     to send data to the database server from the frontend and vice versa.
 
     Written by: Jordan Houlihan
+    Edited by: Joshua Rodack
 */
 
 using Dapper;
@@ -24,12 +25,20 @@ namespace Plot.DataAccess.Contexts;
 
 public class StoreContext : DbContext, IStoreContext
 {
+    /// <summary>
+    /// Returns all stores
+    /// </summary>
+    /// <returns>IEnumerable of Store models</returns>
     public async Task<IEnumerable<Store>?> GetStores()
     {
         return await GetStoredProcedureQuery<Store>("Select_Stores");
     }
 
-
+    /// <summary>
+    /// Returns a specific store by id
+    /// </summary>
+    /// <param name="storeId">Store TUID</param>
+    /// <returns>Returns a single store model</returns>
     public async Task<Store?> GetStoreById(int? storeId)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -51,6 +60,12 @@ public class StoreContext : DbContext, IStoreContext
         //     return null;
         // }
     }
+
+    /// <summary>
+    /// Return the stores a user has access to based on role
+    /// </summary>
+    /// <param name="userId">User id in question</param>
+    /// <returns>IEnumerable of Store models</returns>
     public async Task<IEnumerable<Store>?> GetByAccess(int? userId)
     {//grab stores a user works at
 
@@ -59,7 +74,13 @@ public class StoreContext : DbContext, IStoreContext
 
         return await GetStoredProcedureQuery<Store>("Select_Users_Store_Access", parameters);
     }
-
+    /// <summary>
+    /// Update the record of a store in the database
+    /// based on the id passed in
+    /// </summary>
+    /// <param name="storeId">Id of store to be updated.</param>
+    /// <param name="updateStore">The model holding all the updated information</param>
+    /// <returns>int indicating success or failure.</returns>
     public async Task<int> UpdatePublicInfoStore(int storeId, UpdatePublicInfoStore updateStore)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -76,6 +97,12 @@ public class StoreContext : DbContext, IStoreContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Store", parameters);
     }
+    /// <summary>
+    /// Update the size of the store
+    /// </summary>
+    /// <param name="storeId">id of store</param>
+    /// <param name="updateStore">updated dimensions</param>
+    /// <returns>int indicating success or failure</returns>
     public async Task<int> UpdateSizeStore(int storeId, UpdateSizeStore updateStore)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -85,7 +112,11 @@ public class StoreContext : DbContext, IStoreContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Store", parameters);
     }
-
+    /// <summary>
+    /// Delete store from database.
+    /// </summary>
+    /// <param name="storeId">TUID of store to be updated.</param>
+    /// <returns>int indicating success or failure.</returns>
     public async Task<int> DeleteStoreById(int storeId)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -93,7 +124,11 @@ public class StoreContext : DbContext, IStoreContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Delete_Store", parameters);
     }
-
+    /// <summary>
+    /// Returns the users that work at a store.
+    /// </summary>
+    /// <param name="storeId">Store ID</param>
+    /// <returns>Ienumerable of UserDTO models</returns>
     public async Task<IEnumerable<UserDTO>?> GetUsersAtStore(int storeId)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -117,7 +152,11 @@ public class StoreContext : DbContext, IStoreContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Store", parameters);
     }
-
+    /// <summary>
+    /// Returns all users who don't work at a specific store.
+    /// </summary>
+    /// <param name="storeId">id of store in question</param>
+    /// <returns>IEnumerable of UserDTO models</returns>
     public async Task<IEnumerable<UserDTO>?> GetUsersNotInStore(int storeId)
     {
         DynamicParameters parameters = new DynamicParameters();

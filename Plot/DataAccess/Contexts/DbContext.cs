@@ -11,6 +11,7 @@
     context class and all database context classes will inherit from it.
 
     Written by: Jordan Houlihan
+    Documented by Josh Rodack
 */
 using Dapper;
 using Plot.Data.Models.Env;
@@ -29,7 +30,12 @@ public class DbContext
         _envSettings = new();
         _databaseConnection = _envSettings.databaseConnection;
     }
-
+    /// <summary>
+    /// Public GetConnection value to create a connection to the database for
+    /// the other contexts.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public SqlConnection GetConnection()
     {
         try
@@ -41,14 +47,27 @@ public class DbContext
             throw new ArgumentNullException("Database connection failed. ", exception.Message);
         }
     }
-
+    /// <summary>
+    /// Generic implementation to pass stored procedures to the database
+    /// and return the ienumerables to the front end.
+    /// </summary>
+    /// <typeparam name="T">Generic type for models</typeparam>
+    /// <param name="storedProcedure">name of stored procedure.</param>
+    /// <returns>IEnumerable of Ts </returns>
     public async Task<IEnumerable<T>?> GetStoredProcedureQuery<T>(string storedProcedure)
     {
         DynamicParameters parameters = new DynamicParameters();
 
         return await this.GetStoredProcedureQuery<T>(storedProcedure, parameters);
     }
-
+    /// <summary>
+    /// Generic implementation to pass stored procedures to the database
+    /// and return the ienumerables to the front end.
+    /// </summary>
+    /// <typeparam name="T">Generic Model </typeparam>
+    /// <param name="storedProcedure">Name of stored procedure</param>
+    /// <param name="parameters"> Dapper model to pass stored procedure</param>
+    /// <returns>IEnumerable of T</returns>
     public async Task<IEnumerable<T>?> GetStoredProcedureQuery<T>(string storedProcedure, DynamicParameters parameters)
     {
         try
@@ -67,7 +86,13 @@ public class DbContext
             return default;
         }
     }
-
+    /// <summary>
+    /// Generic stored procedure for calls that only return a single value
+    /// </summary>
+    /// <typeparam name="T">Generic of value returned</typeparam>
+    /// <param name="storedProcedure">name of stored procedure</param>
+    /// <param name="parameters">parameters to be passed to sp</param>
+    /// <returns>Generic model T</returns>
     public async Task<T?> GetFirstOrDefaultStoredProcedureQuery<T>(string storedProcedure, DynamicParameters parameters)
     {
         try
@@ -86,7 +111,12 @@ public class DbContext
             return default;
         }
     }
-
+    /// <summary>
+    /// Generic implementation of a stored procedure for CRUD operations
+    /// </summary>
+    /// <param name="storedProcedure">Name of stored procedure</param>
+    /// <param name="parameters">parameters for stored procedure.</param>
+    /// <returns>int indicating success or failure.</returns>
     public async Task<int> CreateUpdateDeleteStoredProcedureQuery(string storedProcedure, DynamicParameters parameters)
     {
         try

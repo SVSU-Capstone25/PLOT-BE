@@ -12,6 +12,7 @@
     to send data to the database server from the frontend and vice versa.
 
     Written by: Jordan Houlihan
+    Modified by: Joshua Rodack
 */
 using System.Data;
 using System.Net;
@@ -24,6 +25,11 @@ namespace Plot.DataAccess.Contexts;
 
 public class FixtureContext : DbContext, IFixtureContext
 {
+    /// <summary>
+    /// Create a record of a fixture on a floorset floor.
+    /// </summary>
+    /// <param name="fixtureInstance">Model of the values to be added to the database</param>
+    /// <returns>int indicating success or failure.</returns>
     public async Task<int> CreateFixtureInstance(CreateFixtureInstance fixtureInstance)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -38,7 +44,12 @@ public class FixtureContext : DbContext, IFixtureContext
 
         return await GetFirstOrDefaultStoredProcedureQuery<int>("Insert_Floorset_Fixture", parameters);
     }
-
+    /// <summary>
+    /// Create a model for a type of fixture that can be placed on the floorset floor.
+    /// </summary>
+    /// <param name="storeId">id fixture is added to</param>
+    /// <param name="fixtureModel">values of the fixture</param>
+    /// <returns>int indicating success or failure.</returns>
     public async Task<int> CreateFixtureModel(int storeId, CreateFixtureModel fixtureModel)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -51,7 +62,11 @@ public class FixtureContext : DbContext, IFixtureContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Fixture", parameters);
     }
-
+    /// <summary>
+    /// Delete a fixture placed on a floorset by its id.
+    /// </summary>
+    /// <param name="fixtureInstanceId">TUID of fixture.</param>
+    /// <returns>int indicating success or failure.</returns>
     public async Task<int> DeleteFixtureInstanceById(int fixtureInstanceId)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -61,7 +76,11 @@ public class FixtureContext : DbContext, IFixtureContext
 
         return response;
     }
-
+    /// <summary>
+    /// remove a fixture model from a store based on id
+    /// </summary>
+    /// <param name="fixtureModelId">id of fixture model</param>
+    /// <returns>int indicating success or failure.</returns>
     public async Task<int> DeleteFixtureModelById(int fixtureModelId)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -69,7 +88,11 @@ public class FixtureContext : DbContext, IFixtureContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Delete_Fixture", parameters);
     }
-
+    /// <summary>
+    /// Return all fixture instances on a given floorset.
+    /// </summary>
+    /// <param name="floorsetId">id of the floorset</param>
+    /// <returns>IEnumerable of fixture instance models</returns>
     public async Task<IEnumerable<FixtureInstance>?> GetFixtureInstances(int floorsetId)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -78,6 +101,11 @@ public class FixtureContext : DbContext, IFixtureContext
         return await GetStoredProcedureQuery<FixtureInstance>("Select_Floorset_Fixtures", parameters);
     }
 
+    /// <summary>
+    /// Return all models at a store
+    /// </summary>
+    /// <param name="StoreId">Store TUID</param>
+    /// <returns>IEnumerable of Fixture models</returns>
     public async Task<IEnumerable<FixtureModel>?> GetFixtureModels(int StoreId)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -85,7 +113,11 @@ public class FixtureContext : DbContext, IFixtureContext
 
         return await GetStoredProcedureQuery<FixtureModel>("Select_Store_Fixtures", parameters);
     }
-
+    /// <summary>
+    /// Update the instance of a fixture on a floorset.
+    /// </summary>
+    /// <param name="fixtureInstance">Values of the fixture to be updated</param>
+    /// <returns>int indicating success or failure.</returns>
     public async Task<int> UpdateFixtureInstanceById(UpdateFixtureInstance fixtureInstance)
     {
         Console.WriteLine(fixtureInstance);
@@ -107,7 +139,12 @@ public class FixtureContext : DbContext, IFixtureContext
 
         return response;
     }
-
+    /// <summary>
+    /// Update the values of a fixture model at a store.
+    /// </summary>
+    /// <param name="fixtureId">id of fixture to be updated</param>
+    /// <param name="fixtureModel">values to be updated</param>
+    /// <returns>int indicating success or failure.</returns>
     public async Task<int> UpdateFixtureModelById(int fixtureId, CreateFixtureModel fixtureModel)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -121,7 +158,11 @@ public class FixtureContext : DbContext, IFixtureContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Fixture", parameters);
     }
-
+    /// <summary>
+    /// Add employee areas to a floorset.
+    /// </summary>
+    /// <param name="employeeAreaModel">Values of the employee area</param>
+    /// <returns>Int indicating success or failure.</returns>
     public async Task<int> AddEmployeeAreas(AddEmployeeAreaModel employeeAreaModel)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -131,7 +172,11 @@ public class FixtureContext : DbContext, IFixtureContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Employee_Area", parameters);
     }
-
+    /// <summary>
+    /// Add employee areas in bulk
+    /// </summary>
+    /// <param name="employeeAreaModel"> Values for the table</param>
+    /// <returns>int indicating success or failure. </returns>
     public async Task<int> BulkAddEmployeeAreas(BulkAddEmployeeAreaModel employeeAreaModel)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -144,7 +189,11 @@ public class FixtureContext : DbContext, IFixtureContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Bulk_Insert_Employee_Area", parameters);
     }
-
+    /// <summary>
+    /// Remove employee areas in bulk.
+    /// </summary>
+    /// <param name="employeeAreaModel">Values for the table.</param>
+    /// <returns>int indicating success and failure</returns>
     public async Task<int> BulkDeleteEmployeeAreas(BulkDeleteEmployeeAreaModel employeeAreaModel)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -157,7 +206,11 @@ public class FixtureContext : DbContext, IFixtureContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Bulk_Delete_Employee_Area", parameters);
     }
-
+    /// <summary>
+    /// Delete a single employee area from the floorset.
+    /// </summary>
+    /// <param name="employeeAreaModel">Model with values for the table</param>
+    /// <returns>int indicating success or failure.</returns>
     public async Task<int> DeleteEmployeeAreas(DeleteEmployeeAreaModel employeeAreaModel)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -167,7 +220,11 @@ public class FixtureContext : DbContext, IFixtureContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Delete_Employee_Area", parameters);
     }
-
+    /// <summary>
+    /// Return all employee areas for a given floorset.
+    /// </summary>
+    /// <param name="floorsetId">Floorset TUID</param>
+    /// <returns>IEnumerable of Employee area models</returns>
     public async Task<IEnumerable<EmployeeAreaModel>?> GetEmployeeAreas(int floorsetId)
     {
         DynamicParameters parameters = new DynamicParameters();
