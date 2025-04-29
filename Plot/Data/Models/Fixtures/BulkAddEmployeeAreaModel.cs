@@ -1,10 +1,14 @@
 /*
-    Filename: AddEmployeeAreaModel.cs
+    Filename: BulkAddEmployeeAreaModel.cs
     Part of Project: PLOT/PLOT-BE/Plot/Data/Models/Fixtures
 
-    TODO: File Purpose: 
+    File Purpose: This file contains the model
+    for bulk adding employee areas.
 
-    TODO: Class Purpose:
+    Class Purpose: This record is the input model
+    for bulk adding employee areas. This is what the
+    backend expects from the frontend for bulk adding
+    an employee area.
     
     Written by: Clayton Cook
 */
