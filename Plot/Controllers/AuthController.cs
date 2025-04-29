@@ -34,7 +34,6 @@ public class AuthController : ControllerBase
 {
     // VARIABLES -- VARIABLES -- VARIABLES -- VARIABLES -- VARIABLES ------
 
-
     // Holds the link for a password reset
     private readonly string password_reset_link;
 
@@ -46,22 +45,20 @@ public class AuthController : ControllerBase
 
     // Context that holds auth related methods to communicate with the DB.
     private readonly IAuthContext _authContext;
-    
+
     // Service to access variable stored in the env file
     private readonly EnvironmentSettings _envSettings;
 
-
     // Methods -- Methods -- Methods -- Methods -- Methods -- Methods -----
-
 
     /// <summary>
     /// Constructor for AuthController. Initializes the 
     /// services and context via dependency injection.
     /// </summary>
-    /// <param name="emailService"></param>
-    /// <param name="tokenService"></param>
-    /// <param name="authContext"></param>
-    /// <param name="envSettings"></param>
+    /// <param name="emailService">Service for sending emails</param>
+    /// <param name="tokenService">Service for making/verifying auth tokens</param>
+    /// <param name="authContext">Database context for authentication</param>
+    /// <param name="envSettings">Environment settings from the .env file</param>
     public AuthController(EmailService emailService, TokenService tokenService,
                          IAuthContext authContext, EnvironmentSettings envSettings)
     {
@@ -72,7 +69,6 @@ public class AuthController : ControllerBase
         //Get the audience from the env file to use in the reset link.
         password_reset_link = $"{_envSettings.audience}/password-reset?token=";
     }
-
 
     /// <summary>
     /// Endpoint to request a password reset. Takes a users email address 
@@ -153,7 +149,6 @@ public class AuthController : ControllerBase
             return BadRequest("User not found.");
         }
 
-
         PasswordHasher<User> hasher = new();
 
         LoginRequest newUserInfo = new()
@@ -188,7 +183,7 @@ public class AuthController : ControllerBase
     /// <param name="user">The new user</param>
     /// <returns>200 ok if Reset is successful, 
     /// 400 bad request otherwise.</returns>
-    [Authorize(Policy = "Manager")] 
+    [Authorize(Policy = "Manager")]
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -236,14 +231,14 @@ public class AuthController : ControllerBase
         {
             return BadRequest(ModelState);
         }
-        
+
 
         var user = await _authContext.GetUserByEmail(userLoginAttempt.EMAIL!);
 
-        
+
         if (user == null || userLoginAttempt.PASSWORD == null)
         {
-            ErrorMessage errorMessage = new ErrorMessage() { Message = "Invalid login."};
+            ErrorMessage errorMessage = new ErrorMessage() { Message = "Invalid login." };
             return BadRequest(errorMessage);
         }
 
@@ -251,7 +246,7 @@ public class AuthController : ControllerBase
 
         if (passwordHasher.VerifyHashedPassword(user, user.PASSWORD!, userLoginAttempt.PASSWORD) == PasswordVerificationResult.Failed)
         {
-            ErrorMessage errorMessage = new ErrorMessage() { Message = "Invalid login."};
+            ErrorMessage errorMessage = new ErrorMessage() { Message = "Invalid login." };
             return BadRequest(errorMessage);
         }
 
@@ -310,7 +305,7 @@ public class AuthController : ControllerBase
         {
             return BadRequest();
         }
-        
+
         //Trim the header value to get the token
         string token = authHeader.Substring("Bearer ".Length).Trim();
 
@@ -321,11 +316,11 @@ public class AuthController : ControllerBase
 
         UserDTO userDTO = new UserDTO()
         {
-            TUID=user?.TUID,
-            FIRST_NAME=user?.FIRST_NAME,
-            LAST_NAME=user?.LAST_NAME,
-            EMAIL=user?.EMAIL,
-            ROLE=user?.ROLE
+            TUID = user?.TUID,
+            FIRST_NAME = user?.FIRST_NAME,
+            LAST_NAME = user?.LAST_NAME,
+            EMAIL = user?.EMAIL,
+            ROLE = user?.ROLE
         };
 
         return Ok(userDTO);

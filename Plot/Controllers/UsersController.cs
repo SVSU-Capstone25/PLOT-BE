@@ -7,7 +7,7 @@
     which will transport the user data from the frontend 
     to the database and vice versa.
 
-    Written by: Jordan Houlihan
+    Written by: Jordan Houlihan, Clayton Cook, Joshua Rodack
 */
 
 using Microsoft.AspNetCore.Authorization;
@@ -26,6 +26,13 @@ public class UsersController : ControllerBase
     private readonly IUserContext _userContext;
     private readonly ClaimParserService _claimParserService;
 
+    /// <summary>
+    /// Constructor for the users controller, initializes
+    /// the services and context via dependency injection.
+    /// </summary>
+    /// <param name="userContext">Database context for the users</param>
+    /// <param name="authContext">Database context for authentication</param>
+    /// <param name="claimParserService">Service for reading the claims on the auth tokens</param>
     public UsersController(IUserContext userContext, IAuthContext authContext, ClaimParserService claimParserService)
     {
         _userContext = userContext;
@@ -314,9 +321,10 @@ public class UsersController : ControllerBase
     }
 
     /// <summary>
-    /// TODO
+    /// Endpoint to get users by a string request of the ids.
     /// </summary>
-    /// <returns>Array of userDTO objects</returns>
+    /// <param name="usersByStringRequest">User ids</param>
+    /// <returns>List of users</returns>
     [Authorize]
     [HttpPost("get-users-by-string")]
     [Produces("application/json")]

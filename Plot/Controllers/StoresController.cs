@@ -7,7 +7,7 @@
     which will transport store data from the frontend
     to the database and vice versa.
     
-    Written by: Jordan Houlihan
+    Written by: Jordan Houlihan, Clayton Cook, Joshua Rodack
 */
 
 using Microsoft.AspNetCore.Authorization;
@@ -26,6 +26,12 @@ public class StoresController : ControllerBase
     private readonly IStoreContext _storeContext;
     private readonly ClaimParserService _claimParserService;
 
+    /// <summary>
+    /// Constructor for the stores controller, initializes
+    /// the services and context via dependency injection.
+    /// </summary>
+    /// <param name="storeContext">Database context for the stores</param>
+    /// <param name="claimParserService">Service for reading the claims on the auth tokens</param>
     public StoresController(IStoreContext storeContext, ClaimParserService claimParserService)
     {
         _storeContext = storeContext;
@@ -33,9 +39,9 @@ public class StoresController : ControllerBase
     }
 
     /// <summary>
-    /// This endpoint deals with getting all of the stores.
+    /// Endpoint to get all of the stores.
     /// </summary>
-    /// <returns>Array of stores</returns>
+    /// <returns>List of stores</returns>
     [Authorize(Policy = "Manager")]
     [HttpGet("get-all")]
     [Produces("application/json")]
@@ -53,10 +59,11 @@ public class StoresController : ControllerBase
     }
 
     /// <summary>
-    /// This endpoint deals with getting stores based on a user's access.
+    /// Endpoint to get a list of stores based on the logged in
+    /// user's access.
     /// </summary>
-    /// <param name="userId">The id of the user</param>
-    /// <returns>Array of stores</returns>
+    /// <param name="userId">User id</param>
+    /// <returns>List of stores</returns>
     [Authorize]
     [HttpGet("access/{userId:int}")]
     [Produces("application/json")]
@@ -75,6 +82,11 @@ public class StoresController : ControllerBase
         return Ok(stores);
     }
 
+    /// <summary>
+    /// Endpoint to get a store by id.
+    /// </summary>
+    /// <param name="storeId">Store id</param>
+    /// <returns>a store</returns>
     [Authorize]
     [HttpGet("get-store/{storeId:int}")]
     [Produces("application/json")]
@@ -92,6 +104,11 @@ public class StoresController : ControllerBase
         return Ok(store);
     }
 
+    /// <summary>
+    /// Endpoint to get the users working at a store.
+    /// </summary>
+    /// <param name="storeId">Store id</param>
+    /// <returns>List of users</returns>
     [Authorize]
     [HttpGet("get-users-by-store/{storeId:int}")]
     [Produces("application/json")]
@@ -110,6 +127,13 @@ public class StoresController : ControllerBase
         return Ok(users);
     }
 
+    /// TODO: Don't know why the return type was changed to only be one user.
+    /// Should be IEnumerable<UserDTO> for a list of users.
+    /// <summary>
+    /// Endpoint to get users not working at a store.
+    /// </summary>
+    /// <param name="storeId">Store id</param>
+    /// <returns>List of users</returns>
     [Authorize]
     [HttpGet("get-users-not-in-store/{storeId:int}")]
     [Produces("application/json")]
@@ -127,11 +151,12 @@ public class StoresController : ControllerBase
 
         return Ok(users);
     }
+
     /// <summary>
-    /// This endpoint deals with creating a store.
+    /// Endpoint to create a store.
     /// </summary>
-    /// <param name="store">The new store</param>
-    /// <returns>The newly created store</returns>
+    /// <param name="store">The information of the new store</param>
+    /// <returns>Empty response with the specified status code</returns>
     [Authorize(Policy = "Owner")]
     [HttpPost("create-store")]
     [Produces("application/json")]
@@ -155,12 +180,15 @@ public class StoresController : ControllerBase
         return Ok();
     }
 
+    // TODO: Don't know why the return type is a store when there is no way
+    // that this will return a store. The database stored procedure will
+    // never return a store.
     /// <summary>
-    /// This endpoint deals with updating the public information of a store. This includes
-    /// the name, location, image, and employees. 
+    /// Endpoint to update the public information of a store.
     /// </summary>
-    /// <param name="store">The updated public information for the store</param>
-    /// <returns>The updated store</returns>
+    /// <param name="storeId">Store id</param>
+    /// <param name="store">The new information of the store</param>
+    /// <returns></returns>
     [Authorize(Policy = "Manager")]
     [HttpPatch("public-info/{storeId:int}")]
     [Produces("application/json")]
@@ -189,10 +217,11 @@ public class StoresController : ControllerBase
     }
 
     /// <summary>
-    /// This endpoint deals with updating the size of a store.
+    /// Update the size of the store.
     /// </summary>
-    /// <param name="store">The updated size of the store</param>
-    /// <returns>The updated store</returns>
+    /// <param name="storeId">Store id</param>
+    /// <param name="store">The new size information of the store</param>
+    /// <returns>Empty response with the specified status code</returns>
     [Authorize(Policy = "Manager")]
     [HttpPatch("size/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -216,10 +245,10 @@ public class StoresController : ControllerBase
     }
 
     /// <summary>
-    /// This endpoint deals with deleting a store.
+    /// Endpoint to delete a store.
     /// </summary>
-    /// <param name="storeId">The id of the store</param>
-    /// <returns>This endpoint doesn't return a value</returns>
+    /// <param name="storeId">Store id</param>
+    /// <returns>Empty response with the specified status code</returns>
     [Authorize(Policy = "Owner")]
     [HttpDelete("{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

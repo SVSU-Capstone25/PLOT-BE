@@ -7,7 +7,7 @@
     which will transport floorset data from the frontend 
     to the database and vice versa. 
     
-    Written by: Jordan Houlihan
+    Written by: Jordan Houlihan, Clayton Cook, Joshua Rodack
 */
 
 using Microsoft.AspNetCore.Authorization;
@@ -25,6 +25,12 @@ public class FloorsetsController : ControllerBase
     private readonly IFloorsetContext _floorsetContext;
     private readonly ClaimParserService _claimParserService;
 
+    /// <summary>
+    /// Constructor for the floorsets controller, initializes
+    /// the services and context via dependency injection.
+    /// </summary>
+    /// <param name="floorsetContext">Database context for the floorsets</param>
+    /// <param name="claimParserService">Service for reading the claims on the auth tokens</param>
     public FloorsetsController(IFloorsetContext floorsetContext, ClaimParserService claimParserService)
     {
         _floorsetContext = floorsetContext;
@@ -32,11 +38,11 @@ public class FloorsetsController : ControllerBase
     }
 
     /// <summary>
-    /// This endpoint deals with getting a list of floorsets tied to a specified store.
+    /// Endpoint to get all floorsets for a store.
     /// </summary>
-    /// <param name="storeId">The id of the store as a route parameter in the url.</param>
-    /// <returns>A list of floorset objects.</returns>
-    // [Authorize]
+    /// <param name="storeId">Store id</param>
+    /// <returns>List of floorsets for a store</returns>
+    [Authorize]
     [HttpGet("get-floorsets/{storeId:int}")]
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -47,21 +53,26 @@ public class FloorsetsController : ControllerBase
         return Ok(await _floorsetContext.GetFloorsetsByStoreId(storeId));
     }
 
+    /// <summary>
+    /// Endpoint to get a floorset by id. 
+    /// </summary>
+    /// <param name="floorsetId">Floorset id</param>
+    /// <returns>Floorset</returns>
     [HttpGet("get-floorset/{floorsetId:int}")]
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<Floorset>>> GetFloorsetByIdController(int floorsetId)
+    public async Task<ActionResult<Floorset>> GetFloorsetByIdController(int floorsetId)
     {
         return Ok(await _floorsetContext.GetFloorsetById(floorsetId));
     }
 
     /// <summary>
-    /// This endpoint deals with creating a floorset.
+    /// Endpoint to create a floorset.
     /// </summary>
-    /// <param name="floorset">The new floorset information</param>
-    /// <returns>The newly created floorset information</returns>
+    /// <param name="floorset">The information of the created floorset</param>
+    /// <returns></returns>
     [Authorize(Policy = "Manager")]
     [HttpPost("create-floorset")]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -84,11 +95,11 @@ public class FloorsetsController : ControllerBase
     }
 
     /// <summary>
-    /// This endpoint deals with updating the public information of a floorset.
+    /// Endpoint to update the public information of a floorset.
     /// </summary>
-    /// <param name="floorsetId">The id of the floorset</param>
-    /// <param name="floorset">The updated public information</param>
-    /// <returns>The updated floorset</returns>
+    /// <param name="floorsetId">Floorset id</param>
+    /// <param name="floorset">The new information for the floorset</param>
+    /// <returns>Empty response with the specified status code</returns>
     [Authorize(Policy = "Manager")]
     [HttpPatch("public-info/{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -113,10 +124,10 @@ public class FloorsetsController : ControllerBase
     }
 
     /// <summary>
-    /// This endpoint deals with deleting a floorset.
+    /// Endpoint to delete a floorset by id.
     /// </summary>
-    /// <param name="floorsetId">The id of the floorset</param>
-    /// <returns>This endpoint doesn't return a value.</returns>
+    /// <param name="floorsetId">Floorset id</param>
+    /// <returns>Empty response with the specified status code</returns>
     [Authorize(Policy = "Manager")]
     [HttpDelete("{floorsetId:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -128,10 +139,11 @@ public class FloorsetsController : ControllerBase
     }
 
     /// <summary>
-    /// This endpoint deals with copying a floorset.
+    /// Endpoint to copy a floorset. This will make a new floorset with the values
+    /// of a current floorset.
     /// </summary>
-    /// <param name="floorsetId">The TUID of floorset being copied as JSON object</param>
-    /// <returns>This endpoint doesn't return a value.</returns>
+    /// <param name="FloorsetRef">Floorset id</param>
+    /// <returns>Empty response with the specified status code</returns>
     [HttpPost("copy-floorset")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
