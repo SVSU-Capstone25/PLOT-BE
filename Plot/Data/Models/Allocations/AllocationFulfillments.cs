@@ -2,10 +2,14 @@
     Filename: AllocationFulfillments.cs
     Part of Project: PLOT/PLOT-BE/Plot/Data/Models/Allocations
 
-    TODO: File Purpose:
+    File Purpose: This file contains the model
+    for sale allocation outputs. This will be mainly used
+    for the allocation sidebar.
 
-    TODO: Class Purpose:
-    
+    Class Purpose:
+    This record is used as the output format for
+    fixture category allocations.
+
     Written by: Clayton Cook
 */
 

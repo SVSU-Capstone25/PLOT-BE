@@ -2,9 +2,13 @@
     Filename: DeleteEmployeeAreaModel.cs
     Part of Project: PLOT/PLOT-BE/Plot/Data/Models/Fixtures
 
-    TODO: File Purpose: 
+    File Purpose: This file contains the model
+    for deleting an employee area.
 
-    TODO: Class Purpose:
+    Class Purpose: This record is the input model
+    for deleting an employee area. This is what the
+    backend expects from the frontend for deleting
+    an employee area.
     
     Written by: Clayton Cook
 */

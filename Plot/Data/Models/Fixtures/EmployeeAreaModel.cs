@@ -1,5 +1,5 @@
 /*
-    Filename: AddEmployeeAreaModel.cs
+    Filename: EmployeeAreaModel.cs
     Part of Project: PLOT/PLOT-BE/Plot/Data/Models/Fixtures
 
     TODO: File Purpose: 

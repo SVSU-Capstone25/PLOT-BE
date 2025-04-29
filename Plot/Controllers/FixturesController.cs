@@ -7,7 +7,7 @@
     which will transport the base fixture model data and fixture instance data 
     from the frontend to the database and vice versa.
 
-    Written by: Jordan Houlihan
+    Written by: Jordan Houlihan, Michael Polhill, Clayton Cook, Joshua Rodack
 */
 
 using Microsoft.AspNetCore.Authorization;
@@ -28,6 +28,13 @@ public class FixturesController : ControllerBase
     private readonly ISalesContext _salesContext;
     private readonly ClaimParserService _claimParserService;
 
+    /// <summary>
+    /// Constructor for the fixtures controller, initializes
+    /// the services and context via dependency injection.
+    /// </summary>
+    /// <param name="fixtureContext">Database context for the fixtures</param>
+    /// <param name="salesContext">Database context for the sales allocations</param>
+    /// <param name="claimParserService">Service for reading the claims on the auth tokens</param>
     public FixturesController(IFixtureContext fixtureContext, ISalesContext salesContext, ClaimParserService claimParserService)
     {
         _fixtureContext = fixtureContext;
@@ -37,11 +44,12 @@ public class FixturesController : ControllerBase
     }
 
     /// <summary>
-    /// This endpoint deals with returning a floorset's fixture information
-    /// to fill out the floorset's grid and category allocations menu.
+    /// Endpoint to get all of the fixture instances for a floorset.
+    /// This will mainly be used to populate the floorset grid in the fixture editor
+    /// page.
     /// </summary>
-    /// <param name="floorsetId">The id of the floorset</param>
-    /// <returns>A floorset's fixture information</returns>
+    /// <param name="floorsetId">Floorset id</param>
+    /// <returns>List of fixture instances for a floorset</returns>
     [Authorize]
     [HttpGet("get-fixtures-instances/{floorsetId:int}")]
     [Produces("application/json")]
@@ -60,6 +68,13 @@ public class FixturesController : ControllerBase
         return Ok(fixtures);
     }
 
+    /// <summary>
+    /// Endpoint to get all of the fixture models for a store.
+    /// This will mainly be used to populate the fixture sidebar in the fixture
+    /// editor page.
+    /// </summary>
+    /// <param name="storeId">Store id</param>
+    /// <returns>List of fixture models for a store</returns>
     [Authorize]
     [HttpGet("get-fixture-models/{storeId:int}")]
     [Produces("application/json")]
@@ -79,11 +94,10 @@ public class FixturesController : ControllerBase
 
 
     /// <summary>
-    /// updates the fixture instance in the database
-    /// with the given updatefixtureinstance model
+    /// Endpoint to update a fixture instance. 
     /// </summary>
-    /// <param name="updateFixture"></param>
-    /// <returns></returns>
+    /// <param name="updateFixture">The new information for the fixture instance</param>
+    /// <returns>Empty response with the specified status code</returns>
     [Authorize(Policy = "Manager")]
     [HttpPatch("update-fixture-instance")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -112,10 +126,10 @@ public class FixturesController : ControllerBase
     }
 
     /// <summary>
-    /// call to the fixture context to create a new fixture instance
+    /// Endpoint to create a fixture instance. 
     /// </summary>
-    /// <param name="newFixture"></param>
-    /// <returns></returns>
+    /// <param name="newFixture">The information of the created fixture instance</param>
+    /// <returns>id of the created fixture instance</returns>
     [Authorize(Policy = "Manager")]
     [HttpPost("create-fixture-instance")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -131,10 +145,10 @@ public class FixturesController : ControllerBase
     }
 
     /// <summary>
-    /// deletes a fixture instance with the given id.
+    /// Endpoint to delete a fixture instance by id.
     /// </summary>
-    /// <param name="fixtureInstanceId"></param>
-    /// <returns></returns>
+    /// <param name="fixtureInstanceId">Fixture instance id</param>
+    /// <returns>Empty response with the specified status code</returns>
     [Authorize(Policy = "Manager")]
     [HttpDelete("delete-fixture-instance/{fixtureInstanceId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -145,10 +159,11 @@ public class FixturesController : ControllerBase
     }
 
     /// <summary>
-    /// Send a request to 
+    /// Endpoint to create a fixture model for a store.
     /// </summary>
-    /// <param name="fixtureModel"></param>
-    /// <returns></returns>
+    /// <param name="storeId">Store id</param>
+    /// <param name="fixtureModel">The information of the created fixture model</param>
+    /// <returns>Empty response with the specified status code</returns>
     [Authorize(Policy = "Manager")]
     [HttpPost("create-fixture-model/{storeId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -158,6 +173,11 @@ public class FixturesController : ControllerBase
         return Ok(await _fixtureContext.CreateFixtureModel(storeId, fixtureModel));
     }
 
+    /// <summary>
+    /// Endpoint to delete a fixture model.
+    /// </summary>
+    /// <param name="modelId">Model id</param>
+    /// <returns>Empty response with the specified status code</returns>
     [Authorize(Policy = "Manager")]
     [HttpDelete("delete-fixture-model/{modelId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -167,6 +187,12 @@ public class FixturesController : ControllerBase
         return Ok(await _fixtureContext.DeleteFixtureModelById(modelId));
     }
 
+    /// <summary>
+    /// Endpoint to update a fixture model.
+    /// </summary>
+    /// <param name="fixtureId">Fixture id</param>
+    /// <param name="update">The new information for the fixture model</param>
+    /// <returns>Empty response with the specified status code</returns>
     [Authorize(Policy = "Manager")]
     [HttpPatch("update-fixture-model/{fixtureId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -176,6 +202,11 @@ public class FixturesController : ControllerBase
         return Ok(await _fixtureContext.UpdateFixtureModelById(fixtureId, update));
     }
 
+    /// <summary>
+    /// Endpoint to add employee areas to a floorset.
+    /// </summary>
+    /// <param name="employeeAreas">Employee areas</param>
+    /// <returns>Empty response with the specified status code</returns>
     [Authorize(Policy = "Manager")]
     [HttpPost("add-employee-areas")]
     [Produces("application/json")]
@@ -194,6 +225,11 @@ public class FixturesController : ControllerBase
         return Ok();
     }
 
+    /// <summary>
+    /// Endpoint to bulk add employee areas to a floorset.
+    /// </summary>
+    /// <param name="employeeAreas">Employee areas</param>
+    /// <returns>Empty response with the specified status code</returns>
     [Authorize(Policy = "Manager")]
     [HttpPost("bulk-add-employee-areas")]
     [Produces("application/json")]
@@ -208,6 +244,11 @@ public class FixturesController : ControllerBase
         return Ok();
     }
 
+    /// <summary>
+    /// Endpoint to delete employee areas from a floorset.
+    /// </summary>
+    /// <param name="employeeAreas">Employee areas</param>
+    /// <returns>Empty response with the specified status code</returns>
     [Authorize(Policy = "Manager")]
     [HttpDelete("delete-employee-areas")]
     [Produces("application/json")]
@@ -225,6 +266,11 @@ public class FixturesController : ControllerBase
         return Ok();
     }
 
+    /// <summary>
+    /// Endpoint to bulk delete employee areas from a floorset.
+    /// </summary>
+    /// <param name="employeeAreas">Employee areas</param>
+    /// <returns>Empty response with the specified status code</returns>
     [Authorize(Policy = "Manager")]
     [HttpDelete("bulk-delete-employee-areas")]
     [Produces("application/json")]
@@ -239,6 +285,11 @@ public class FixturesController : ControllerBase
         return Ok();
     }
 
+    /// <summary>
+    /// Endpoint to get all employee areas for a floorset.
+    /// </summary>
+    /// <param name="floorsetId">Floorset id</param>
+    /// <returns>List of employee areas for a floorset</returns>
     [Authorize(Policy = "Employee")]
     [HttpGet("get-employee-areas/{floorsetId:int}")]
     [Produces("application/json")]

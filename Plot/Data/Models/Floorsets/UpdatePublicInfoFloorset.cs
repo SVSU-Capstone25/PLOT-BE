@@ -22,14 +22,14 @@ namespace Plot.Data.Models.Floorsets;
 
 public record UpdatePublicInfoFloorset
 {
-    
+
     [StringLength(100, ErrorMessage = "Floorset name cannot exceed 100 characters.")]
     public string? NAME { get; set; }
     [Required]
     public int? STORE_TUID { get; set; }
-    
+
     public DateTime? DATE_CREATED { get; set; }
-    
+
     public int? CREATED_BY { get; set; }
     [Required]
     public DateTime? DATE_MODIFIED { get; set; }

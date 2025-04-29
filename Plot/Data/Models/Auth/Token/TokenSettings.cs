@@ -12,6 +12,7 @@
     This record serves as a model for data to configure the TokenService
     class. The properties correspond to token configuration values needed
     by the TokenService class.
+    
 
     Written by: Michael Polhill
 */
