@@ -7,7 +7,7 @@
     which will transport the base fixture model data and fixture instance data 
     from the frontend to the database and vice versa.
 
-    Written by: Jordan Houlihan, Clayton Cook, Joshua Rodack
+    Written by: Jordan Houlihan, Michael Polhill, Clayton Cook, Joshua Rodack
 */
 
 using Microsoft.AspNetCore.Authorization;

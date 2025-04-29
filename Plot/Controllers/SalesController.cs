@@ -6,7 +6,7 @@
     This file contains the sales controller endpoint mapping,
     which will upload/process sales data from the frontend/database.
     
-    Written by: Jordan Houlihan, Clayton Cook, Joshua Rodack
+    Written by: Jordan Houlihan, Michael Polhill, Clayton Cook, Joshua Rodack
 */
 
 using Microsoft.AspNetCore.Authorization;
@@ -64,7 +64,7 @@ public class SalesController : ControllerBase
         using var workbook = new XLWorkbook(memoryStream);
         var worksheet = workbook.Worksheet(1);
 
-        //Save file shit------------------------------------------------------
+        
         var captureDate = worksheet.Cell(1, 11).Value.ToString();
 
         var match = Regex.Match(captureDate, @"\b\d{1,2}/\d{1,2}/\d{4}\b");

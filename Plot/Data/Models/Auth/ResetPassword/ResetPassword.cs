@@ -4,11 +4,10 @@
     
     File Purpose:
     This file defines the ResetPassword model class, 
-    a NewPassword and Token for a post http request.
+    a NewPassword and Token.
 
     Class Purpose:
-    This record serves as a model to inject into a post http
-    request in the AuthController.
+    This record serves as a model to send to the api for a reset users password.
     The new password and token are used to reset a users password.
 
     Written by: Michael Polhill
