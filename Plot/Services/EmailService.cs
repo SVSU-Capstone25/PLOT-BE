@@ -6,7 +6,6 @@ using Plot.Data.Models.Env;
 
 namespace Plot.Services;
 
-//80 chars---------------------------------------------------------------------
 /// <summary>
 /// Filename: EmailService.cs
 /// Part of Project: PLOT/PLOT-BE/Plot/Services
@@ -29,8 +28,8 @@ namespace Plot.Services;
 /// Mailkit/Mimekit: https://github.com/jstedfast/MailKit.
 /// RazorEmailRenderer: A custom class that renders email templates using
 //  Razorlight.
-/// IConfiguration: An interface that provides access to configuration
-//  settings.
+/// IOptions: An interface that provides access to configuration
+//  settings in appsettings.json.
 /// EmailSettings: A model that holds email settings.
 /// 
 /// Written by: Michael Polhill
@@ -57,6 +56,8 @@ public class EmailService
 
     // SMTP server password 
     private readonly string _senderSmtpPass;
+
+    // Service to get variables from env
     private readonly EnvironmentSettings _envSettings;
 
     // Methods -- Methods -- Methods -- Methods -- Methods -- Methods -----
@@ -66,12 +67,13 @@ public class EmailService
     /// Gets the servers email password from .env file.
     /// </summary>
     /// <param name="emailSettings">An instance of IOptions that contains
-    /// application settings.</param> 
+    /// application settings from appsettings.json.</param> 
     /// <exception cref="ArgumentNullException"> Thrown when an email 
     /// configuration is missing. </exception>
     public EmailService(IOptions<EmailSettings> emailSettings, EnvironmentSettings envSettings)
     {
         _envSettings = envSettings;
+
         //Use the emailSettings instance to get the email settings.
         _senderName = emailSettings.Value.SenderName ?? throw new
             ArgumentNullException(emailSettings.Value.SenderName);
@@ -136,10 +138,10 @@ public class EmailService
     /// <param name="recipientEmailAddress">The email address of the 
     /// recipient.</param> 
     /// <param name="recipientName"> The name of the email recipient.</param>
-    /// <param name="loginLink"></param> The login reset link.
+    /// <param name="createPasswordLink"></param> The login reset link.
     /// <returns></returns>
     public async Task SendRegistrationEmailAsync(
-        string recipientEmailAddress, string recipientName, string loginLink)
+        string recipientEmailAddress, string recipientName, string createPasswordLink)
     {
         // Create a new email template to be used as the 
         // registration notification body.
@@ -149,7 +151,7 @@ public class EmailService
             BodyText = "Your account has been successfully registered" +
                 "  with PLOT. Please click the button below to create a password.",
             ButtonText = "Change Password",
-            ButtonLink = loginLink,
+            ButtonLink = createPasswordLink,
             AfterButtonText = string.Empty
         };
 

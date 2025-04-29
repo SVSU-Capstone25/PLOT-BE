@@ -1,4 +1,6 @@
 /*
+    !!--IMPLEMENTATION CHANGE, NOT CURRENTLY IN USE--!!
+
     Filename: TokenSettings.cs
     Part of Project: PLOT/PLOT-BE/Plot/Data/Models/Auth/Token
 
@@ -20,10 +22,11 @@ public record TokenSettings
 {
     // VARIABLES -- VARIABLES -- VARIABLES -- VARIABLES -- VARIABLES ------
 
-    // Issuer of the token (Http://Plot.com)!!!!!!!!Change when info is available!!!!!!!!
+
+    // Issuer of the token 
     public string? Issuer { get; set; }
 
-    // Audience of the token (Http://Plot.com)!!!!!!!!Change when info is available!!!!!!!!
+    // Audience of the token 
     public string? Audience { get; set; }
 
     // Token expiration time (in hours)

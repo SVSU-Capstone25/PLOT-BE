@@ -1,5 +1,5 @@
 /*
-    Filename: ClaimParserService.cs
+    Filename: Program.cs
     Part of Project: PLOT/PLOT-BE/Plot
 
     Project Purpose: This project is the backend for Plato's Closet
@@ -21,6 +21,7 @@ using Plot.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 EnvironmentSettings envSettings = new();
 builder.Services.AddScoped<EnvironmentSettings>();
 
@@ -39,18 +40,21 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddHealthChecks();
+
 
 // Bind settings from appsettings.json to the EmailSettings model
 // to be used to configure EmailService settings.
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
 
+// Configure authentication settings for api endpoints that have the 
+// [Authorize] tag. Uses jwt Bearer authentication. 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        //Configure JWT validation
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -59,16 +63,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = envSettings.audience,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(envSettings.auth_secret_key)),
+                Encoding.UTF8.GetBytes(envSettings.auth_secret_key)),//Use secret key from env
             ValidateLifetime = true,
         };
     });
 
-
+// Configure authorization settings 
+//Defines role-based access for Employee, Manager, and Owner.
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("Employee", policy => policy.RequireClaim("Role", "Owner", "Manager", "Employee"))
     .AddPolicy("Manager", policy => policy.RequireClaim("Role", "Owner", "Manager"))
     .AddPolicy("Owner", policy => policy.RequireClaim("Role", "Owner"));
+
 
 // Add contexts and services as scoped services throughout
 // the backend project for dependency injection.
@@ -82,6 +88,7 @@ builder.Services.AddScoped<ClaimParserService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<TokenService>();
 
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -90,7 +97,8 @@ builder.Services.AddControllers()
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -101,6 +109,8 @@ app.Use(async (context, next) =>
     context.Response.Headers.Append("Referrer-Policy", "no-referrer-when-downgrade");
     await next.Invoke();
 });
+
+// Middleware Configuration
 
 //app.UseHttpsRedirection();
 app.UseStaticFiles();

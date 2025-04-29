@@ -13,6 +13,7 @@
 
     Written by: Jordan Houlihan
     Modified by: Josh Rodack
+    Comments by: Josh Rodack
 */
 using System.Data;
 using Dapper;
@@ -24,6 +25,11 @@ namespace Plot.DataAccess.Contexts;
 
 public class FloorsetContext : DbContext, IFloorsetContext
 {
+    /// <summary>
+    /// Return all floorsets at a given store.
+    /// </summary>
+    /// <param name="storeId">Store TUID</param>
+    /// <returns>IEnumerable of Floorset models</returns>
     public async Task<IEnumerable<Floorset>?> GetFloorsetsByStoreId(int storeId)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -31,14 +37,22 @@ public class FloorsetContext : DbContext, IFloorsetContext
 
         return await GetStoredProcedureQuery<Floorset>("Select_Stores_Floorsets", parameters);
     }
-
+    /// <summary>
+    /// Get a single floorset by an id
+    /// </summary>
+    /// <param name="floorsetId">floorset id</param>
+    /// <returns>a single floorset model</returns>
     public async Task<Floorset?> GetFloorsetById(int floorsetId)
     {
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("FLOORSET_TUID", floorsetId);
         return await GetFirstOrDefaultStoredProcedureQuery<Floorset>("Select_Floorsets", parameters);
     }
-
+    /// <summary>
+    /// Create floorset record in the database
+    /// </summary>
+    /// <param name="floorset">Floorset model to carry over field values</param>
+    /// <returns>int indicating success or failure. </returns>
     public async Task<int> CreateFloorset(CreateFloorset floorset)
     {
         try
@@ -65,7 +79,12 @@ public class FloorsetContext : DbContext, IFloorsetContext
             return 0;
         }
     }
-
+    /// <summary>
+    /// Update a floorset given a floorset id
+    /// </summary>
+    /// <param name="floorsetId">floorset id</param>
+    /// <param name="updateFloorset">values to be udpated</param>
+    /// <returns>int indicating success or failure.</returns>
     public async Task<int> UpdateFloorsetById(int floorsetId, UpdatePublicInfoFloorset updateFloorset)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -80,7 +99,11 @@ public class FloorsetContext : DbContext, IFloorsetContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_Floorset", parameters);
     }
-
+    /// <summary>
+    /// delete a floorset given an id
+    /// </summary>
+    /// <param name="floorsetId">floorset id</param>
+    /// <returns>int indicating success or failure</returns>
     public async Task<int> DeleteFloorsetById(int floorsetId)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -88,12 +111,17 @@ public class FloorsetContext : DbContext, IFloorsetContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Delete_Floorset", parameters);
     }
-
-    public async Task<int> CopyFloorset(FloorsetRef FloorsetRef){
+    /// <summary>
+    /// copy a floorset into a new record to be modified.
+    /// </summary>
+    /// <param name="FloorsetRef">model of floorset to be copied</param>
+    /// <returns>int indicating success or failure.</returns>
+    public async Task<int> CopyFloorset(FloorsetRef FloorsetRef)
+    {
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("OLD_FLOORSET_TUID", FloorsetRef.TUID);
         Console.WriteLine("Old TUID " + FloorsetRef.TUID);
-        
+
         return await CreateUpdateDeleteStoredProcedureQuery("Copy_Floorset", parameters);
     }
 }

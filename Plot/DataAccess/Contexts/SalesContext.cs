@@ -12,6 +12,7 @@
     to send data to the database server from the frontend and vice versa.
 
     Written by: Jordan Houlihan
+    Comments by: Josh Rodack
 */
 using Dapper;
 using Microsoft.Data.SqlClient;
@@ -25,11 +26,24 @@ namespace Plot.DataAccess.Contexts;
 
 public class SalesContext : DbContext, ISalesContext
 {
+    /// <summary>
+    /// Returns the allocations for a given floorset
+    /// </summary>
+    /// <param name="floorsetId"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
     public Task<IEnumerable<FixtureAllocations>> GetFixtureAllocations(int floorsetId)
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Creates the sales allocations given a list of fixture allocations and
+    /// the excel file
+    /// </summary>
+    /// <param name="allocations">Allocation models to receive values</param>
+    /// <param name="excelFile">Excel file to be parsed</param>
+    /// <returns>int indicating success or failure.</returns>
     public async Task<int> UploadSales(List<CreateFixtureAllocations> allocations, CreateExcelFileModel excelFile)
     {
         //Console.WriteLine("in Upload sales");
@@ -54,6 +68,11 @@ public class SalesContext : DbContext, ISalesContext
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Sales_With_Allocations", parameters);
     }
 
+    /// <summary>
+    /// given a floorset, return the fullfilments of allocations
+    /// </summary>
+    /// <param name="floorsetId">Floorset id</param>
+    /// <returns>IEnumerable of fulfilled allocations</returns>
     public async Task<IEnumerable<AllocationFulfillments>?> GetAllocationFulfillments(int floorsetId)
     {
         DynamicParameters parameters = new DynamicParameters();

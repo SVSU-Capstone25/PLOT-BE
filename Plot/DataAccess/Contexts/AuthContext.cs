@@ -12,6 +12,7 @@
     to send data to the database server from the frontend and vice versa.
 
     Written by: Jordan Houlihan
+    Commented by: Joshua Rodack
 */
 
 using System.Security.Cryptography;
@@ -31,7 +32,11 @@ public class AuthContext : DbContext, IAuthContext
 
     private readonly int oneTimePasswordSizeLowerBound = 32;
     private readonly int oneTimePasswordSizeUpperBound = 33;
-
+    /// <summary>
+    /// Creates a user in the database.
+    /// </summary>
+    /// <param name="user">User model to be passed to database</param>
+    /// <returns>int indicating success or failure.</returns>
     public async Task<int> CreateUser(UserRegistration user)
     {
         int oneTimePassword = RandomNumberGenerator.GetInt32(oneTimePasswordSizeLowerBound, oneTimePasswordSizeUpperBound);
@@ -47,7 +52,11 @@ public class AuthContext : DbContext, IAuthContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Insert_Update_User", parameters);
     }
-
+    /// <summary>
+    /// Returns a user based on their email.
+    /// </summary>
+    /// <param name="email">Email string to check against database.</param>
+    /// <returns>User model</returns>
     public async Task<User?> GetUserByEmail(string email)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -72,7 +81,12 @@ public class AuthContext : DbContext, IAuthContext
         //     return null;
         // }
     }
-
+    /// <summary>
+    /// updates the password of a user
+    /// </summary>
+    /// <param name="user">model holding the email of the user
+    /// and the new password</param>
+    /// <returns>int indicates success or failure.</returns>
     public async Task<int> UpdatePassword(LoginRequest user)
     {
         DynamicParameters parameters = new DynamicParameters();
@@ -81,6 +95,11 @@ public class AuthContext : DbContext, IAuthContext
 
         return await CreateUpdateDeleteStoredProcedureQuery("Update_User_Password", parameters);
     }
+    /// <summary>
+    /// Deletes a user from the database by the user's id
+    /// </summary>
+    /// <param name="userId">User TUID</param>
+    /// <returns>int indicating success or failure.</returns>
     public async Task<int> DeleteUserById(int userId)
     {
         DynamicParameters parameters = new DynamicParameters();

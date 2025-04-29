@@ -5,12 +5,8 @@
     This file contains the authentication endpoint mappings
     for PLOT.
 
-    Dependencies:
-    EmailService: Sends password reset emails.
-    TokenService: Generates and validates password reset tokens.
-    AuthContext: Database context for accessing user data.
-
     Written by: Michael Polhill, Jordan Houlihan
+    Refactored comments Michael P. 4/28
 */
 
 using System.Net.Http.Headers;
@@ -36,23 +32,27 @@ namespace Plot.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    // CONSTANTS -- CONSTANTS -- CONSTANTS -- CONSTANTS -- CONSTANTS ------
-
-    // Base link for the password reset page.
-    // (Need to change when we have the actual route)
-    private readonly string RESET_LINK_TEMPLATE;
-
     // VARIABLES -- VARIABLES -- VARIABLES -- VARIABLES -- VARIABLES ------
+
+
+    // Holds the link for a password reset
+    private readonly string password_reset_link;
 
     // Service used for sending password reset emails.
     private readonly EmailService _emailService;
 
-    // Service used for generating and validating password reset tokens.
+    // Service used for generating and validating jwt tokens.
     private readonly TokenService _tokenService;
 
+    // Context that holds auth related methods to communicate with the DB.
     private readonly IAuthContext _authContext;
+    
+    // Service to access variable stored in the env file
     private readonly EnvironmentSettings _envSettings;
+
+
     // Methods -- Methods -- Methods -- Methods -- Methods -- Methods -----
+
 
     /// <summary>
     /// Constructor for AuthController. Initializes the 
@@ -61,15 +61,18 @@ public class AuthController : ControllerBase
     /// <param name="emailService"></param>
     /// <param name="tokenService"></param>
     /// <param name="authContext"></param>
-    public AuthController(EmailService emailService, TokenService tokenService, IAuthContext authContext, EnvironmentSettings envSettings)
+    /// <param name="envSettings"></param>
+    public AuthController(EmailService emailService, TokenService tokenService,
+                         IAuthContext authContext, EnvironmentSettings envSettings)
     {
         _emailService = emailService;
         _tokenService = tokenService;
         _authContext = authContext;
         _envSettings = envSettings;
-
-        RESET_LINK_TEMPLATE = $"{_envSettings.audience}/password-reset?token=";
+        //Get the audience from the env file to use in the reset link.
+        password_reset_link = $"{_envSettings.audience}/password-reset?token=";
     }
+
 
     /// <summary>
     /// Endpoint to request a password reset. Takes a users email address 
@@ -93,19 +96,20 @@ public class AuthController : ControllerBase
         }
 
         // Generate a new token for the user.
-        //string resetToken = _tokenService.GenerateToken(user);
         string resetToken = _tokenService.GeneratePasswordResetToken(user);
 
         // Add the token to the end of the reset link template to create
         // a unique reset link.
-        string resetLink = RESET_LINK_TEMPLATE + resetToken;
+        string resetLink = password_reset_link + resetToken;
 
         // Pass the users name, email, and reset link to the email service
         // to send the password reset email.
         await _emailService.SendPasswordResetEmailAsync(
             user.EMAIL!, user.FIRST_NAME!, resetLink);
+
         return Ok();
     }
+
 
     /// <summary>
     /// Endpoint to reset a user's password. Takes a new password and a 
@@ -133,8 +137,6 @@ public class AuthController : ControllerBase
 
         // Validate the token, sends back the email address if valid.
         // Otherwise returns null.
-        //var email = _tokenService.ValidateToken(token);
-
         var email = _tokenService.ValidatePasswordResetToken(token);
 
 
@@ -151,6 +153,7 @@ public class AuthController : ControllerBase
             return BadRequest("User not found.");
         }
 
+
         PasswordHasher<User> hasher = new();
 
         LoginRequest newUserInfo = new()
@@ -159,6 +162,9 @@ public class AuthController : ControllerBase
             PASSWORD = hasher.HashPassword(user, receivedResetPassword.NewPassword)
         };
 
+
+        // Get the number of rows affected from db to determine if
+        // operation succeeded.
         int rowsAffected = await _authContext.UpdatePassword(newUserInfo);
 
         if (rowsAffected > 0)
@@ -166,6 +172,7 @@ public class AuthController : ControllerBase
             // Return OK with success message.
             return Ok("Password reset successful.");
         }
+
         return BadRequest();
     }
 
@@ -174,10 +181,14 @@ public class AuthController : ControllerBase
     /// user sent from the frontend, find the user in the database to ensure
     /// that the process succeeded, and send the user a registration email
     /// to change their password.
+    /// Note: On user creation a random hashed password is initially set as
+    /// the users password, this is why the user receives a password reset
+    /// email on registration.
     /// </summary>
     /// <param name="user">The new user</param>
-    /// <returns></returns>
-    [Authorize(Policy = "Manager")]
+    /// <returns>200 ok if Reset is successful, 
+    /// 400 bad request otherwise.</returns>
+    [Authorize(Policy = "Manager")] 
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -197,10 +208,11 @@ public class AuthController : ControllerBase
             return BadRequest();
         }
 
-        //string resetToken = _tokenService.GenerateToken(registeredUser!);
+        // Generate token for password reset.
         string resetToken = _tokenService.GeneratePasswordResetToken(registeredUser!);
-        string resetLink = RESET_LINK_TEMPLATE + resetToken;
+        string resetLink = password_reset_link + resetToken;
 
+        //Send email so that the new user can set their password.
         await _emailService.SendRegistrationEmailAsync(registeredUser.EMAIL!, registeredUser.FIRST_NAME!, resetLink);
 
         return Ok();
@@ -208,27 +220,27 @@ public class AuthController : ControllerBase
 
     /// <summary>
     /// This endpoint deals with logging in a user. This will verify if
-    /// the email and password combination is correct, then send a token
-    /// to the frontend to add to their local storage for further processing
-    /// when the user enters the dashboard.
+    /// the email and password combination is correct, then send a jwt token
+    /// to the frontend to add to set a cookie for authorization.
     /// </summary>
     /// <param name="userLoginAttempt">The login attempt</param>
-    /// <returns>The token used for authorization</returns>
+    /// <returns>The token model used for authorization or bad request</returns>
     [HttpPost("login")]
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Login(LoginRequest userLoginAttempt)
     {
+        // Determine if incoming json can bind to the model
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
         
-        //Console.WriteLine(userLoginAttempt);
+
         var user = await _authContext.GetUserByEmail(userLoginAttempt.EMAIL!);
 
-        Console.WriteLine(user);
+        
         if (user == null || userLoginAttempt.PASSWORD == null)
         {
             ErrorMessage errorMessage = new ErrorMessage() { Message = "Invalid login."};
@@ -243,17 +255,8 @@ public class AuthController : ControllerBase
             return BadRequest(errorMessage);
         }
 
-        //var token = _tokenService.GenerateToken(user);
+        // Generate jwt token for authorization
         var token = _tokenService.GenerateAuthToken(user);
-
-        // Set the token in the response cookies for authentication.
-        // Response.Cookies.Append("Auth", token, new CookieOptions
-        // {
-        //     HttpOnly = true,
-        //     Secure = true,
-        //     SameSite = SameSiteMode.None,
-        //     Expires = DateTimeOffset.UtcNow.AddMinutes(double.Parse(_envSettings.expiration_time)),
-        // });
 
         return Ok(new LoginToken()
         {
@@ -261,9 +264,11 @@ public class AuthController : ControllerBase
         });
     }
 
+
     /// <summary>
     /// This endpoint deals with logging out a user. This will delete the token 
     /// from the user.
+    /// NOTE: NOT CURRENTLY BEING USED.
     /// </summary>
     /// <returns></returns>
     [Authorize]
@@ -285,6 +290,12 @@ public class AuthController : ControllerBase
         return Ok();
     }
 
+    /// <summary>
+    /// This method determines the current user from the 
+    /// jwt in the http Authorization header and sends back
+    /// a userDTO if user is found. 
+    /// </summary>
+    /// <returns></returns>
     [Authorize]
     [HttpGet("get-current-user")]
     [Produces("application/json")]
@@ -300,10 +311,11 @@ public class AuthController : ControllerBase
             return BadRequest();
         }
         
+        //Trim the header value to get the token
         string token = authHeader.Substring("Bearer ".Length).Trim();
 
+        //Validate and get the users email from the token
         var userEmail = _tokenService.ValidateAuthToken(token);
-
 
         var user = await _authContext.GetUserByEmail(userEmail!);
 
@@ -317,32 +329,5 @@ public class AuthController : ControllerBase
         };
 
         return Ok(userDTO);
-    }
-
-    [HttpPost("data-test")]
-    [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<ResetPasswordRequest> TestFail([FromBody] ResetPasswordRequest email)
-    {
-        email.EMAIL = "new@email.com";
-        return Ok(email);
-    }
-
-    [HttpPost("test-password")]
-    [Produces("application/json")]
-    public async Task<ActionResult<string>> TestPassword()
-    {
-        PasswordHasher<User> hasher = new();
-        User user = new() { FIRST_NAME = "admin", LAST_NAME = "admin", EMAIL = "NickLeja@email.com", PASSWORD = "admin", ROLE = "Owner", ACTIVE = true };
-
-        LoginRequest newUserInfo = new()
-        {
-            EMAIL = user.EMAIL,
-            PASSWORD = hasher.HashPassword(user, "admin")
-        };
-
-        int rowsAffected = await _authContext.UpdatePassword(newUserInfo);
-
-        return Ok(rowsAffected);
     }
 }
